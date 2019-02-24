@@ -9,7 +9,7 @@ public class LookupPlate extends Operation {
     public String perform(Request req) {
         String response = "-1";
         if (req.getArguments().size() >= 1) {
-            response = PlateRegistry.getInstance().getOwner(req.getArgument(1));
+            response = PlateRegistry.getInstance().getOwner(req.getArgument(0));
         }
         return this.addRequestEnd(req, response);
     }
