@@ -1,3 +1,7 @@
+package udp.client;
+
+import udp.client.Client;
+
 import java.io.IOException;
 import java.util.Arrays;
 
