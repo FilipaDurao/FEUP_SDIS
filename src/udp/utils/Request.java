@@ -14,6 +14,11 @@ public class Request {
         arguments = new ArrayList<String>(Arrays.asList(Arrays.copyOfRange(responseTokens, 1, responseTokens.length)));
     }
 
+    public Request(String operation, String[] arguments) {
+        this.operation = operation;
+        this.arguments = new ArrayList<>(Arrays.asList(arguments));
+    }
+
     public String getOperation() {
         return operation;
     }

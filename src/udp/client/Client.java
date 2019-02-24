@@ -31,14 +31,14 @@ public class Client {
 
     public void register() throws IOException {
         System.out.println("IN REGISTER");
-        String lincenseAndOwner = this.opnd[0] + " " + this.opnd[1];
+        String lincenseAndOwner = this.oper + " " + this.opnd[0] + " " + this.opnd[1];
         DatagramPacket packet = new DatagramPacket(lincenseAndOwner.getBytes(), lincenseAndOwner.length(), InetAddress.getByName(this.host_name), this.port_number);
         socket.send(packet);
     }
 
     public void lookup() throws IOException {
         System.out.println("IN LOOKUP");
-        String lincensePlate = this.opnd[0];
+        String lincensePlate = this.oper + " " + this.opnd[0];
         DatagramPacket packet = new DatagramPacket(lincensePlate.getBytes(), lincensePlate.length(), InetAddress.getByName(this.host_name), this.port_number);
         socket.send(packet);
     }

@@ -15,12 +15,14 @@ public class ServerMain {
 
         try {
             int portNumber = Integer.valueOf(args[0]);
+            System.out.println("Running on port: " + portNumber);
             Server server = new Server(portNumber);
             server.addOperation("lookup", new LookupPlate());
             server.addOperation("register", new RegisterPlate());
             server.run();
         } catch (IOException e) {
             System.out.println("Exited");
+            e.printStackTrace();
         }
     }
 }
