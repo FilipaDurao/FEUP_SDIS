@@ -8,8 +8,8 @@ import java.net.*;
 public class Client {
     public static final int TRIES = 3;
     private DatagramSocket socket;
-    private String host_name;
-    private Integer port_number;
+    protected String host_name;
+    protected Integer port_number;
 
 
     Client(String host_name, Integer port_number) throws IOException {
