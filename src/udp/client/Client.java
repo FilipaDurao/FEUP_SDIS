@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.*;
 
 public class Client {
+    public static final int TRIES = 3;
     private DatagramSocket socket;
     private String host_name;
     private Integer port_number;
@@ -13,6 +14,7 @@ public class Client {
 
     Client(String host_name, Integer port_number) throws IOException {
         this.socket = new DatagramSocket();
+        this.socket.setSoTimeout(1000);
         this.host_name = host_name;
         this.port_number = port_number;
     }
@@ -31,14 +33,19 @@ public class Client {
     }
 
     String sendRequest(Request request) throws Exception {
-        try {
-            this.sendSingleRequest(request);
-            System.out.println("Message Sent: \n" + request);
-            return this.getResponse();
-        } catch (UnknownHostException e) {
-            System.err.println("Exception: Unknown Host");
-        } catch (IOException e) {
-            System.err.println("Unable to send request or retrieve response");
+        int tries = TRIES;
+
+        while (tries > 0) {
+            try {
+                this.sendSingleRequest(request);
+                System.out.println("Message Sent: \n" + request);
+                return this.getResponse();
+            } catch (SocketTimeoutException e) {
+                tries--;
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                break;
+            }
         }
 
         throw new Exception("Unable to send message");
