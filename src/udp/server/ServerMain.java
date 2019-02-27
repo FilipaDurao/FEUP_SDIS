@@ -16,8 +16,9 @@ public class ServerMain {
         try {
             int portNumber = Integer.valueOf(args[0]);
             int multicastPortNumber = Integer.valueOf(args[2]);
+            String  multicastAddress = args[1];
             System.out.println("Running on port: " + portNumber);
-            Server server = new Server(portNumber, args[1], multicastPortNumber);
+            Server server = new Server(portNumber, multicastAddress, multicastPortNumber);
             server.addOperation("lookup", new LookupPlate());
             server.addOperation("register", new RegisterPlate());
             server.run();
