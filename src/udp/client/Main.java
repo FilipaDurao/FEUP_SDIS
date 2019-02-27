@@ -2,7 +2,6 @@ package udp.client;
 
 import udp.utils.Request;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 public class Main {
