@@ -5,11 +5,11 @@ import udp.utils.Request;
 import java.io.IOException;
 import java.net.*;
 
-public class Client {
-    public static final int TRIES = 3;
+class Client {
+    private static final int TRIES = 3;
     private DatagramSocket socket;
-    protected String host_name;
-    protected Integer port_number;
+    String host_name;
+    Integer port_number;
 
 
     Client(String host_name, Integer port_number) throws IOException {
