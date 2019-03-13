@@ -1,14 +1,14 @@
 package proj.peer.rmi;
 
-import java.rmi.RemoteException;
+import proj.peer.message.BackupMessage;
+
 
 public class RemoteBackup implements  RemoteBackupInterface{
     public RemoteBackup() {}
 
     public int backup(String pathname, Integer replicationDegree) {
-        System.out.println("Backup: ");
-        System.out.println(pathname);
-        System.out.println(replicationDegree);
+        BackupMessage msg = new BackupMessage("1",pathname,0, replicationDegree, "this is the body");
+        System.out.println(msg);
         return 0;
     }
 

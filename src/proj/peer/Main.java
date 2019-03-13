@@ -15,7 +15,7 @@ public class Main {
         try {
             RemoteBackup reBackup = new RemoteBackup();
             RemoteBackupInterface stub = (RemoteBackupInterface) UnicastRemoteObject.exportObject(reBackup,0);
-            Registry reg = LocateRegistry.getRegistry();
+            Registry reg = LocateRegistry.createRegistry(1099);
             reg.rebind("RBackup", stub);
             System.out.println("Server Ready");
         } catch (RemoteException e) {

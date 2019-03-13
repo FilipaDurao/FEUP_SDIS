@@ -23,9 +23,7 @@ public class ClientMain {
             Registry reg = LocateRegistry.getRegistry(host);
             RemoteBackupInterface remoteBackup = (RemoteBackupInterface) reg.lookup("RBackup");
             Integer res = remoteBackup.backup("test.pdf", 1);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
+        } catch (RemoteException | NotBoundException e) {
             e.printStackTrace();
         }
     }
