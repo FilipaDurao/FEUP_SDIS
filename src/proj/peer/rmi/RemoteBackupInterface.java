@@ -4,7 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface RemoteBackupInterface extends Remote {
-    int backup(String pathname, Integer replicationDegree) throws RemoteException;
+    int backup(String pathname, Integer replicationDegree) throws Exception;
 
     int restore(String pathname) throws RemoteException;
 
