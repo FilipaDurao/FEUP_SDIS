@@ -17,14 +17,26 @@ public class Peer {
         }
 
         String peerId = args[0];
+        RemoteBackup reBackup = new RemoteBackup(peerId);
+        RemoteBackupInterface stub = null;
         try {
-            RemoteBackup reBackup = new RemoteBackup(peerId);
-            RemoteBackupInterface stub = (RemoteBackupInterface) UnicastRemoteObject.exportObject(reBackup,0);
-            Registry reg = LocateRegistry.createRegistry(1099);
-            reg.rebind("RBackup" + peerId, stub);
+            stub = (RemoteBackupInterface) UnicastRemoteObject.exportObject(reBackup, 0);
+            Registry reg = null;
+            try {
+                reg = LocateRegistry.getRegistry();
+                reg.rebind("RBackup" + peerId, stub);
+            } catch (RemoteException e) {
+                System.out.println("Tries to create");
+                reg = LocateRegistry.createRegistry(1099);
+                reg.rebind("RBackup" + peerId, stub);
+            }
+            
             System.out.println("Server Ready");
+
         } catch (RemoteException e) {
+            System.err.println(e.getMessage());
             e.printStackTrace();
         }
+
     }
 }
