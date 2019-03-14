@@ -1,6 +1,7 @@
 package proj.peer.connection;
 
 import proj.peer.message.Message;
+import proj.peer.message.MessageFactory;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -30,7 +31,7 @@ public class MulticastConnection {
         DatagramPacket packet = new DatagramPacket(msgBytes, msgBytes.length);
 
         this.multiSocket.receive(packet);
-        return new Message(new String(packet.getData(), 0, packet.getLength()));
+        return MessageFactory.getMessage(new String(packet.getData(), 0, packet.getLength()));
     }
 
     public String getMulticast_name() {
