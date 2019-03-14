@@ -5,10 +5,15 @@ import proj.peer.message.PutChunkMessage;
 
 
 public class RemoteBackup implements  RemoteBackupInterface{
-    public RemoteBackup() {}
+
+    private String senderId;
+
+    public RemoteBackup(String senderId) {
+        this.senderId = senderId;
+    }
 
     public int backup(String pathname, Integer replicationDegree) throws Exception {
-        Message msg = new PutChunkMessage("1",pathname,0, replicationDegree, "this is the body");
+        Message msg = new PutChunkMessage(this.senderId, pathname,0, replicationDegree, "this is the body");
         Message convMsg =  new PutChunkMessage(msg.toString());
         System.out.println(convMsg);
         return 0;
