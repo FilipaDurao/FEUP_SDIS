@@ -42,7 +42,7 @@ fi
 
 if [[ "$TILE" = true && "$INPLACE" == false ]] ; then
 
-    index=0
+    index=1
     let "NROW=($NPEERS+1)/($COLUMNS)-1"
     let "NLAST=($NPEERS+1)%($COLUMNS)"
     
