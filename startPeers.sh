@@ -1,7 +1,43 @@
 #!/bin/bash
 
+MCNAME="230.1.2.3"
+MCPORT="5678"
+
+MDBNAME="230.1.2.3"
+MDBPORT="5679"
+
+MDRNAME="230.1.2.3"
+MDRPORT="5680"
+
+index=1
+
 INPLACE=false
 TILE=false
+
+
+function startConsole() {
+    if [[ $index -gt $NPEERS ]]; then 
+        echo "Ending launch..."
+        exit 0
+    fi
+
+    x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$index &
+    echo "Launched peer with id $PEER$index"
+    let index++
+    sleep .2
+}
+
+function startInPlace() {
+        if [[ $index -gt $NPEERS ]]; then 
+        echo "Ending launch..."
+        exit 0
+    fi
+
+    java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$c &
+    echo "Launched peer with id $PEER$index"
+    let index++
+    sleep .2
+}
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -42,7 +78,6 @@ fi
 
 if [[ "$TILE" = true && "$INPLACE" == false ]] ; then
 
-    index=1
     let "NROW=($NPEERS+1)/($COLUMNS)-1"
     let "NLAST=($NPEERS+1)%($COLUMNS)"
     
@@ -53,15 +88,7 @@ if [[ "$TILE" = true && "$INPLACE" == false ]] ; then
     i3-msg split h
     for (( c=0; c<$COLUMNS-1; c++ ))
     do
-        if [[ $index -gt $NPEERS ]]; then 
-            echo "Ending launch..."
-            exit 0
-        fi
-
-        x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$index &
-        echo "Launched peer with id $PEER$index"
-        let index++
-        sleep .2
+        startConsole
     done
     
     for (( i=0; i<$COLUMNS; i++ ))
@@ -69,27 +96,11 @@ if [[ "$TILE" = true && "$INPLACE" == false ]] ; then
         i3-msg split v
         for (( c=0; c<$NROW; c++ ))
         do
-            if [[ $index -gt $NPEERS ]]; then 
-                echo "Ending launch..."
-                exit 0
-            fi
-
-            x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$index &
-            echo "Launched peer with id $PEER$index"
-            let index++
-            sleep .2
+            startConsole
         done
 
         if [[ $i < $NLAST ]]; then
-            if [[ $index -gt $NPEERS ]]; then 
-                echo "Ending launch..."
-                exit 0
-            fi
-
-            x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$index &
-            echo "Launched peer with id $PEER$index"
-            let index++
-            sleep .2
+            startConsole
         fi
 
         if [[ $i -lt $COLUMNS-1 ]]; then
@@ -102,12 +113,11 @@ else
     for (( c=0; c<$NPEERS; c++ ))
     do  
         if [ "$INPLACE" = true ] ; then
-            java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$c &
+            startInPlace
         else
-            x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$c &
+            startConsole
         fi
 
-        echo "Launched peer with id $PEER$c"
     done
 fi
 

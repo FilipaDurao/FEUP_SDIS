@@ -26,4 +26,9 @@ public class StoredMessage extends  Message{
         this.fileId = msgHeader[3];
         this.chunkNo = Integer.valueOf(msgHeader[4]);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %d %s %s %d %s%s", this.operation, Message.VERSION, this.senderId, this.fileId, this.chunkNo, Message.CRLF, Message.CRLF);
+    }
 }

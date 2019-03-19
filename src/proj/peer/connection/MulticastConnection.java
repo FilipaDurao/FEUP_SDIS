@@ -33,20 +33,5 @@ public class MulticastConnection {
         this.multiSocket.receive(packet);
         return MessageFactory.getMessage(new String(packet.getData(), 0, packet.getLength()));
     }
-
-    public String getMulticast_name() {
-        return multicast_name;
-    }
-
-    public void setMulticast_name(String multicast_name) {
-        this.multicast_name = multicast_name;
-    }
-
-    public Integer getMulticast_port_number() {
-        return multicast_port_number;
-    }
-
-    public void setMulticast_port_number(Integer multicast_port_number) {
-        this.multicast_port_number = multicast_port_number;
-    }
+    
 }

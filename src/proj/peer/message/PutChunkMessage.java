@@ -36,10 +36,6 @@ public class PutChunkMessage extends Message {
 
     @Override
     public String toString() {
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(this.operation).append(" ").append(Message.VERSION).append(" ").append(this.senderId).append(" ").append(this.fileId)
-                .append(" ").append(this.chunkNo).append(" ").append(this.replicationDegree).append(" ").append(Message.CRLF)
-                .append(Message.CRLF).append(this.body);
-        return strBuilder.toString();
+        return String.format("%s %d %s %s %d %d %s%s%s", this.operation, Message.VERSION, this.senderId, this.fileId, this.chunkNo, this.replicationDegree, Message.CRLF, Message.CRLF, this.body);
     }
 }
