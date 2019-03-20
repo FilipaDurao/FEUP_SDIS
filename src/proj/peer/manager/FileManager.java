@@ -17,7 +17,7 @@ public class FileManager {
 
     public FileManager(String peerId) throws Exception {
         this.savedFiles = new HashMap<>();
-        this.rootFolder = new File("backup_" + peerId);
+        this.rootFolder = new File("data/backup_" + peerId);
 
         if (!this.rootFolder.mkdirs() && !this.rootFolder.isDirectory()) {
             throw new Exception("Root folder is not a directory.");

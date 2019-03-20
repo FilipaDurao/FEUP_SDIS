@@ -66,7 +66,7 @@ done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
-CLASSPATH="/out/production/FEUP_SDIS"
+CLASSPATH="/out_peer"
 PEERCLASS="proj.peer.Peer"
 
 COMPILERPATH="/src"
