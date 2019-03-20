@@ -11,14 +11,16 @@ MDBPORT="5679"
 MDRNAME="230.1.2.3"
 MDRPORT="5680"
 
-index=1
+INITIAL_INDEX=1
+index=$INITIAL_INDEX
 
 INPLACE=false
 TILE=false
 
 
 function startConsole() {
-    if [[ $index -gt $NPEERS ]]; then 
+    let STARTEDP=$index-$INITIAL_INDEX+1
+    if [[ $STARTEDP -gt $NPEERS ]]; then 
         echo "Ending launch..."
         exit 0
     fi
@@ -30,7 +32,8 @@ function startConsole() {
 }
 
 function startInPlace() {
-    if [[ $index -gt $NPEERS ]]; then 
+    let STARTEDP=$index-$INITIAL_INDEX+1
+    if [[ $STARTEDP -gt $NPEERS ]]; then 
         echo "Ending launch..."
         exit 0
     fi
@@ -82,7 +85,9 @@ if ! [[ "$NPEERS" =~ ^[0-9]+$ ]]
 fi
 
 javac -cp $SCRIPTPATH$COMPILERPATH -d $SCRIPTPATH$CLASSPATH $SCRIPTPATH$CCLASSPATH 
-
+if [[ $? -ne 0 ]]; then
+    exit -1
+fi
 
 if [[ "$TILE" = true && "$INPLACE" == false ]] ; then
 
