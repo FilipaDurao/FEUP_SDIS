@@ -3,6 +3,7 @@ package proj.peer;
 import proj.peer.connection.ControlConnection;
 import proj.peer.connection.DataBackup;
 import proj.peer.connection.RunnableMC;
+import proj.peer.manager.FileManager;
 import proj.peer.rmi.RemoteBackup;
 import proj.peer.rmi.RemoteBackupInterface;
 
@@ -32,7 +33,10 @@ public class Peer {
     private DataBackup backup;
     private ControlConnection control;
 
-    public Peer(String peerId, String controlName, Integer controlPort, String backupName, Integer backupPort, String restoreName, Integer restorePort) throws IOException {
+
+    private FileManager fileManager;
+
+    public Peer(String peerId, String controlName, Integer controlPort, String backupName, Integer backupPort, String restoreName, Integer restorePort) throws Exception {
         this.peerId = peerId;
         this.controlName = controlName;
         this.controlPort = controlPort;
@@ -40,9 +44,11 @@ public class Peer {
         this.backupPort = backupPort;
         this.restoreName = restoreName;
         this.restorePort = restorePort;
+
+        this.fileManager = new FileManager(this.peerId);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         if (args.length != 7) {
             System.err.println("Usage: java Peer <peer_ap>");
             System.exit(-1);
@@ -106,4 +112,7 @@ public class Peer {
         return control;
     }
 
+    public FileManager getFileManager() {
+        return fileManager;
+    }
 }

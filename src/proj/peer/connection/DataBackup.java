@@ -23,7 +23,7 @@ public class DataBackup extends RunnableMC {
                 PutChunkMessage msg = (PutChunkMessage) this.getMessage();
                 System.out.println("Received Message");
 
-                // Save chunk
+                this.peer.getFileManager().putChunk(msg.getFileId(), msg.getChunkNo(), msg.getBody());
 
                 StoredMessage response = new StoredMessage(peer.getPeerId(), msg.getFileId(), msg.getChunkNo());
                 peer.getControl().sendMessage(response);
