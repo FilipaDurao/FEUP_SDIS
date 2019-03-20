@@ -31,4 +31,8 @@ public class StoredMessage extends  Message{
     public String toString() {
         return String.format("%s %d %s %s %d %s%s", this.operation, Message.VERSION, this.senderId, this.fileId, this.chunkNo, Message.CRLF, Message.CRLF);
     }
+
+    public Integer getChunkNo() {
+        return chunkNo;
+    }
 }

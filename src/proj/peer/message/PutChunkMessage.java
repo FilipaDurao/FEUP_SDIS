@@ -38,4 +38,16 @@ public class PutChunkMessage extends Message {
     public String toString() {
         return String.format("%s %d %s %s %d %d %s%s%s", this.operation, Message.VERSION, this.senderId, this.fileId, this.chunkNo, this.replicationDegree, Message.CRLF, Message.CRLF, this.body);
     }
+
+    public Integer getChunkNo() {
+        return chunkNo;
+    }
+
+    public Integer getReplicationDegree() {
+        return replicationDegree;
+    }
+
+    public String getBody() {
+        return body;
+    }
 }

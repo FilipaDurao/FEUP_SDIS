@@ -1,5 +1,6 @@
 package proj.peer;
 
+import proj.peer.connection.ControlConnection;
 import proj.peer.connection.DataBackup;
 import proj.peer.connection.RunnableMC;
 import proj.peer.rmi.RemoteBackup;
@@ -29,9 +30,9 @@ public class Peer {
     private ThreadPoolExecutor executor;
 
     private DataBackup backup;
+    private ControlConnection control;
 
     public Peer(String peerId, String controlName, Integer controlPort, String backupName, Integer backupPort, String restoreName, Integer restorePort) throws IOException {
-
         this.peerId = peerId;
         this.controlName = controlName;
         this.controlPort = controlPort;
@@ -39,12 +40,6 @@ public class Peer {
         this.backupPort = backupPort;
         this.restoreName = restoreName;
         this.restorePort = restorePort;
-
-        this.runQueue = new LinkedBlockingQueue<Runnable>();
-        this.executor = new ThreadPoolExecutor(3, 5, 1, TimeUnit.SECONDS, this.runQueue);
-
-        this.backup = new DataBackup(backupName, backupPort);
-        this.executor.execute(this.backup);
     }
 
     public static void main(String[] args) throws IOException {
@@ -63,16 +58,26 @@ public class Peer {
 
         Peer peer = new Peer(peerId, controlName, controlPort, backupName, backupPort, restoreName, restorePort);
         peer.establishRMI();
+        peer.startConnections();
+        System.out.println("Server Ready");
+    }
 
+    private void startConnections() throws IOException {
+        this.runQueue = new LinkedBlockingQueue<Runnable>();
+        this.executor = new ThreadPoolExecutor(3, 5, 1, TimeUnit.SECONDS, this.runQueue);
 
+        this.backup = new DataBackup(this, backupName, backupPort);
+        this.executor.execute(this.backup);
+
+        this.control = new ControlConnection(controlName, controlPort);
     }
 
     private void establishRMI() {
         RemoteBackup reBackup = new RemoteBackup(this);
-        RemoteBackupInterface stub = null;
+        RemoteBackupInterface stub;
         try {
             stub = (RemoteBackupInterface) UnicastRemoteObject.exportObject(reBackup, 0);
-            Registry reg = null;
+            Registry reg;
             try {
                 reg = LocateRegistry.getRegistry();
                 reg.rebind("RBackup" + this.peerId, stub);
@@ -82,9 +87,7 @@ public class Peer {
                 reg.rebind("RBackup" + this.peerId, stub);
             }
 
-
             System.out.println("Created RBackup" + this.peerId);
-            System.out.println("Server Ready");
 
         } catch (RemoteException e) {
             System.err.println(e.getMessage());
@@ -97,6 +100,10 @@ public class Peer {
 
     public DataBackup getBackup() {
         return backup;
+    }
+
+    public ControlConnection getControl() {
+        return control;
     }
 
 }

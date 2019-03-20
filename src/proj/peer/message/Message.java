@@ -24,4 +24,16 @@ public abstract class Message implements MessageInterface {
     public byte[] getBytes() {
         return this.toString().getBytes();
     }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
 }

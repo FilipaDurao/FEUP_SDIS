@@ -78,6 +78,7 @@ if ! [[ "$NPEERS" =~ ^[0-9]+$ ]]
         exit -1
 fi
 
+
 if [[ "$TILE" = true && "$INPLACE" == false ]] ; then
 
     let "NROW=($NPEERS+1)/($COLUMNS)-1"
