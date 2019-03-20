@@ -69,6 +69,9 @@ SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 CLASSPATH="/out/production/FEUP_SDIS"
 PEERCLASS="proj.peer.Peer"
 
+COMPILERPATH="/src"
+CCLASSPATH="/src/proj/peer/Peer.java"
+
 NPEERS=${1:-3}
 PEERPREFIX="PEER"
 
@@ -77,6 +80,8 @@ if ! [[ "$NPEERS" =~ ^[0-9]+$ ]]
         echo "Number of peers must be an integer"
         exit -1
 fi
+
+javac -cp $SCRIPTPATH$COMPILERPATH -d $SCRIPTPATH$CLASSPATH $SCRIPTPATH$CCLASSPATH 
 
 
 if [[ "$TILE" = true && "$INPLACE" == false ]] ; then

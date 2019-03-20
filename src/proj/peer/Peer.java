@@ -50,7 +50,7 @@ public class Peer {
 
     public static void main(String[] args) throws Exception {
         if (args.length != 7) {
-            System.err.println("Usage: java Peer <peer_ap>");
+            System.err.println("Usage: java Peer <peer_ap> <control_name> <control_port> <backup_name> <backup_port>  <restore_name> <restore_port>");
             System.exit(-1);
         }
 
