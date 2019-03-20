@@ -1,5 +1,7 @@
 #!/bin/bash
 
+./killAllPeers.sh
+
 MCNAME="230.1.2.3"
 MCPORT="5678"
 
