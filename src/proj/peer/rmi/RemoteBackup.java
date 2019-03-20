@@ -37,7 +37,7 @@ public class RemoteBackup implements  RemoteBackupInterface{
             System.err.format("Exception occurred trying to read '%s'.", pathname);
             return -1;
         }
-2
+
         return 0;
     }
 
