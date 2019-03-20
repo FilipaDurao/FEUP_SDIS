@@ -4,11 +4,12 @@ import proj.peer.Peer;
 import proj.peer.message.Message;
 import proj.peer.message.PutChunkMessage;
 
-import java.io.IOException;
+import java.io.*;
 
 
 public class RemoteBackup implements  RemoteBackupInterface{
 
+    public static final int CHUNK_SIZE = 64000;
     private String senderId;
     private Peer peer;
 
@@ -17,13 +18,26 @@ public class RemoteBackup implements  RemoteBackupInterface{
         this.peer = peer;
     }
 
-    public int backup(String pathname, Integer replicationDegree)  {
-        Message msg = new PutChunkMessage(this.senderId, pathname,0, replicationDegree, "this is the body");
-        try {
-            this.peer.getBackup().sendMessage(msg);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public int backup(String pathname, Integer replicationDegree) throws IOException {
+        try
+        {
+            byte[] buffer = new byte[CHUNK_SIZE];
+            FileInputStream in = new FileInputStream(pathname);
+
+            int rc = in.read(buffer);
+            for (int i = 0; rc != -1; i++)
+            {
+                PutChunkMessage msg = new PutChunkMessage(this.senderId, pathname, i, replicationDegree, new String(buffer, 0, buffer.length));
+                this.peer.getBackup().sendMessage(msg);
+                rc = in.read(buffer);
+            }
         }
+        catch (Exception e)
+        {
+            System.err.format("Exception occurred trying to read '%s'.", pathname);
+            return -1;
+        }
+2
         return 0;
     }
 

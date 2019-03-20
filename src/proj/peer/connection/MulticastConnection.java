@@ -10,6 +10,8 @@ import java.net.MulticastSocket;
 
 public class MulticastConnection {
 
+    public static final int CHUNK_SIZE = 64000;
+    public static final int MAX_HEADER_SIZE = 1000;
     protected MulticastSocket multiSocket;
     private String multicast_name;
     private Integer multicast_port_number;
@@ -27,7 +29,7 @@ public class MulticastConnection {
     }
 
     public Message getMessage()  {
-        byte[] msgBytes = new byte[1024];
+        byte[] msgBytes = new byte[CHUNK_SIZE + MAX_HEADER_SIZE];
         DatagramPacket packet = new DatagramPacket(msgBytes, msgBytes.length);
 
         try {
