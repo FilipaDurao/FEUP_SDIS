@@ -1,21 +1,29 @@
 package proj.peer.rmi;
 
+import proj.peer.Peer;
 import proj.peer.message.Message;
 import proj.peer.message.PutChunkMessage;
+
+import java.io.IOException;
 
 
 public class RemoteBackup implements  RemoteBackupInterface{
 
     private String senderId;
+    private Peer peer;
 
-    public RemoteBackup(String senderId) {
-        this.senderId = senderId;
+    public RemoteBackup(Peer peer) {
+        this.senderId = peer.getPeerId();
+        this.peer = peer;
     }
 
-    public int backup(String pathname, Integer replicationDegree) throws Exception {
+    public int backup(String pathname, Integer replicationDegree)  {
         Message msg = new PutChunkMessage(this.senderId, pathname,0, replicationDegree, "this is the body");
-        Message convMsg =  new PutChunkMessage(msg.toString());
-        System.out.println(convMsg);
+        try {
+            this.peer.getBackup().sendMessage(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return 0;
     }
 

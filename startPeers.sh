@@ -21,19 +21,19 @@ function startConsole() {
         exit 0
     fi
 
-    x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$index &
+    x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$index $MCNAME $MCPORT $MDBNAME $MDBPORT $MDRNAME $MDRPORT &
     echo "Launched peer with id $PEER$index"
     let index++
     sleep .2
 }
 
 function startInPlace() {
-        if [[ $index -gt $NPEERS ]]; then 
+    if [[ $index -gt $NPEERS ]]; then 
         echo "Ending launch..."
         exit 0
     fi
 
-    java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$c &
+    java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$index  $MCNAME $MCPORT $MDBNAME $MDBPORT $MDRNAME $MDRPORT &
     echo "Launched peer with id $PEER$index"
     let index++
     sleep .2

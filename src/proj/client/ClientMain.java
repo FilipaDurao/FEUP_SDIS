@@ -22,6 +22,7 @@ public class ClientMain {
 
             if (operation.toUpperCase().equals("BACKUP")) {
                 backup(args, remoteBackup);
+                System.exit(0);
             }
 
             System.err.println("Unsupported operation: " + operation);
@@ -40,5 +41,6 @@ public class ClientMain {
         String pathname = args[2];
         Integer replicationDegree = Integer.valueOf(args[3]);
         Integer res = remoteBackup.backup(pathname, replicationDegree);
+        System.out.println("Returned: " + res);
     }
 }
