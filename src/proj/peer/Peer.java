@@ -75,7 +75,8 @@ public class Peer {
         this.backup = new DataBackup(this, backupName, backupPort);
         this.executor.execute(this.backup);
 
-        this.control = new ControlConnection(controlName, controlPort);
+        this.control = new ControlConnection(this, controlName, controlPort);
+        this.executor.execute(this.control);
     }
 
     private void establishRMI() {

@@ -67,7 +67,7 @@ public class FileManager {
 
     public String getChunk(String fileId, Integer chunkId) throws Exception {
 
-        if (!this.savedFiles.containsKey(fileId) || this.savedFiles.get(fileId).contains(chunkId)) {
+        if (!this.savedFiles.containsKey(fileId) || !this.savedFiles.get(fileId).contains(chunkId)) {
             throw new Exception("File not found");
         }
 
@@ -75,7 +75,7 @@ public class FileManager {
     }
 
     public void deleteChunk(String fileId, Integer chunkId) throws Exception {
-        if (!this.savedFiles.containsKey(fileId) || this.savedFiles.get(fileId).contains(chunkId)) {
+        if (!this.savedFiles.containsKey(fileId) || !this.savedFiles.get(fileId).contains(chunkId)) {
             throw new Exception("File not found");
         }
 
@@ -93,6 +93,14 @@ public class FileManager {
             this.deleteChunk(fileId, chunk.getChunkNumber());
         }
 
+    }
+
+    public boolean isChunkSaved(String fileId, Integer chunkId) {
+        return this.isFileSaved(fileId) && this.savedFiles.get(fileId).contains(chunkId);
+    }
+
+    public boolean isFileSaved(String fileId) {
+        return this.savedFiles.containsKey(fileId);
     }
 
 }

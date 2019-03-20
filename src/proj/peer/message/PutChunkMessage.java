@@ -1,15 +1,13 @@
 package proj.peer.message;
 
-public class PutChunkMessage extends Message {
+public class PutChunkMessage extends MessageChunk {
 
     public static final String OPERATION = "PUTCHUNK";
-    private final Integer chunkNo;
-    private final Integer replicationDegree;
-    private final String body;
+    private Integer replicationDegree;
+    private String body;
 
     public PutChunkMessage(String senderId, String fileId, Integer chunkNo, Integer replicationDegree, String body) {
-        super(OPERATION, senderId, fileId);
-        this.chunkNo = chunkNo;
+        super(OPERATION, senderId, fileId, chunkNo);
         this.replicationDegree = replicationDegree;
         this.body = body;
     }
@@ -39,9 +37,6 @@ public class PutChunkMessage extends Message {
         return String.format("%s %d %s %s %d %d %s%s%s", this.operation, Message.VERSION, this.senderId, this.fileId, this.chunkNo, this.replicationDegree, Message.CRLF, Message.CRLF, this.body);
     }
 
-    public Integer getChunkNo() {
-        return chunkNo;
-    }
 
     public Integer getReplicationDegree() {
         return replicationDegree;

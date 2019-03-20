@@ -1,13 +1,11 @@
 package proj.peer.message;
 
-public class StoredMessage extends  Message{
+public class StoredMessage extends  MessageChunk{
 
     public static final String OPERATION = "STORED";
-    private final Integer chunkNo;
 
     public StoredMessage(String senderId, String fileId, Integer chunkNo) {
-        super(OPERATION, senderId, fileId);
-        this.chunkNo = chunkNo;
+        super(OPERATION, senderId, fileId, chunkNo);
     }
 
     public StoredMessage(String msgStr) throws Exception {
@@ -32,7 +30,4 @@ public class StoredMessage extends  Message{
         return String.format("%s %d %s %s %d %s%s", this.operation, Message.VERSION, this.senderId, this.fileId, this.chunkNo, Message.CRLF, Message.CRLF);
     }
 
-    public Integer getChunkNo() {
-        return chunkNo;
-    }
 }
