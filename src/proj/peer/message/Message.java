@@ -15,6 +15,8 @@ public abstract class Message implements MessageInterface {
         this.operation = operation;
         this.senderId = senderId;
         this.fileId = fileId;
+
+        System.err.println("TODO: Add version, currently hard coded");
     }
 
     public Message() {

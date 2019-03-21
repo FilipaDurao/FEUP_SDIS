@@ -6,10 +6,10 @@ import proj.peer.message.StoredMessage;
 
 import java.io.IOException;
 
-public class DataBackup extends RunnableMC {
+public class BackupConnection extends RunnableMC {
     private Peer peer;
 
-    public DataBackup(Peer peer, String multicast_name, Integer multicast_port_number) throws IOException {
+    public BackupConnection(Peer peer, String multicast_name, Integer multicast_port_number) throws IOException {
         super(multicast_name, multicast_port_number);
         this.peer = peer;
     }

@@ -1,8 +1,7 @@
 package proj.peer;
 
+import proj.peer.connection.BackupConnection;
 import proj.peer.connection.ControlConnection;
-import proj.peer.connection.DataBackup;
-import proj.peer.connection.RunnableMC;
 import proj.peer.manager.FileManager;
 import proj.peer.rmi.RemoteBackup;
 import proj.peer.rmi.RemoteBackupInterface;
@@ -12,8 +11,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -30,9 +29,10 @@ public class Peer {
     private LinkedBlockingQueue<Runnable> runQueue;
     private ThreadPoolExecutor executor;
 
-    private DataBackup backup;
-    private ControlConnection control;
+    private ScheduledThreadPoolExecutor scheduler;
 
+    private BackupConnection backup;
+    private ControlConnection control;
 
     private FileManager fileManager;
 
@@ -71,8 +71,9 @@ public class Peer {
     private void startConnections() throws IOException {
         this.runQueue = new LinkedBlockingQueue<Runnable>();
         this.executor = new ThreadPoolExecutor(3, 5, 1, TimeUnit.SECONDS, this.runQueue);
+        this.scheduler = new ScheduledThreadPoolExecutor(1);
 
-        this.backup = new DataBackup(this, backupName, backupPort);
+        this.backup = new BackupConnection(this, backupName, backupPort);
         this.executor.execute(this.backup);
 
         this.control = new ControlConnection(this, controlName, controlPort);
@@ -105,7 +106,7 @@ public class Peer {
         return peerId;
     }
 
-    public DataBackup getBackup() {
+    public BackupConnection getBackup() {
         return backup;
     }
 
@@ -115,5 +116,9 @@ public class Peer {
 
     public FileManager getFileManager() {
         return fileManager;
+    }
+
+    public ScheduledThreadPoolExecutor getScheduler() {
+        return scheduler;
     }
 }

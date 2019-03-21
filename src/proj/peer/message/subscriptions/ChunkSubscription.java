@@ -18,6 +18,11 @@ public class ChunkSubscription extends FileSubscription{
             ChunkSubscription other = (ChunkSubscription) o;
             return super.equals(o) && this.chunkNo.equals(other.getChunkNo());
         }
-        return false;
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return (this.operation + this.fileId + chunkNo).hashCode();
     }
 }
