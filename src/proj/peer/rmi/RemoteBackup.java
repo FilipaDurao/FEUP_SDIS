@@ -1,49 +1,42 @@
 package proj.peer.rmi;
 
 import proj.peer.Peer;
-import proj.peer.message.PutChunkMessage;
-import proj.peer.message.handlers.PutChunkHandler;
-import proj.peer.utils.SHA256Encoder;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 
 public class RemoteBackup implements  RemoteBackupInterface{
 
     public static final int CHUNK_SIZE = 64000;
-    private String senderId;
-    private Peer peer;
+    private ChunkSender chunkSender;
 
     public RemoteBackup(Peer peer) {
-        this.senderId = peer.getPeerId();
-        this.peer = peer;
+        this.chunkSender = new ChunkSender(peer);
     }
 
-    public int backup(String pathname, Integer replicationDegree) throws IOException {
-        try
-        {
+    public int backup(String pathname, Integer replicationDegree) {
+        File file = new File(pathname);
+        try (RandomAccessFile data = new RandomAccessFile(file, "r")) {
             byte[] buffer = new byte[CHUNK_SIZE];
-            FileInputStream in = new FileInputStream(pathname);
-
-            int rc = in.read(buffer);
-            for (int i = 0; rc != -1; i++)
-            {
-                String encodedFileName = SHA256Encoder.encode((new File(pathname)).getName());
-                PutChunkMessage msg = new PutChunkMessage(this.senderId, encodedFileName, i, replicationDegree, new String(buffer, 0, buffer.length));
-                PutChunkHandler handler = new PutChunkHandler(peer, msg);
-                handler.run();
-                this.peer.getControl().subscribe(handler);
-                rc = in.read(buffer);
+            double nChunks = data.length() / (double) CHUNK_SIZE;
+            int i = 0;
+            for (i = 0; i < nChunks; i++) {
+                data.read(buffer);
+                chunkSender.sendChunk(replicationDegree, file, new String(buffer, 0, buffer.length), i);
             }
-        }
-        catch (Exception e)
-        {
-            System.err.format("Exception occurred trying to read '%s'.", pathname);
+
+            if (nChunks == Math.floor(nChunks)) {
+                chunkSender.sendChunk(replicationDegree, file, "", i);
+            }
+        } catch (IOException e) {
             return -1;
         }
 
         return 0;
     }
+
 
     public int restore(String pathname) {
         System.out.println("Restore: " + pathname);

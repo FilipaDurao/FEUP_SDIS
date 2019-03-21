@@ -3,10 +3,10 @@ package proj.peer.connection;
 import proj.peer.Peer;
 import proj.peer.message.Message;
 import proj.peer.message.MessageChunk;
+import proj.peer.message.handlers.SubscriptionHandler;
 import proj.peer.message.subscriptions.ChunkSubscription;
 import proj.peer.message.subscriptions.FileSubscription;
 import proj.peer.message.subscriptions.OperationSubscription;
-import proj.peer.message.handlers.SubscriptionHandler;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;

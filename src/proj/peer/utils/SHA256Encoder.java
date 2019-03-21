@@ -1,9 +1,9 @@
 package proj.peer.utils;
 
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 public class SHA256Encoder {
 
@@ -13,12 +13,13 @@ public class SHA256Encoder {
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
-            byte[] encoded = Base64.getEncoder().encode(hash);
-            return new String(encoded, 0, encoded.length);
+            return  String.format("%064x", new BigInteger(1, hash));
 
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Encoding algorithm not found!");
             return text;
         }
     }
+
+
 }

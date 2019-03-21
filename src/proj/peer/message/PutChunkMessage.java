@@ -18,7 +18,7 @@ public class PutChunkMessage extends MessageChunk {
         if (msgParts.length >= 3)
             this.body = msgParts[2];
         else
-            throw new Exception("Malformed OPERATION message: Body is missing");
+            this.body = "";
 
         String[] msgHeader = msgParts[0].split(" ");
         if (msgHeader.length != 6) {

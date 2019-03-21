@@ -1,6 +1,5 @@
 package proj.peer.manager;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 public class FileInfo {
