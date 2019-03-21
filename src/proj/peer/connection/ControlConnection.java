@@ -6,7 +6,7 @@ import proj.peer.message.MessageChunk;
 import proj.peer.message.subscriptions.ChunkSubscription;
 import proj.peer.message.subscriptions.FileSubscription;
 import proj.peer.message.subscriptions.OperationSubscription;
-import proj.peer.message.subscriptions.handlers.SubscriptionHandler;
+import proj.peer.message.handlers.SubscriptionHandler;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;

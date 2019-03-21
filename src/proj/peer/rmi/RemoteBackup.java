@@ -1,9 +1,9 @@
 package proj.peer.rmi;
 
 import proj.peer.Peer;
-import proj.peer.message.Message;
 import proj.peer.message.PutChunkMessage;
-import proj.peer.message.subscriptions.handlers.PutChunkHandler;
+import proj.peer.message.handlers.PutChunkHandler;
+import proj.peer.utils.SHA256Encoder;
 
 import java.io.*;
 
@@ -28,7 +28,8 @@ public class RemoteBackup implements  RemoteBackupInterface{
             int rc = in.read(buffer);
             for (int i = 0; rc != -1; i++)
             {
-                PutChunkMessage msg = new PutChunkMessage(this.senderId, pathname, i, replicationDegree, new String(buffer, 0, buffer.length));
+                String encodedFileName = SHA256Encoder.encode((new File(pathname)).getName());
+                PutChunkMessage msg = new PutChunkMessage(this.senderId, encodedFileName, i, replicationDegree, new String(buffer, 0, buffer.length));
                 PutChunkHandler handler = new PutChunkHandler(peer, msg);
                 handler.run();
                 this.peer.getControl().subscribe(handler);

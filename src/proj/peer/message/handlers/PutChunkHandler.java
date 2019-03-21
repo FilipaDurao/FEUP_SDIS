@@ -1,4 +1,4 @@
-package proj.peer.message.subscriptions.handlers;
+package proj.peer.message.handlers;
 
 import proj.peer.Peer;
 import proj.peer.connection.BackupConnection;

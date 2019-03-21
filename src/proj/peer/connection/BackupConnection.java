@@ -3,8 +3,11 @@ package proj.peer.connection;
 import proj.peer.Peer;
 import proj.peer.message.PutChunkMessage;
 import proj.peer.message.StoredMessage;
+import proj.peer.message.handlers.MessageSender;
+import proj.peer.utils.RandomGenerator;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class BackupConnection extends RunnableMC {
     private Peer peer;
@@ -29,7 +32,8 @@ public class BackupConnection extends RunnableMC {
                 this.peer.getFileManager().putChunk(msg.getFileId(), msg.getChunkNo(), msg.getBody(), msg.getReplicationDegree());
 
                 StoredMessage response = new StoredMessage(peer.getPeerId(), msg.getFileId(), msg.getChunkNo());
-                peer.getControl().sendMessage(response);
+                int delay = RandomGenerator.getNumberInRange(0, 400);
+                this.peer.getScheduler().schedule(new MessageSender(peer.getControl(), response), delay, TimeUnit.MILLISECONDS);
 
                 System.out.println("Awaiting message");
             } catch (Exception e) {
