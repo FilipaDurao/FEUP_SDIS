@@ -9,4 +9,6 @@ public interface SubscriptionHandler {
     void notify(Message msg);
 
     FileSubscription getSub();
+
+    boolean wasSuccessful();
 }
