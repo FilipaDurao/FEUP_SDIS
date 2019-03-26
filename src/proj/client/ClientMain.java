@@ -40,7 +40,13 @@ public class ClientMain {
 
         String pathname = args[2];
         Integer replicationDegree = Integer.valueOf(args[3]);
-        Integer res = remoteBackup.backup(pathname, replicationDegree);
+        int res = remoteBackup.backup(pathname, replicationDegree);
         System.out.println("Returned: " + res);
+
+        if (res != 0) {
+            System.out.println("Backup failed");
+        } else {
+            System.out.println("Succeeded");
+        }
     }
 }
