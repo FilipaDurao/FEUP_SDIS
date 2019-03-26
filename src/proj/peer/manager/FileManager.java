@@ -66,16 +66,18 @@ public class FileManager {
     }
 
     public void storeChunkPeer(String fileId, Integer chunkId, String peerId) {
-
+        if (this.savedFiles.containsKey(fileId)) {
+            this.savedFiles.get(fileId).addPeerId(chunkId, peerId);
+        }
     }
 
 
     public String getChunk(String fileId, Integer chunkId) throws Exception {
-
         if (!this.savedFiles.containsKey(fileId) || !this.savedFiles.get(fileId).contains(chunkId)) {
             throw new Exception("File not found");
         }
 
+        System.out.println("Getting file");
         return new String(Files.readAllBytes(Paths.get(this.rootFolder.getAbsolutePath() + "/" + fileId + "/" + chunkId)));
     }
 

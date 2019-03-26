@@ -47,7 +47,7 @@ public abstract class RetransmissionHandler extends AsyncHandler {
                 this.future = this.scheduler.schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
             }
             else {
-                System.err.println("Failed PUTCHUNK protocol");
+                System.err.println(msg.getOperation() + " protocol failed.");
                 this.subscriptionConnection.unsubscribe(this.sub);
                 this.countDown();
             }

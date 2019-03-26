@@ -21,7 +21,7 @@ public class StoredHandler implements SubscriptionHandlerInterface {
         if (msg instanceof StoredMessage) {
             System.out.println(String.format("Message Received: %s %s %s", msg.getOperation(), msg.getSenderId(), msg.getFileId()));
             StoredMessage storedMessage = (StoredMessage) msg;
-            fileManager.storeChunkPeer(storedMessage.getFileId(), storedMessage.getChunkNo(), storedMessage.getSenderId());
+            fileManager.storeChunkPeer(msg.getFileId(), storedMessage.getChunkNo(), storedMessage.getSenderId());
         }
     }
 

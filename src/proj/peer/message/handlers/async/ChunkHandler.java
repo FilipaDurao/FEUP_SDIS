@@ -9,15 +9,19 @@ import proj.peer.message.subscriptions.ChunkSubscription;
 import java.util.concurrent.CountDownLatch;
 
 public class ChunkHandler extends RetransmissionHandler {
+    private String body;
+
     public ChunkHandler(Peer peer, GetChunkMessage msg, CountDownLatch countDownLatch) {
         super(peer.getScheduler(), peer.getControl(), peer.getRestore(), msg, countDownLatch);
         this.sub = new ChunkSubscription(ChunkMessage.OPERATION, msg.getFileId(), msg.getChunkNo());
+        this.body = "";
     }
 
     @Override
     public void notify(Message msg) {
         if (msg instanceof ChunkMessage) {
             this.cancel();
+            this.body = ((ChunkMessage) msg).getBody();
             this.subscriptionConnection.unsubscribe(this.sub);
             this.successful = true;
             this.countDown();
@@ -27,6 +31,10 @@ public class ChunkHandler extends RetransmissionHandler {
 
     @Override
     public boolean wasSuccessful() {
-        return false;
+        return this.successful;
+    }
+
+    public String getBody() {
+        return this.body;
     }
 }

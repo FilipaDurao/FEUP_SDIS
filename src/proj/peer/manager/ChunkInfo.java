@@ -23,8 +23,7 @@ public class ChunkInfo {
     }
 
     public void addPeer(String id) {
-        if (!this.peerIds.contains(id))
-            this.peerIds.add(id);
+        this.peerIds.add(id);
     }
 
     public int getNumberOfSaves() {

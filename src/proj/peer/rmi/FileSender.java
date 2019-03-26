@@ -43,6 +43,10 @@ public class FileSender {
      * Latch that waits fot all handlers to conclude.
      */
     private CountDownLatch chunkSavedSignal;
+
+    /**
+     * File to send.
+     */
     private File file;
 
 
@@ -91,14 +95,17 @@ public class FileSender {
 
             int i;
             for (i = 0; i < nChunks; i++) {
-                data.read(buffer);
-                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, new String(buffer, 0, buffer.length), i));
+                int dataLength = data.read(buffer);
+                if (dataLength == -1)
+                    throw  new Exception("Error reading file");
+                System.out.println(buffer.length);
+                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, new String(buffer, 0, dataLength), i));
             }
 
             if (nChunks == Math.floor(nChunks)) {
                 this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, "", i));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             return false;
         }
 
