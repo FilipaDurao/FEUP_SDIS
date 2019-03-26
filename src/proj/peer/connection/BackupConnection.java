@@ -24,18 +24,16 @@ public class BackupConnection extends RunnableMC {
         while (true) {
             try {
                 PutChunkMessage msg = (PutChunkMessage) this.getMessage();
-                if( msg.getSenderId().equals(this.peer.getPeerId())) {
+                if( msg.getSenderId().equals(this.peer.getPeerId()) || msg.getVersion().equals(peer.getVersion())) {
                     continue;
                 }
-                System.out.println("Received Message");
 
                 this.peer.getFileManager().putChunk(msg.getFileId(), msg.getChunkNo(), msg.getBody(), msg.getReplicationDegree());
 
-                StoredMessage response = new StoredMessage(peer.getPeerId(), msg.getFileId(), msg.getChunkNo());
+                StoredMessage response = new StoredMessage(peer.getVersion(), peer.getPeerId(), msg.getFileId(), msg.getChunkNo());
                 int delay = RandomGenerator.getNumberInRange(0, 400);
                 this.peer.getScheduler().schedule(new MessageSender(peer.getControl(), response), delay, TimeUnit.MILLISECONDS);
 
-                System.out.println("Awaiting message");
             } catch (Exception e) {
                 System.err.println("Error: " + e.getMessage());
             }

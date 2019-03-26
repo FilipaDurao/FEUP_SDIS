@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Peer {
 
+    private String version;
     private String peerId;
     private String controlName;
     private Integer controlPort;
@@ -36,7 +37,8 @@ public class Peer {
 
     private FileManager fileManager;
 
-    public Peer(String peerId, String controlName, Integer controlPort, String backupName, Integer backupPort, String restoreName, Integer restorePort) throws Exception {
+    public Peer(String version, String peerId, String controlName, Integer controlPort, String backupName, Integer backupPort, String restoreName, Integer restorePort) throws Exception {
+        this.version = version;
         this.peerId = peerId;
         this.controlName = controlName;
         this.controlPort = controlPort;
@@ -49,20 +51,21 @@ public class Peer {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 7) {
-            System.err.println("Usage: java Peer <peer_ap> <control_name> <control_port> <backup_name> <backup_port>  <restore_name> <restore_port>");
+        if (args.length != 8) {
+            System.err.println("Usage: java Peer <version> <peer_ap> <control_name> <control_port> <backup_name> <backup_port>  <restore_name> <restore_port>");
             System.exit(-1);
         }
 
-        String peerId = args[0];
-        String controlName = args[1];
-        Integer controlPort = Integer.valueOf(args[2]);
-        String backupName = args[3];
-        Integer backupPort = Integer.valueOf(args[4]);
-        String restoreName = args[5];
-        Integer restorePort = Integer.valueOf(args[6]);
+        String version = args[0];
+        String peerId = args[1];
+        String controlName = args[2];
+        Integer controlPort = Integer.valueOf(args[3]);
+        String backupName = args[4];
+        Integer backupPort = Integer.valueOf(args[5]);
+        String restoreName = args[6];
+        Integer restorePort = Integer.valueOf(args[7]);
 
-        Peer peer = new Peer(peerId, controlName, controlPort, backupName, backupPort, restoreName, restorePort);
+        Peer peer = new Peer(version, peerId, controlName, controlPort, backupName, backupPort, restoreName, restorePort);
         peer.establishRMI();
         peer.startConnections();
         System.out.println("Server Ready");
@@ -120,5 +123,9 @@ public class Peer {
 
     public ScheduledThreadPoolExecutor getScheduler() {
         return scheduler;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }

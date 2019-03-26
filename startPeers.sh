@@ -2,6 +2,15 @@
 
 ./killAllPeers.sh
 
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+CLASSPATH="/out_peer"
+PEERCLASS="proj.peer.Peer"
+
+COMPILERPATH="/src"
+CCLASSPATH="/src/proj/peer/Peer.java"
+
+PEERPREFIX="19"
+
 MCNAME="230.1.2.3"
 MCPORT="5678"
 
@@ -17,6 +26,8 @@ index=$INITIAL_INDEX
 INPLACE=false
 TILE=false
 
+VERSION="1.0"
+
 
 function startConsole() {
     let STARTEDP=$index-$INITIAL_INDEX+1
@@ -25,7 +36,7 @@ function startConsole() {
         exit 0
     fi
 
-    x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$index $MCNAME $MCPORT $MDBNAME $MDBPORT $MDRNAME $MDRPORT &
+    x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $VERSION $PEER$index $MCNAME $MCPORT $MDBNAME $MDBPORT $MDRNAME $MDRPORT &
     echo "Launched peer with id $PEER$index"
     let index++
     sleep .2
@@ -38,7 +49,7 @@ function startInPlace() {
         exit 0
     fi
 
-    java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $PEER$index  $MCNAME $MCPORT $MDBNAME $MDBPORT $MDRNAME $MDRPORT &
+    java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $VERSION $PEER$index  $MCNAME $MCPORT $MDBNAME $MDBPORT $MDRNAME $MDRPORT &
     echo "Launched peer with id $PEER$index"
     let index++
     sleep .2
@@ -68,15 +79,7 @@ esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
-SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
-CLASSPATH="/out_peer"
-PEERCLASS="proj.peer.Peer"
-
-COMPILERPATH="/src"
-CCLASSPATH="/src/proj/peer/Peer.java"
-
 NPEERS=${1:-3}
-PEERPREFIX="PEER"
 
 if ! [[ "$NPEERS" =~ ^[0-9]+$ ]]
     then

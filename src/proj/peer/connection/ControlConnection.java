@@ -37,7 +37,7 @@ public class ControlConnection extends RunnableMC {
             try {
                 Message msg = this.getMessage();
 
-                if (msg.getSenderId().equals(peer.getPeerId())) {
+                if (msg.getSenderId().equals(peer.getPeerId()) || msg.getVersion().equals(peer.getVersion())) {
                     continue;
                 }
 

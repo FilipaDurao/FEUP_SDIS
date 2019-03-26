@@ -4,19 +4,19 @@ package proj.peer.message;
 public abstract class Message implements MessageInterface {
 
     public final static String CRLF = "" + (char) 0xD + (char) 0xA;
-    public final static Integer VERSION = 1;
 
     protected String operation;
     protected String senderId;
     protected String fileId;
+    protected String version;
 
 
-    Message(String operation, String senderId, String fileId) {
+    Message(String version, String operation, String senderId, String fileId) {
+        this.version = version;
         this.operation = operation;
         this.senderId = senderId;
         this.fileId = fileId;
 
-        System.err.println("TODO: Add version, currently hard coded");
     }
 
     public Message() {
@@ -38,4 +38,9 @@ public abstract class Message implements MessageInterface {
     public String getFileId() {
         return fileId;
     }
+
+    public String getVersion() {
+        return version;
+    }
+
 }

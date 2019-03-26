@@ -26,7 +26,7 @@ public class FileSaver {
 
     private PutChunkHandler sendChunk(Integer replicationDegree, File file, String body, int i) {
         String encodedFileName = SHA256Encoder.encode(file.getName());
-        PutChunkMessage msg = new PutChunkMessage(peer.getPeerId(), encodedFileName, i, replicationDegree, body);
+        PutChunkMessage msg = new PutChunkMessage(peer.getVersion(), peer.getPeerId(), encodedFileName, i, replicationDegree, body);
         PutChunkHandler handler = new PutChunkHandler(this.peer, msg, this.chunkSavedSignal);
         handler.run();
         this.peer.getControl().subscribe(handler);
