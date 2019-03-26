@@ -98,7 +98,6 @@ public class FileSender {
                 int dataLength = data.read(buffer);
                 if (dataLength == -1)
                     throw  new Exception("Error reading file");
-                System.out.println(buffer.length);
                 this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, new String(buffer, 0, dataLength), i));
             }
 
