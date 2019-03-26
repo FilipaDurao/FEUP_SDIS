@@ -1,8 +1,9 @@
 package proj.peer.rmi;
 
 import proj.peer.Peer;
-import proj.peer.message.PutChunkMessage;
+import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.message.handlers.async.BackupChunkHandler;
+import proj.peer.message.subscriptions.ChunkSubscription;
 import proj.peer.utils.SHA256Encoder;
 
 import java.io.File;
@@ -125,7 +126,7 @@ public class FileSender {
 
         for (BackupChunkHandler handler : this.handlers) {
             if (!handler.wasSuccessful()) {
-                System.out.println("Failed: :" + handler.getSub().getChunkNo());
+                System.out.println("Failed: :" + ((ChunkSubscription) handler.getSub()).getChunkNo());
                 return false;
             }
         }

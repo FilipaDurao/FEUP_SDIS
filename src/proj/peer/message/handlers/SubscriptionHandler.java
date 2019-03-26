@@ -1,13 +1,12 @@
 package proj.peer.message.handlers;
 
-import proj.peer.message.Message;
 import proj.peer.message.subscriptions.OperationSubscription;
 
+public abstract class SubscriptionHandler implements SubscriptionHandlerInterface {
+    protected OperationSubscription sub;
 
-public interface SubscriptionHandler {
-
-    void notify(Message msg);
-
-    OperationSubscription getSub();
+    public OperationSubscription getSub() {
+        return this.sub;
+    }
 
 }

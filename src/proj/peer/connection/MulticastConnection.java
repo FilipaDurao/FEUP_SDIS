@@ -1,6 +1,6 @@
 package proj.peer.connection;
 
-import proj.peer.message.Message;
+import proj.peer.message.messages.Message;
 import proj.peer.message.MessageFactory;
 
 import java.io.IOException;

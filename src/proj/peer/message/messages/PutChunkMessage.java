@@ -1,4 +1,4 @@
-package proj.peer.message;
+package proj.peer.message.messages;
 
 public class PutChunkMessage extends MessageChunk {
 
@@ -14,9 +14,9 @@ public class PutChunkMessage extends MessageChunk {
 
     public PutChunkMessage(String msgStr) throws Exception {
         super();
-        String[] msgParts = msgStr.split(Message.CRLF);
-        if (msgParts.length >= 3)
-            this.body = msgParts[2];
+        String[] msgParts = msgStr.split(Message.CRLF + Message.CRLF);
+        if (msgParts.length >= 2)
+            this.body = msgParts[1];
         else
             this.body = "";
 

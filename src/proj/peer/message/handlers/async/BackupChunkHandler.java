@@ -3,11 +3,11 @@ package proj.peer.message.handlers.async;
 import proj.peer.Peer;
 import proj.peer.connection.BackupConnection;
 import proj.peer.connection.ControlConnection;
-import proj.peer.message.Message;
-import proj.peer.message.PutChunkMessage;
-import proj.peer.message.StoredMessage;
-import proj.peer.message.handlers.SubscriptionHandler;
+import proj.peer.message.messages.Message;
+import proj.peer.message.messages.PutChunkMessage;
+import proj.peer.message.messages.StoredMessage;
 import proj.peer.message.subscriptions.ChunkSubscription;
+import proj.peer.message.subscriptions.OperationSubscription;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -16,9 +16,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class BackupChunkHandler extends AsyncHandler implements SubscriptionHandler {
+public class BackupChunkHandler extends AsyncHandler {
 
-    private final ChunkSubscription sub;
     private ScheduledThreadPoolExecutor scheduler;
     private BackupConnection backupConnection;
     private ControlConnection controlConnection;
@@ -82,10 +81,6 @@ public class BackupChunkHandler extends AsyncHandler implements SubscriptionHand
         }
     }
 
-    @Override
-    public ChunkSubscription getSub() {
-        return sub;
-    }
 
     @Override
     public boolean wasSuccessful() {

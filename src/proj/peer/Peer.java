@@ -2,7 +2,9 @@ package proj.peer;
 
 import proj.peer.connection.BackupConnection;
 import proj.peer.connection.ControlConnection;
+import proj.peer.connection.RestoreConnection;
 import proj.peer.manager.FileManager;
+import proj.peer.message.handlers.GetChunkHandler;
 import proj.peer.message.handlers.StoredHandler;
 import proj.peer.rmi.RemoteBackup;
 import proj.peer.rmi.RemoteBackupInterface;
@@ -37,6 +39,7 @@ public class Peer {
     private ControlConnection control;
 
     private FileManager fileManager;
+    private RestoreConnection restore;
 
     public Peer(String version, String peerId, String controlName, Integer controlPort, String backupName, Integer backupPort, String restoreName, Integer restorePort) throws Exception {
         this.version = version;
@@ -82,7 +85,11 @@ public class Peer {
 
         this.control = new ControlConnection(this, controlName, controlPort);
         this.control.subscribe(new StoredHandler(this));
+        this.control.subscribe(new GetChunkHandler(this));
         this.executor.execute(this.control);
+
+        this.restore = new RestoreConnection(this, restoreName, restorePort);
+        this.executor.execute(this.restore);
     }
 
     private void establishRMI() {
@@ -117,6 +124,10 @@ public class Peer {
 
     public ControlConnection getControl() {
         return control;
+    }
+
+    public RestoreConnection getRestore() {
+        return restore;
     }
 
     public FileManager getFileManager() {

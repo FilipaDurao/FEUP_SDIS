@@ -1,14 +1,14 @@
-package proj.peer.message;
+package proj.peer.message.messages;
 
-public class StoredMessage extends  MessageChunk{
+public class GetChunkMessage extends MessageChunk {
 
-    public static final String OPERATION = "STORED";
+    public static final String OPERATION = "GETCHUNK";
 
-    public StoredMessage(String version, String senderId, String fileId, Integer chunkNo) {
+    public GetChunkMessage(String version, String senderId, String fileId, Integer chunkNo) {
         super(version, OPERATION, senderId, fileId, chunkNo);
     }
 
-    public StoredMessage(String msgStr) throws Exception {
+    public GetChunkMessage(String msgStr) throws Exception {
         super();
         String[] msgParts = msgStr.split(Message.CRLF);
         if (msgParts.length >= 3)

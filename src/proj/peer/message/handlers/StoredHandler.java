@@ -2,11 +2,11 @@ package proj.peer.message.handlers;
 
 import proj.peer.Peer;
 import proj.peer.manager.FileManager;
-import proj.peer.message.Message;
-import proj.peer.message.StoredMessage;
+import proj.peer.message.messages.Message;
+import proj.peer.message.messages.StoredMessage;
 import proj.peer.message.subscriptions.OperationSubscription;
 
-public class StoredHandler implements SubscriptionHandler {
+public class StoredHandler implements SubscriptionHandlerInterface {
 
     private OperationSubscription operationSubscription;
     private FileManager fileManager;

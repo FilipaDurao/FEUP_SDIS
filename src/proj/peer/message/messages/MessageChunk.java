@@ -1,4 +1,4 @@
-package proj.peer.message;
+package proj.peer.message.messages;
 
 public abstract class MessageChunk extends Message{
     protected Integer chunkNo;

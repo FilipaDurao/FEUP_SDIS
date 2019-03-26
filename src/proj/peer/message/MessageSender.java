@@ -1,7 +1,7 @@
-package proj.peer.message.handlers;
+package proj.peer.message;
 
 import proj.peer.connection.MulticastConnection;
-import proj.peer.message.Message;
+import proj.peer.message.messages.Message;
 
 import java.io.IOException;
 
