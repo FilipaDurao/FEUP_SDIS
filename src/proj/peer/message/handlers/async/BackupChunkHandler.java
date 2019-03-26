@@ -26,7 +26,7 @@ public class BackupChunkHandler extends AsyncHandler implements SubscriptionHand
     private HashSet<String> storedIds;
     private Future future;
     private Integer attempts;
-    private Boolean successful;
+    private volatile Boolean successful;
 
     public BackupChunkHandler(Peer peer, PutChunkMessage msg, CountDownLatch chunkSavedSignal) {
         super(chunkSavedSignal);
@@ -45,9 +45,9 @@ public class BackupChunkHandler extends AsyncHandler implements SubscriptionHand
     public void run() {
         try {
             this.backupConnection.sendMessage(msg);
-            if (this.attempts <= 5 && !this.successful) {
+            this.attempts++;
+            if (this.attempts < 5 && !this.successful) {
                 this.future = this.scheduler.schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
-                this.attempts++;
             }
             else {
                 System.err.println("Failed PUTCHUNK protocol");

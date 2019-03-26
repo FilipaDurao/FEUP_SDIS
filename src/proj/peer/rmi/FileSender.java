@@ -89,7 +89,7 @@ public class FileSender {
             double nChunks = data.length() / (double) CHUNK_SIZE;
             String encodedFileName = SHA256Encoder.encode(file.getName());
 
-            this.chunkSavedSignal = new CountDownLatch((int) nChunks + ((nChunks == Math.floor(nChunks)) ? 1 : 0));
+            this.chunkSavedSignal = new CountDownLatch((int) (Math.ceil(nChunks) + ((nChunks == Math.floor(nChunks)) ? 1 : 0)));
 
             int i;
             for (i = 0; i < nChunks; i++) {
@@ -118,12 +118,14 @@ public class FileSender {
         try {
             this.chunkSavedSignal.await();
         } catch (InterruptedException e) {
+            e.printStackTrace();
             return false;
         }
 
 
         for (BackupChunkHandler handler : this.handlers) {
             if (!handler.wasSuccessful()) {
+                System.out.println("Failed: :" + handler.getSub().getChunkNo());
                 return false;
             }
         }

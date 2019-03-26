@@ -2,6 +2,7 @@ package proj.client;
 
 import proj.peer.rmi.RemoteBackupInterface;
 
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -23,6 +24,9 @@ public class ClientMain {
             if (operation.toUpperCase().equals("BACKUP")) {
                 backup(args, remoteBackup);
                 System.exit(0);
+            } else if (operation.toUpperCase().equals("RESTORE")) {
+                restore(args, remoteBackup);
+                System.exit(0);
             }
 
             System.err.println("Unsupported operation: " + operation);
@@ -30,6 +34,24 @@ public class ClientMain {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void restore(String[] args, RemoteBackupInterface remoteBackup) throws RemoteException {
+        if (args.length < 3) {
+            System.err.println("Missing parameters in restore");
+            System.exit(-1);
+        }
+        String filename = args[2];
+
+        int res = remoteBackup.restore(filename);
+
+        System.out.println("Returned: " + res);
+        if (res != 0) {
+            System.out.println("Restore failed");
+        } else {
+            System.out.println("Succeeded");
+        }
+
     }
 
     private static void backup(String[] args, RemoteBackupInterface remoteBackup) throws Exception {
@@ -41,8 +63,8 @@ public class ClientMain {
         String pathname = args[2];
         Integer replicationDegree = Integer.valueOf(args[3]);
         int res = remoteBackup.backup(pathname, replicationDegree);
-        System.out.println("Returned: " + res);
 
+        System.out.println("Returned: " + res);
         if (res != 0) {
             System.out.println("Backup failed");
         } else {
