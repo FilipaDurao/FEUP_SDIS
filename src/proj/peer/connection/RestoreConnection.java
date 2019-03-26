@@ -2,6 +2,8 @@ package proj.peer.connection;
 
 import proj.peer.Peer;
 import proj.peer.message.messages.ChunkMessage;
+import proj.peer.message.messages.Message;
+import proj.peer.message.messages.PutChunkMessage;
 
 import java.io.IOException;
 
@@ -16,15 +18,16 @@ public class RestoreConnection extends RunnableMC {
     @Override
     public void run() {
 
+        System.out.println("Restore awaiting message");
         while (true) {
-            System.out.println("Restore awaiting message");
             try {
-                ChunkMessage msg = (ChunkMessage) this.getMessage();
-                if( msg.getSenderId().equals(this.peer.getPeerId()) || !msg.getVersion().equals(peer.getVersion())) {
+                Message message = this.getMessage();
+                if( message.getSenderId().equals(this.peer.getPeerId())|| !(message instanceof ChunkMessage) || !message.getVersion().equals(peer.getVersion())) {
                     continue;
                 }
-                System.out.println(String.format("Restore Received: %s %s %d", msg.getOperation(), msg.getFileId(), msg.getChunkNo()));
+                ChunkMessage msg = (ChunkMessage) message;
 
+                System.out.println(String.format("Restore Received: %s %s %d", msg.getOperation(), msg.getFileId(), msg.getChunkNo()));
 
             } catch (Exception e) {
                 System.err.println("Error: " + e.getMessage());

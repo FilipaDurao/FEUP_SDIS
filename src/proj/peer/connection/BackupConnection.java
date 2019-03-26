@@ -1,6 +1,7 @@
 package proj.peer.connection;
 
 import proj.peer.Peer;
+import proj.peer.message.messages.Message;
 import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.message.messages.StoredMessage;
 import proj.peer.message.MessageSender;
@@ -20,14 +21,17 @@ public class BackupConnection extends RunnableMC {
     @Override
     public void run() {
 
+        System.out.println("Backup awaiting message");
         while (true) {
-            System.out.println("Backup awaiting message");
 
             try {
-                PutChunkMessage msg = (PutChunkMessage) this.getMessage();
-                if( msg.getSenderId().equals(this.peer.getPeerId()) || !msg.getVersion().equals(peer.getVersion())) {
+                Message message = this.getMessage();
+                if( message.getSenderId().equals(this.peer.getPeerId()) || !(message instanceof PutChunkMessage) || !message.getVersion().equals(peer.getVersion())) {
                     continue;
                 }
+
+                PutChunkMessage msg = (PutChunkMessage) message;
+
                 System.out.println(String.format("Backup Received: %s %s %d", msg.getOperation(), msg.getFileId(), msg.getChunkNo()));
 
                 this.peer.getFileManager().putChunk(msg.getFileId(), msg.getChunkNo(), msg.getBody(), msg.getReplicationDegree());
