@@ -24,9 +24,10 @@ public class BackupConnection extends RunnableMC {
         while (true) {
             try {
                 PutChunkMessage msg = (PutChunkMessage) this.getMessage();
-                if( msg.getSenderId().equals(this.peer.getPeerId()) || msg.getVersion().equals(peer.getVersion())) {
+                if( msg.getSenderId().equals(this.peer.getPeerId()) || !msg.getVersion().equals(peer.getVersion())) {
                     continue;
                 }
+                System.out.println(String.format("Received: %s %s %d", msg.getOperation(), msg.getFileId(), msg.getChunkNo()));
 
                 this.peer.getFileManager().putChunk(msg.getFileId(), msg.getChunkNo(), msg.getBody(), msg.getReplicationDegree());
 

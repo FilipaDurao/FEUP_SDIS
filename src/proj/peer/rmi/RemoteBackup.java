@@ -13,9 +13,9 @@ public class RemoteBackup implements  RemoteBackupInterface{
     }
 
     public int backup(String pathname, Integer replicationDegree) {
-        FileSaver fileSaver = new FileSaver(peer);
+        FileSender fileSender = new FileSender(peer, pathname, replicationDegree);
 
-        if (!fileSaver.sendFile(pathname, replicationDegree) || !fileSaver.waitOperation()) return -1;
+        if (!fileSender.sendFile() || !fileSender.waitOperation()) return -1;
 
         return 0;
     }
