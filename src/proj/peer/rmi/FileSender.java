@@ -1,6 +1,7 @@
 package proj.peer.rmi;
 
 import proj.peer.Peer;
+import proj.peer.connection.MulticastConnection;
 import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.message.handlers.async.BackupChunkHandler;
 import proj.peer.message.subscriptions.ChunkSubscription;
@@ -17,10 +18,6 @@ import java.util.concurrent.CountDownLatch;
  */
 public class FileSender {
 
-    /**
-     * Maximum size of a chunk.
-     */
-    private static final int CHUNK_SIZE = 64000;
 
     /**
      * Peer associated with the sender.
@@ -86,8 +83,8 @@ public class FileSender {
     boolean sendFile() {
 
         try (RandomAccessFile data = new RandomAccessFile(file, "r")) {
-            byte[] buffer = new byte[CHUNK_SIZE];
-            double nChunks = data.length() / (double) CHUNK_SIZE;
+            byte[] buffer = new byte[MulticastConnection.CHUNK_SIZE];
+            double nChunks = data.length() / (double) MulticastConnection.CHUNK_SIZE;
             String encodedFileName = SHA256Encoder.encode(file.getName());
 
             this.chunkSavedSignal = new CountDownLatch((int) (Math.ceil(nChunks) + ((nChunks == Math.floor(nChunks)) ? 1 : 0)));

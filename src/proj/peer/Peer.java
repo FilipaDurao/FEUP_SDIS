@@ -3,6 +3,7 @@ package proj.peer;
 import proj.peer.connection.BackupConnection;
 import proj.peer.connection.ControlConnection;
 import proj.peer.connection.RestoreConnection;
+import proj.peer.connection.SubscriptionConnection;
 import proj.peer.manager.FileManager;
 import proj.peer.message.handlers.GetChunkHandler;
 import proj.peer.message.handlers.StoredHandler;

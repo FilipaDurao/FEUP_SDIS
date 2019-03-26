@@ -1,69 +1,25 @@
 package proj.peer.message.handlers.async;
 
 import proj.peer.Peer;
-import proj.peer.connection.BackupConnection;
-import proj.peer.connection.ControlConnection;
 import proj.peer.message.messages.Message;
 import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.message.messages.StoredMessage;
 import proj.peer.message.subscriptions.ChunkSubscription;
-import proj.peer.message.subscriptions.OperationSubscription;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-public class BackupChunkHandler extends AsyncHandler {
+public class BackupChunkHandler extends RetransmissionHandler {
 
-    private ScheduledThreadPoolExecutor scheduler;
-    private BackupConnection backupConnection;
-    private ControlConnection controlConnection;
-    private PutChunkMessage msg;
     private HashSet<String> storedIds;
-    private Future future;
-    private Integer attempts;
-    private volatile Boolean successful;
 
     public BackupChunkHandler(Peer peer, PutChunkMessage msg, CountDownLatch chunkSavedSignal) {
-        super(chunkSavedSignal);
-        this.backupConnection = peer.getBackup();
-        this.controlConnection = peer.getControl();
-        this.scheduler = peer.getScheduler();
-        this.msg = msg;
+        super(peer.getScheduler(), peer.getBackup(), peer.getControl(), msg, chunkSavedSignal);
         this.storedIds = new HashSet<>();
-        this.attempts = 0;
-        this.successful = false;
-
         this.sub = new ChunkSubscription(StoredMessage.OPERATION, msg.getFileId(), msg.getChunkNo());
     }
 
-    @Override
-    public void run() {
-        try {
-            this.backupConnection.sendMessage(msg);
-            this.attempts++;
-            if (this.attempts < 5 && !this.successful) {
-                this.future = this.scheduler.schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
-            }
-            else {
-                System.err.println("Failed PUTCHUNK protocol");
-                this.controlConnection.unsubscribe(this.sub);
-                this.countDown();
-            }
-        } catch (IOException e) {
-            System.err.println("Error sending scheduled message");
-        }
 
-    }
-
-    public void cancel() {
-        if (future != null) {
-            future.cancel(true);
-        }
-    }
 
 
     @Override
@@ -71,9 +27,9 @@ public class BackupChunkHandler extends AsyncHandler {
         if (response instanceof StoredMessage) {
             if (!storedIds.contains(response.getSenderId())) {
                 this.storedIds.add(response.getSenderId());
-                if (this.storedIds.size() >= this.msg.getReplicationDegree()) {
+                if (this.storedIds.size() >= ((PutChunkMessage) this.msg).getReplicationDegree()) {
                     this.cancel();
-                    this.controlConnection.unsubscribe(this.sub);
+                    this.subscriptionConnection.unsubscribe(this.sub);
                     this.successful = true;
                     this.countDown();
                 }

@@ -1,19 +1,16 @@
 package proj.peer.rmi;
 
 import proj.peer.Peer;
-import proj.peer.message.messages.GetChunkMessage;
-import proj.peer.utils.SHA256Encoder;
-
-import java.io.IOException;
 
 
 public class RemoteBackup implements  RemoteBackupInterface{
 
+    private final FileRestorer fileRestorer;
     private Peer peer;
 
     public RemoteBackup(Peer peer) {
-
         this.peer = peer;
+        this.fileRestorer = new FileRestorer(peer);
     }
 
     public int backup(String pathname, Integer replicationDegree) {
@@ -26,15 +23,10 @@ public class RemoteBackup implements  RemoteBackupInterface{
     }
 
     public int restore(String filename) {
-        try {
-            System.out.println("Restore: " + filename);
-            GetChunkMessage msg = new GetChunkMessage(this.peer.getVersion(), this.peer.getPeerId(), SHA256Encoder.encode(filename), 0);
-            this.peer.getControl().sendMessage(msg);
-        } catch (IOException e) {
-            return -1;
-        }
+        if (!this.fileRestorer.restoreFile(filename)) return -1;
         return 0;
     }
+
 
     public int delete(String pathname) {
         System.out.println("Delete: " + pathname);
