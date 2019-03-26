@@ -44,6 +44,7 @@ public class FileManager {
         }
     }
     */
+
     public void putChunk(String fileId, Integer chunkId, String content, Integer replicationDegree) throws IOException {
         File fileFolder = new File(rootFolder.getAbsolutePath() + "/" + fileId);
         fileFolder.mkdirs();
@@ -61,6 +62,10 @@ public class FileManager {
             info.addChunk(chunkId, replicationDegree);
             this.savedFiles.put(fileId, info);
         }
+
+    }
+
+    public void storeChunkPeer(String fileId, Integer chunkId, String peerId) {
 
     }
 

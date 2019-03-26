@@ -3,6 +3,7 @@ package proj.peer;
 import proj.peer.connection.BackupConnection;
 import proj.peer.connection.ControlConnection;
 import proj.peer.manager.FileManager;
+import proj.peer.message.handlers.StoredHandler;
 import proj.peer.rmi.RemoteBackup;
 import proj.peer.rmi.RemoteBackupInterface;
 
@@ -80,6 +81,7 @@ public class Peer {
         this.executor.execute(this.backup);
 
         this.control = new ControlConnection(this, controlName, controlPort);
+        this.control.subscribe(new StoredHandler(this));
         this.executor.execute(this.control);
     }
 

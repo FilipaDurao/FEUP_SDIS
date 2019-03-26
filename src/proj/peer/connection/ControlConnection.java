@@ -42,13 +42,24 @@ public class ControlConnection extends RunnableMC {
                 }
 
                 // Branch point for subscriptions
-                if (msg  instanceof  MessageChunk) {
+                if (msg instanceof MessageChunk) {
                     MessageChunk msgC = (MessageChunk) msg;
-                    FileSubscription possibleSub = new ChunkSubscription(msgC.getOperation(), msgC.getFileId(), msgC.getChunkNo());
+                    OperationSubscription possibleSub = new ChunkSubscription(msgC.getOperation(), msgC.getFileId(), msgC.getChunkNo());
                     if (subscriptions.containsKey(possibleSub)) {
                         subscriptions.get(possibleSub).notify(msg);
                         continue;
                     }
+                }
+
+                OperationSubscription possibleFileSub = new FileSubscription(msg.getOperation(), msg.getFileId());
+                OperationSubscription possibleOpSub = new OperationSubscription(msg.getOperation());
+
+                if (subscriptions.containsKey(possibleFileSub)) {
+                    subscriptions.get(possibleFileSub).notify(msg);
+                    continue;
+                } else if (subscriptions.containsKey(possibleOpSub)) {
+                    subscriptions.get(possibleOpSub).notify(msg);
+                    continue;
                 }
 
 

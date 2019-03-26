@@ -1,4 +1,4 @@
-package proj.peer.message.handlers;
+package proj.peer.message.handlers.async;
 
 import proj.peer.Peer;
 import proj.peer.connection.BackupConnection;
@@ -6,6 +6,7 @@ import proj.peer.connection.ControlConnection;
 import proj.peer.message.Message;
 import proj.peer.message.PutChunkMessage;
 import proj.peer.message.StoredMessage;
+import proj.peer.message.handlers.SubscriptionHandler;
 import proj.peer.message.subscriptions.ChunkSubscription;
 
 import java.io.IOException;
@@ -15,25 +16,24 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class PutChunkHandler implements Runnable, SubscriptionHandler {
+public class BackupChunkHandler extends AsyncHandler implements SubscriptionHandler {
 
     private final ChunkSubscription sub;
     private ScheduledThreadPoolExecutor scheduler;
     private BackupConnection backupConnection;
     private ControlConnection controlConnection;
     private PutChunkMessage msg;
-    private CountDownLatch chunkSavedSignal;
     private HashSet<String> storedIds;
     private Future future;
     private Integer attempts;
     private Boolean successful;
 
-    public PutChunkHandler(Peer peer, PutChunkMessage msg, CountDownLatch chunkSavedSignal) {
+    public BackupChunkHandler(Peer peer, PutChunkMessage msg, CountDownLatch chunkSavedSignal) {
+        super(chunkSavedSignal);
         this.backupConnection = peer.getBackup();
         this.controlConnection = peer.getControl();
         this.scheduler = peer.getScheduler();
         this.msg = msg;
-        this.chunkSavedSignal = chunkSavedSignal;
         this.storedIds = new HashSet<>();
         this.attempts = 0;
         this.successful = false;
@@ -52,8 +52,7 @@ public class PutChunkHandler implements Runnable, SubscriptionHandler {
             else {
                 System.err.println("Failed PUTCHUNK protocol");
                 this.controlConnection.unsubscribe(this.sub);
-                if (this.chunkSavedSignal != null)
-                    this.chunkSavedSignal.countDown();
+                this.countDown();
             }
         } catch (IOException e) {
             System.err.println("Error sending scheduled message");
@@ -77,8 +76,7 @@ public class PutChunkHandler implements Runnable, SubscriptionHandler {
                     this.cancel();
                     this.controlConnection.unsubscribe(this.sub);
                     this.successful = true;
-                    if (this.chunkSavedSignal != null)
-                        this.chunkSavedSignal.countDown();
+                    this.countDown();
                 }
             }
         }

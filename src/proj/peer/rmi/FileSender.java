@@ -2,7 +2,7 @@ package proj.peer.rmi;
 
 import proj.peer.Peer;
 import proj.peer.message.PutChunkMessage;
-import proj.peer.message.handlers.PutChunkHandler;
+import proj.peer.message.handlers.async.BackupChunkHandler;
 import proj.peer.utils.SHA256Encoder;
 
 import java.io.File;
@@ -39,7 +39,7 @@ public class FileSender {
     /**
      * Saves all handlers for the messages sent.
      */
-    private ArrayList<PutChunkHandler> handlers;
+    private ArrayList<BackupChunkHandler> handlers;
 
     /**
      * Latch that waits fot all handlers to conclude.
@@ -70,9 +70,9 @@ public class FileSender {
      * @param chunkNo Chunk number of the message.
      * @return Handler for the message subscription and retransmission.
      */
-    private PutChunkHandler sendChunk(Integer replicationDegree, String encodedFileName, String body, int chunkNo) {
+    private BackupChunkHandler sendChunk(Integer replicationDegree, String encodedFileName, String body, int chunkNo) {
         PutChunkMessage msg = new PutChunkMessage(peer.getVersion(), peer.getPeerId(), encodedFileName, chunkNo, replicationDegree, body);
-        PutChunkHandler handler = new PutChunkHandler(this.peer, msg, this.chunkSavedSignal);
+        BackupChunkHandler handler = new BackupChunkHandler(this.peer, msg, this.chunkSavedSignal);
         handler.run();
         this.peer.getControl().subscribe(handler);
         return handler;
@@ -122,7 +122,7 @@ public class FileSender {
         }
 
 
-        for (PutChunkHandler handler : this.handlers) {
+        for (BackupChunkHandler handler : this.handlers) {
             if (!handler.wasSuccessful()) {
                 return false;
             }
