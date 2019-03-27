@@ -6,10 +6,7 @@ import proj.peer.message.handlers.async.ChunkHandler;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.utils.SHA256Encoder;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.concurrent.CountDownLatch;
 
 public class FileRestorer {
@@ -30,19 +27,16 @@ public class FileRestorer {
 
     public boolean restoreFile(String filename) {
 
-
-        try {
-            FileWriter fileWriter = new FileWriter(fileFolder.getAbsolutePath() + "/" + filename);
-            PrintWriter printWriter = new PrintWriter(fileWriter);
+        try (FileOutputStream stream = new FileOutputStream(fileFolder.getAbsolutePath() + "/" + filename)) {
 
             for (int i = 0;;i++) {
-                String body = restoreChunk(filename, i);
-                printWriter.print(body);
-                if (body.length() < MulticastConnection.CHUNK_SIZE) {
+                byte[] body = restoreChunk(filename, i);
+                System.out.println("Received CHUNK with body length: " + body.length);
+                stream.write(body);
+                if (body.length < MulticastConnection.CHUNK_SIZE) {
                     break;
                 }
             }
-            printWriter.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,7 +45,7 @@ public class FileRestorer {
         return true;
     }
 
-    private String restoreChunk(String filename, Integer chunkNo) throws Exception  {
+    private byte[] restoreChunk(String filename, Integer chunkNo) throws Exception  {
         GetChunkMessage msg = new GetChunkMessage(this.peer.getVersion(), this.peer.getPeerId(), SHA256Encoder.encode(filename), chunkNo);
         CountDownLatch countDownLatch = new CountDownLatch(1);
         ChunkHandler handler = new ChunkHandler(peer, msg, countDownLatch);

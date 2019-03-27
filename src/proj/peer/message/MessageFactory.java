@@ -4,20 +4,21 @@ import proj.peer.message.messages.*;
 
 public class MessageFactory {
 
-    public static Message getMessage(String msgStr) throws Exception {
-        String operation = msgStr.substring(0, msgStr.indexOf(" "));
+    public static Message getMessage(byte[] msgStr) throws Exception {
+        String strMessage = new String(msgStr, 0, msgStr.length);
+        String operation = strMessage.substring(0, strMessage.indexOf(" "));
 
         if (operation.toUpperCase().equals(PutChunkMessage.OPERATION)) {
             return new PutChunkMessage(msgStr);
         }
         else if (operation.toUpperCase().equals(StoredMessage.OPERATION)) {
-            return new StoredMessage(msgStr);
+            return new StoredMessage(strMessage);
         }
         else if (operation.toUpperCase().equals(ChunkMessage.OPERATION)) {
             return new ChunkMessage(msgStr);
         }
         else if (operation.toUpperCase().equals(GetChunkMessage.OPERATION)) {
-            return new GetChunkMessage(msgStr);
+            return new GetChunkMessage(strMessage);
         }
 
         throw new Exception("Message type not recognized: " + operation);

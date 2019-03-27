@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Arrays;
 
 public class MulticastConnection {
 
@@ -34,7 +35,7 @@ public class MulticastConnection {
 
         try {
             this.multiSocket.receive(packet);
-            return MessageFactory.getMessage(new String(packet.getData(), 0, packet.getLength()));
+            return MessageFactory.getMessage(Arrays.copyOfRange(packet.getData(), 0, packet.getLength()));
         } catch (Exception e) {
             e.printStackTrace();
         }

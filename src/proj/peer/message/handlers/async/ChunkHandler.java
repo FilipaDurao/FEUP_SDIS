@@ -9,12 +9,11 @@ import proj.peer.message.subscriptions.ChunkSubscription;
 import java.util.concurrent.CountDownLatch;
 
 public class ChunkHandler extends RetransmissionHandler {
-    private String body;
+    private byte[] body;
 
     public ChunkHandler(Peer peer, GetChunkMessage msg, CountDownLatch countDownLatch) {
         super(peer.getScheduler(), peer.getControl(), peer.getRestore(), msg, countDownLatch);
         this.sub = new ChunkSubscription(ChunkMessage.OPERATION, msg.getFileId(), msg.getChunkNo());
-        this.body = "";
     }
 
     @Override
@@ -34,7 +33,7 @@ public class ChunkHandler extends RetransmissionHandler {
         return this.successful;
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return this.body;
     }
 }

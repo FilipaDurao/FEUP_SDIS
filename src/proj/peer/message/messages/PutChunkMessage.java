@@ -1,26 +1,26 @@
 package proj.peer.message.messages;
 
-public class PutChunkMessage extends MessageChunk {
+import java.nio.ByteBuffer;
+
+public class PutChunkMessage extends MessageWBody {
 
     public static final String OPERATION = "PUTCHUNK";
     private Integer replicationDegree;
-    private String body;
 
-    public PutChunkMessage(String version, String senderId, String fileId, Integer chunkNo, Integer replicationDegree, String body) {
-        super(version, OPERATION, senderId, fileId, chunkNo);
+    public PutChunkMessage(String version, String senderId, String fileId, Integer chunkNo, Integer replicationDegree, byte[] body) {
+        super(version, OPERATION, senderId, fileId, chunkNo, body);
         this.replicationDegree = replicationDegree;
-        this.body = body;
     }
 
-    public PutChunkMessage(String msgStr) throws Exception {
+    public PutChunkMessage(byte[] messageBytes) throws Exception {
         super();
-        String[] msgParts = msgStr.split(Message.CRLF + Message.CRLF);
+        byte[][] msgParts = this.split(messageBytes, Message.LINE_TERMINATOR_ARRAY);
         if (msgParts.length >= 2)
             this.body = msgParts[1];
         else
-            this.body = "";
+            this.body = new byte[0];
 
-        String[] msgHeader = msgParts[0].split(" ");
+        String[] msgHeader = new String(msgParts[0], 0, msgParts[0].length).split(" ");
         if (msgHeader.length != 6) {
             throw new Exception("Malformed OPERATION message: Wrong number of arguments");
         }
@@ -35,7 +35,7 @@ public class PutChunkMessage extends MessageChunk {
 
     @Override
     public String toString() {
-        return String.format("%s %s %s %s %d %d %s%s%s", this.operation, this.getVersion(), this.senderId, this.fileId, this.chunkNo, this.replicationDegree, Message.CRLF, Message.CRLF, this.body);
+        return String.format("%s %s %s %s %d %d %s%s", this.operation, this.getVersion(), this.senderId, this.fileId, this.chunkNo, this.replicationDegree, Message.CRLF, Message.CRLF);
     }
 
 
@@ -43,7 +43,4 @@ public class PutChunkMessage extends MessageChunk {
         return replicationDegree;
     }
 
-    public String getBody() {
-        return body;
-    }
 }

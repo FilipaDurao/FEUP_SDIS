@@ -22,8 +22,9 @@ public class GetChunkHandler extends SubscriptionHandler {
     public void notify(Message msg) {
         if (msg instanceof GetChunkMessage) {
             try {
+                System.out.println(String.format("Get Chunk Message Received: %s %s %s", msg.getOperation(), msg.getSenderId(), msg.getFileId()));
                 GetChunkMessage getChunkMessage = (GetChunkMessage) msg;
-                String body = this.peer.getFileManager().getChunk(getChunkMessage.getFileId(), getChunkMessage.getChunkNo());
+                byte[] body = this.peer.getFileManager().getChunk(getChunkMessage.getFileId(), getChunkMessage.getChunkNo());
                 ChunkMessage response = new ChunkMessage(peer.getVersion(), peer.getPeerId(), getChunkMessage.getFileId(), getChunkMessage.getChunkNo(), body);
                 int delay = RandomGenerator.getNumberInRange(0, 400);
                 this.peer.getScheduler().schedule(new MessageSender(peer.getRestore(), response), delay, TimeUnit.MILLISECONDS);

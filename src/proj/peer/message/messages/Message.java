@@ -1,9 +1,12 @@
 package proj.peer.message.messages;
 
 
+import java.nio.charset.StandardCharsets;
+
 public abstract class Message implements MessageInterface {
 
     public final static String CRLF = "" + (char) 0xD + (char) 0xA;
+    public final static byte[] LINE_TERMINATOR_ARRAY = {0xD, 0xA, 0xD, 0xA};
 
     protected String operation;
     protected String senderId;
@@ -24,7 +27,7 @@ public abstract class Message implements MessageInterface {
     }
 
     public byte[] getBytes() {
-        return this.toString().getBytes();
+        return this.toString().getBytes(StandardCharsets.ISO_8859_1);
     }
 
     public String getOperation() {

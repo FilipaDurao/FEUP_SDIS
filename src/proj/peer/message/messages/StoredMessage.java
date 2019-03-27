@@ -10,8 +10,8 @@ public class StoredMessage extends  MessageChunk{
 
     public StoredMessage(String msgStr) throws Exception {
         super();
-        String[] msgParts = msgStr.split(Message.CRLF);
-        if (msgParts.length >= 3)
+        String[] msgParts = msgStr.split(Message.CRLF + Message.CRLF);
+        if (msgParts.length > 2)
             throw new Exception("Malformed OPERATION message: Body included");
 
         String[] msgHeader = msgParts[0].split(" ");

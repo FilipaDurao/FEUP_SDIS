@@ -10,7 +10,10 @@ import proj.peer.utils.SHA256Encoder;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -72,7 +75,7 @@ public class FileSender {
      * @param chunkNo Chunk number of the message.
      * @return Handler for the message subscription and retransmission.
      */
-    private BackupChunkHandler sendChunk(Integer replicationDegree, String encodedFileName, String body, int chunkNo) {
+    private BackupChunkHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo) {
         PutChunkMessage msg = new PutChunkMessage(peer.getVersion(), peer.getPeerId(), encodedFileName, chunkNo, replicationDegree, body);
         BackupChunkHandler handler = new BackupChunkHandler(this.peer, msg, this.chunkSavedSignal);
         handler.run();
@@ -98,13 +101,15 @@ public class FileSender {
                 int dataLength = data.read(buffer);
                 if (dataLength == -1)
                     throw  new Exception("Error reading file");
-                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, new String(buffer, 0, dataLength), i));
+                byte[] body = Arrays.copyOfRange(buffer, 0, dataLength);
+                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, body, i));
             }
 
             if (nChunks == Math.floor(nChunks)) {
-                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, "", i));
+                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, new byte[0], i));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
 
@@ -116,7 +121,7 @@ public class FileSender {
      * @return True if the transfer was successful.
      */
     boolean waitOperation() {
-        if (chunkSavedSignal == null)
+        if (chunkSavedSignal == null || this.handlers.size() == 0)
             return true;
 
         try {

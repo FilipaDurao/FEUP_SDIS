@@ -20,7 +20,6 @@ public abstract class RetransmissionHandler extends AsyncHandler {
     protected Future future;
 
 
-
     public RetransmissionHandler(ScheduledThreadPoolExecutor scheduler, MulticastConnection senderConnection, SubscriptionConnection subscriptionConnection, Message msg, CountDownLatch countDownLatch) {
         super(countDownLatch);
         this.senderConnection = senderConnection;
@@ -43,17 +42,17 @@ public abstract class RetransmissionHandler extends AsyncHandler {
         try {
             this.senderConnection.sendMessage(msg);
             this.attempts++;
-            if (this.attempts < 5 && !this.successful) {
-                this.future = this.scheduler.schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
-            }
-            else {
-                System.err.println(msg.getOperation() + " protocol failed.");
-                this.subscriptionConnection.unsubscribe(this.sub);
-                this.countDown();
-            }
         } catch (IOException e) {
             System.err.println("Error sending scheduled message");
         }
+        if (this.attempts < 5 && !this.successful) {
+            this.future = this.scheduler.schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
+        } else {
+            System.err.println(msg.getOperation() + " protocol failed.");
+            this.subscriptionConnection.unsubscribe(this.sub);
+            this.countDown();
+        }
+
 
     }
 }

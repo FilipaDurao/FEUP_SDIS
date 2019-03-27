@@ -1,9 +1,6 @@
 package proj.peer.manager;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -45,14 +42,13 @@ public class FileManager {
     }
     */
 
-    public void putChunk(String fileId, Integer chunkId, String content, Integer replicationDegree) throws IOException {
+    public void putChunk(String fileId, Integer chunkId, byte[] content, Integer replicationDegree) throws IOException {
         File fileFolder = new File(rootFolder.getAbsolutePath() + "/" + fileId);
         fileFolder.mkdirs();
 
-        FileWriter fileWriter = new FileWriter(fileFolder.getAbsolutePath() + "/" + chunkId);
-        PrintWriter printWriter = new PrintWriter(fileWriter);
-        printWriter.print(content);
-        printWriter.close();
+        try (FileOutputStream stream = new FileOutputStream(fileFolder.getAbsolutePath() + "/" + chunkId)) {
+            stream.write(content);
+        }
 
         if (this.savedFiles.containsKey(fileId)) {
             FileInfo chunks = this.savedFiles.get(fileId);
@@ -72,13 +68,13 @@ public class FileManager {
     }
 
 
-    public String getChunk(String fileId, Integer chunkId) throws Exception {
+    public byte[] getChunk(String fileId, Integer chunkId) throws Exception {
         if (!this.savedFiles.containsKey(fileId) || !this.savedFiles.get(fileId).contains(chunkId)) {
             throw new Exception("File not found");
         }
 
         System.out.println("Getting file");
-        return new String(Files.readAllBytes(Paths.get(this.rootFolder.getAbsolutePath() + "/" + fileId + "/" + chunkId)));
+        return Files.readAllBytes(Paths.get(this.rootFolder.getAbsolutePath() + "/" + fileId + "/" + chunkId));
     }
 
     public void deleteChunk(String fileId, Integer chunkId) throws Exception {
