@@ -41,7 +41,7 @@ public class BackupConnection extends RunnableMC {
                 this.peer.getScheduler().schedule(new MessageSender(peer.getControl(), response), delay, TimeUnit.MILLISECONDS);
 
             } catch (Exception e) {
-                System.err.println("Error: " + e.getMessage());
+                System.err.println("Backup Connection Error: " + e.getMessage());
             }
         }
     }

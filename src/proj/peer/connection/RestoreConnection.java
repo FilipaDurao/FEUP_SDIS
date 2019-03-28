@@ -33,7 +33,7 @@ public class RestoreConnection extends SubscriptionConnection {
                 System.out.println(String.format("Restore Received: %s %s %d", msg.getOperation(), msg.getFileId(), msg.getChunkNo()));
 
             } catch (Exception e) {
-                System.err.println("Error: " + e.getMessage());
+                System.err.println("Restore Connection Error: " + e.getMessage());
             }
         }
     }

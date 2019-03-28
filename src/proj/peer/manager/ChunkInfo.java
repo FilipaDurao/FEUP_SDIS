@@ -1,8 +1,9 @@
 package proj.peer.manager;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
-public class ChunkInfo {
+public class ChunkInfo implements Serializable {
     private Integer chunkNumber;
     private Integer replicationDegree;
     private HashSet<String> peerIds;

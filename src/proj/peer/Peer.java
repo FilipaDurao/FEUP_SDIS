@@ -31,9 +31,6 @@ public class Peer {
     private String restoreName;
     private Integer restorePort;
 
-    private LinkedBlockingQueue<Runnable> runQueue;
-    private ThreadPoolExecutor executor;
-
     private ScheduledThreadPoolExecutor scheduler;
 
     private BackupConnection backup;
@@ -73,24 +70,25 @@ public class Peer {
         Peer peer = new Peer(version, peerId, controlName, controlPort, backupName, backupPort, restoreName, restorePort);
         peer.establishRMI();
         peer.startConnections();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(peer.fileManager));
+
         System.out.println("Server Ready");
     }
 
     private void startConnections() throws IOException {
-        this.runQueue = new LinkedBlockingQueue<Runnable>();
-        this.executor = new ThreadPoolExecutor(3, 5, 1, TimeUnit.SECONDS, this.runQueue);
         this.scheduler = new ScheduledThreadPoolExecutor(1);
 
         this.backup = new BackupConnection(this, backupName, backupPort);
-        this.executor.execute(this.backup);
+        new Thread(this.backup).start();
 
         this.control = new ControlConnection(this, controlName, controlPort);
         this.control.subscribe(new StoredHandler(this));
         this.control.subscribe(new GetChunkHandler(this));
-        this.executor.execute(this.control);
+        new Thread(this.control).start();
 
         this.restore = new RestoreConnection(this, restoreName, restorePort);
-        this.executor.execute(this.restore);
+        new Thread(this.restore).start();
     }
 
     private void establishRMI() {

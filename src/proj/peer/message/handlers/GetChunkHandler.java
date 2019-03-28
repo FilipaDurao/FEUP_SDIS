@@ -29,6 +29,7 @@ public class GetChunkHandler extends SubscriptionHandler {
                 int delay = RandomGenerator.getNumberInRange(0, 400);
                 this.peer.getScheduler().schedule(new MessageSender(peer.getRestore(), response), delay, TimeUnit.MILLISECONDS);
             } catch (Exception e) {
+                e.printStackTrace();
                 System.err.println("Failure sending chunk.");
             }
 

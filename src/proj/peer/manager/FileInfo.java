@@ -1,9 +1,10 @@
 package proj.peer.manager;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
-public class FileInfo {
+public class FileInfo implements Serializable {
 
     private HashMap<Integer, ChunkInfo> chunks;
 
@@ -15,8 +16,8 @@ public class FileInfo {
         this.chunks.put(chunkNumber, new ChunkInfo(chunkNumber, replicationDegree));
     }
 
-    public HashSet<ChunkInfo> getChunks() {
-        return (HashSet<ChunkInfo>) this.chunks.values();
+    public Collection<ChunkInfo> getChunks() {
+        return this.chunks.values();
     }
 
     public boolean contains(Integer chunkNumber) {

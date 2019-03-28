@@ -1,109 +1,89 @@
 package proj.peer.manager;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
 
-public class FileManager {
+public class FileManager implements Runnable{
 
-    private File rootFolder;
-    private HashMap<String, FileInfo> savedFiles;
+    public static final String FILENAME_PREFIX = "savedFileManager-";
+    public static final String FILENAME_SUFIX = ".backup";
+    private FileStructure fileStructure;
+    private String peerId;
 
     public FileManager(String peerId) throws Exception {
-        this.savedFiles = new HashMap<>();
-        this.rootFolder = new File("data/backup_" + peerId);
-
-        if (!this.rootFolder.mkdirs() && !this.rootFolder.isDirectory()) {
-            throw new Exception("Root folder is not a directory.");
-        }
-
-        // this.refreshFileIndex();
+        this.peerId = peerId;
+        this.recoverFileStructure();
     }
 
-    /*
-    public void refreshFileIndex() {
-        for (File fileFolder : Objects.requireNonNull(this.rootFolder.listFiles())) {
-            if(!fileFolder.isDirectory()) {
-                continue;
+
+    private void saveFileStructure() {
+        try {
+            FileOutputStream fos = new FileOutputStream(FILENAME_PREFIX + this.peerId + FILENAME_SUFIX);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(this.fileStructure);
+            oos.close();
+
+        } catch (IOException e) {
+            System.err.println("Failed saving of the file structure.");
+        }
+
+    }
+
+
+    private void recoverFileStructure() throws Exception {
+        try {
+            FileInputStream fos = new FileInputStream(FILENAME_PREFIX + this.peerId + FILENAME_SUFIX);
+            ObjectInputStream oos = new ObjectInputStream(fos);
+            Object saved = oos.readObject();
+            if (saved instanceof FileStructure) {
+                this.fileStructure = (FileStructure) saved;
+            } else {
+                throw new Exception("Wrong class saved.");
+
             }
-
-            HashSet<Integer> chunks = new HashSet<>();
-
-            for (File chunkFile : Objects.requireNonNull(fileFolder.listFiles())) {
-                if (chunkFile.isDirectory() && !chunkFile.getName().matches("\\d+")) {
-                    continue;
-                }
-                chunks.add(Integer.valueOf(chunkFile.getName()));
-            }
-
-            savedFiles.put(fileFolder.getName(), chunks);
+            oos.close();
+            this.fileStructure.checkFileStructure();
+        } catch (Exception e) {
+            this.fileStructure = new FileStructure("data/backup_" + peerId);
+            System.err.println("Failed recovering of the file structure.");
         }
     }
-    */
+
 
     public void putChunk(String fileId, Integer chunkId, byte[] content, Integer replicationDegree) throws IOException {
-        File fileFolder = new File(rootFolder.getAbsolutePath() + "/" + fileId);
-        fileFolder.mkdirs();
 
-        try (FileOutputStream stream = new FileOutputStream(fileFolder.getAbsolutePath() + "/" + chunkId)) {
-            stream.write(content);
-        }
-
-        if (this.savedFiles.containsKey(fileId)) {
-            FileInfo chunks = this.savedFiles.get(fileId);
-            chunks.addChunk(chunkId, replicationDegree);
-        } else {
-            FileInfo info = new FileInfo();
-            info.addChunk(chunkId, replicationDegree);
-            this.savedFiles.put(fileId, info);
-        }
-
+        fileStructure.putChunk(fileId, chunkId, content, replicationDegree);
     }
 
     public void storeChunkPeer(String fileId, Integer chunkId, String peerId) {
-        if (this.savedFiles.containsKey(fileId)) {
-            this.savedFiles.get(fileId).addPeerId(chunkId, peerId);
-        }
+        fileStructure.storeChunkPeer(fileId, chunkId, peerId);
     }
 
 
     public byte[] getChunk(String fileId, Integer chunkId) throws Exception {
-        if (!this.savedFiles.containsKey(fileId) || !this.savedFiles.get(fileId).contains(chunkId)) {
-            throw new Exception("File not found");
-        }
 
-        System.out.println("Getting file");
-        return Files.readAllBytes(Paths.get(this.rootFolder.getAbsolutePath() + "/" + fileId + "/" + chunkId));
+        return fileStructure.getChunk(fileId, chunkId);
     }
 
     public void deleteChunk(String fileId, Integer chunkId) throws Exception {
-        if (!this.savedFiles.containsKey(fileId) || !this.savedFiles.get(fileId).contains(chunkId)) {
-            throw new Exception("File not found");
-        }
 
-        File file = new File(rootFolder.getAbsolutePath() + "/" + fileId + "/" + chunkId);
-        file.delete();
+        fileStructure.deleteChunk(fileId, chunkId);
     }
 
     public void deleteFile(String fileId) throws Exception {
-        if (!this.savedFiles.containsKey(fileId)) {
-            throw new Exception("File not found");
-        }
 
-        FileInfo chunks = this.savedFiles.get(fileId);
-        for (ChunkInfo chunk : chunks.getChunks()) {
-            this.deleteChunk(fileId, chunk.getChunkNumber());
-        }
-
+        fileStructure.deleteFile(fileId);
     }
 
     public boolean isChunkSaved(String fileId, Integer chunkId) {
-        return this.isFileSaved(fileId) && this.savedFiles.get(fileId).contains(chunkId);
+        return fileStructure.isChunkSaved(fileId, chunkId);
     }
 
     public boolean isFileSaved(String fileId) {
-        return this.savedFiles.containsKey(fileId);
+        return fileStructure.isFileSaved(fileId);
     }
 
+    @Override
+    public void run() {
+        this.saveFileStructure();
+    }
 }
