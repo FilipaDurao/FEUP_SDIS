@@ -6,15 +6,15 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FileStructure implements Serializable {
-    private HashMap<String, FileInfo> savedFiles;
+    private ConcurrentHashMap<String, FileInfo> savedFiles;
     private File rootFolder;
 
     public FileStructure(String rootFolderPath) throws Exception {
-        this.savedFiles =  new HashMap<>();
+        this.savedFiles =  new ConcurrentHashMap<>();
 
         this.rootFolder = new File(rootFolderPath);
 
@@ -88,7 +88,7 @@ public class FileStructure implements Serializable {
         return this.savedFiles.containsKey(fileId);
     }
 
-    public void checkFileStructure() throws Exception {
+    public void checkFileStructure() {
         for (Map.Entry<String, FileInfo> entry : this.savedFiles.entrySet()) {
             String fileId = entry.getKey();
             for (ChunkInfo chunkInfo :  entry.getValue().getChunks()) {

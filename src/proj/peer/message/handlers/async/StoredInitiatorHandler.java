@@ -9,11 +9,11 @@ import proj.peer.message.subscriptions.ChunkSubscription;
 import java.util.HashSet;
 import java.util.concurrent.CountDownLatch;
 
-public class BackupChunkHandler extends RetransmissionHandler {
+public class StoredInitiatorHandler extends RetransmissionHandler {
 
     private HashSet<String> storedIds;
 
-    public BackupChunkHandler(Peer peer, PutChunkMessage msg, CountDownLatch chunkSavedSignal) {
+    public StoredInitiatorHandler(Peer peer, PutChunkMessage msg, CountDownLatch chunkSavedSignal) {
         super(peer.getScheduler(), peer.getBackup(), peer.getControl(), msg, chunkSavedSignal);
         this.storedIds = new HashSet<>();
         this.sub = new ChunkSubscription(StoredMessage.OPERATION, msg.getFileId(), msg.getChunkNo());

@@ -8,10 +8,10 @@ import proj.peer.message.subscriptions.ChunkSubscription;
 
 import java.util.concurrent.CountDownLatch;
 
-public class ChunkHandler extends RetransmissionHandler {
+public class ChunkMsgHandler extends RetransmissionHandler {
     private byte[] body;
 
-    public ChunkHandler(Peer peer, GetChunkMessage msg, CountDownLatch countDownLatch) {
+    public ChunkMsgHandler(Peer peer, GetChunkMessage msg, CountDownLatch countDownLatch) {
         super(peer.getScheduler(), peer.getControl(), peer.getRestore(), msg, countDownLatch);
         this.sub = new ChunkSubscription(ChunkMessage.OPERATION, msg.getFileId(), msg.getChunkNo());
     }

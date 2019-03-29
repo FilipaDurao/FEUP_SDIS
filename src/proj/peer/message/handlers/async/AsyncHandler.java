@@ -1,7 +1,6 @@
 package proj.peer.message.handlers.async;
 
 import proj.peer.message.handlers.SubscriptionHandler;
-import proj.peer.message.handlers.SubscriptionHandlerInterface;
 
 import java.util.concurrent.CountDownLatch;
 

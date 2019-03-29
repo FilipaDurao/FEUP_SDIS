@@ -3,10 +3,9 @@ package proj.peer;
 import proj.peer.connection.BackupConnection;
 import proj.peer.connection.ControlConnection;
 import proj.peer.connection.RestoreConnection;
-import proj.peer.connection.SubscriptionConnection;
 import proj.peer.manager.FileManager;
 import proj.peer.message.handlers.GetChunkHandler;
-import proj.peer.message.handlers.StoredHandler;
+import proj.peer.message.handlers.StoredGenericHandler;
 import proj.peer.rmi.RemoteBackup;
 import proj.peer.rmi.RemoteBackupInterface;
 
@@ -15,10 +14,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class Peer {
 
@@ -77,13 +73,13 @@ public class Peer {
     }
 
     private void startConnections() throws IOException {
-        this.scheduler = new ScheduledThreadPoolExecutor(1);
+        this.scheduler = new ScheduledThreadPoolExecutor(3);
 
         this.backup = new BackupConnection(this, backupName, backupPort);
         new Thread(this.backup).start();
 
         this.control = new ControlConnection(this, controlName, controlPort);
-        this.control.subscribe(new StoredHandler(this));
+        this.control.subscribe(new StoredGenericHandler(this));
         this.control.subscribe(new GetChunkHandler(this));
         new Thread(this.control).start();
 

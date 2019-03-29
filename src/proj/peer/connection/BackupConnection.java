@@ -1,6 +1,7 @@
 package proj.peer.connection;
 
 import proj.peer.Peer;
+import proj.peer.message.handlers.async.PutChunkHandler;
 import proj.peer.message.messages.Message;
 import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.message.messages.StoredMessage;
@@ -34,15 +35,11 @@ public class BackupConnection extends RunnableMC {
 
                 System.out.println(String.format("Backup Received: %s %s %d", msg.getOperation(), msg.getFileId(), msg.getChunkNo()));
 
-                this.peer.getFileManager().putChunk(msg.getFileId(), msg.getChunkNo(), msg.getBody(), msg.getReplicationDegree());
-
-                StoredMessage response = new StoredMessage(peer.getVersion(), peer.getPeerId(), msg.getFileId(), msg.getChunkNo());
-                int delay = RandomGenerator.getNumberInRange(0, 400);
-                this.peer.getScheduler().schedule(new MessageSender(peer.getControl(), response), delay, TimeUnit.MILLISECONDS);
-
+                this.peer.getScheduler().execute(new PutChunkHandler(msg, peer));
             } catch (Exception e) {
                 System.err.println("Backup Connection Error: " + e.getMessage());
             }
         }
     }
+
 }

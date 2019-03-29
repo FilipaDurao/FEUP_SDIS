@@ -3,15 +3,12 @@ package proj.peer.rmi;
 import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
 import proj.peer.message.messages.PutChunkMessage;
-import proj.peer.message.handlers.async.BackupChunkHandler;
+import proj.peer.message.handlers.async.StoredInitiatorHandler;
 import proj.peer.message.subscriptions.ChunkSubscription;
 import proj.peer.utils.SHA256Encoder;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
@@ -40,7 +37,7 @@ public class FileSender {
     /**
      * Saves all handlers for the messages sent.
      */
-    private ArrayList<BackupChunkHandler> handlers;
+    private ArrayList<StoredInitiatorHandler> handlers;
 
     /**
      * Latch that waits fot all handlers to conclude.
@@ -75,9 +72,9 @@ public class FileSender {
      * @param chunkNo Chunk number of the message.
      * @return Handler for the message subscription and retransmission.
      */
-    private BackupChunkHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo) {
+    private StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo) {
         PutChunkMessage msg = new PutChunkMessage(peer.getVersion(), peer.getPeerId(), encodedFileName, chunkNo, replicationDegree, body);
-        BackupChunkHandler handler = new BackupChunkHandler(this.peer, msg, this.chunkSavedSignal);
+        StoredInitiatorHandler handler = new StoredInitiatorHandler(this.peer, msg, this.chunkSavedSignal);
         handler.run();
         this.peer.getControl().subscribe(handler);
         return handler;
@@ -132,7 +129,7 @@ public class FileSender {
         }
 
 
-        for (BackupChunkHandler handler : this.handlers) {
+        for (StoredInitiatorHandler handler : this.handlers) {
             if (!handler.wasSuccessful()) {
                 System.out.println("Failed: :" + ((ChunkSubscription) handler.getSub()).getChunkNo());
                 return false;
