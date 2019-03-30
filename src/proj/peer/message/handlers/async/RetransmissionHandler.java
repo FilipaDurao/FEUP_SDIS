@@ -1,8 +1,10 @@
 package proj.peer.message.handlers.async;
 
+import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
 import proj.peer.connection.SubscriptionConnection;
 import proj.peer.message.messages.Message;
+import proj.peer.message.subscriptions.OperationSubscription;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -20,11 +22,11 @@ public abstract class RetransmissionHandler extends AsyncHandler {
     protected Future future;
 
 
-    public RetransmissionHandler(ScheduledThreadPoolExecutor scheduler, MulticastConnection senderConnection, SubscriptionConnection subscriptionConnection, Message msg, CountDownLatch countDownLatch) {
-        super(countDownLatch);
+    public RetransmissionHandler(OperationSubscription sub, Peer peer, MulticastConnection senderConnection, SubscriptionConnection subscriptionConnection, Message msg, CountDownLatch countDownLatch) {
+        super(sub, peer, countDownLatch);
         this.senderConnection = senderConnection;
         this.subscriptionConnection = subscriptionConnection;
-        this.scheduler = scheduler;
+        this.scheduler = peer.getScheduler();
         this.msg = msg;
         this.attempts = 0;
         this.successful = false;

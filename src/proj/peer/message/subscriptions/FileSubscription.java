@@ -4,8 +4,8 @@ public class FileSubscription extends OperationSubscription {
 
     protected String fileId;
 
-    public FileSubscription(String operation, String fileId) {
-        super(operation);
+    public FileSubscription(String operation, String fileId, String version) {
+        super(operation, version);
         this.fileId = fileId;
     }
 
@@ -24,6 +24,6 @@ public class FileSubscription extends OperationSubscription {
 
     @Override
     public int hashCode() {
-        return (operation + fileId).hashCode();
+        return (operation + fileId + version).hashCode();
     }
 }

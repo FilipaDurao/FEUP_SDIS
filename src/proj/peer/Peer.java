@@ -18,6 +18,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Peer {
 
+    public static final String DEFAULT_VERSION = "1.0";
     private String version;
     private String peerId;
     private String controlName;
@@ -79,8 +80,6 @@ public class Peer {
         new Thread(this.backup).start();
 
         this.control = new ControlConnection(this, controlName, controlPort);
-        this.control.subscribe(new StoredGenericHandler(this));
-        this.control.subscribe(new GetChunkHandler(this));
         new Thread(this.control).start();
 
         this.restore = new RestoreConnection(this, restoreName, restorePort);

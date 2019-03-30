@@ -14,9 +14,8 @@ public class StoredInitiatorHandler extends RetransmissionHandler {
     private HashSet<String> storedIds;
 
     public StoredInitiatorHandler(Peer peer, PutChunkMessage msg, CountDownLatch chunkSavedSignal) {
-        super(peer.getScheduler(), peer.getBackup(), peer.getControl(), msg, chunkSavedSignal);
+        super(new ChunkSubscription(StoredMessage.OPERATION, msg.getFileId(), msg.getChunkNo(), msg.getVersion()), peer, peer.getBackup(), peer.getControl(), msg, chunkSavedSignal);
         this.storedIds = new HashSet<>();
-        this.sub = new ChunkSubscription(StoredMessage.OPERATION, msg.getFileId(), msg.getChunkNo());
     }
 
 

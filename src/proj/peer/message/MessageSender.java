@@ -21,7 +21,7 @@ public class MessageSender implements Runnable  {
         try {
             this.connection.sendMessage(this.msg);
         } catch (IOException e) {
-            System.err.println("Error sending message.");
+            System.err.println("[Error sending message] : " + e.getMessage());
         }
     }
 }

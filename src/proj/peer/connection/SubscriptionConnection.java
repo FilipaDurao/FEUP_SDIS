@@ -14,9 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class SubscriptionConnection extends RunnableMC {
     protected Peer peer;
     protected ConcurrentHashMap<OperationSubscription, SubscriptionHandlerInterface> subscriptions;
+    private String connectionName;
 
-    public SubscriptionConnection(String multicast_name, Integer multicast_port_number, Peer peer) throws IOException {
+    SubscriptionConnection(String connectionName, String multicast_name, Integer multicast_port_number, Peer peer) throws IOException {
         super(multicast_name, multicast_port_number);
+        this.connectionName =  connectionName;
         this.peer = peer;
         this.subscriptions = new ConcurrentHashMap<>();
     }
@@ -33,15 +35,15 @@ public abstract class SubscriptionConnection extends RunnableMC {
     protected boolean checkForSubscription(Message msg) {
         if (msg instanceof MessageChunk) {
             MessageChunk msgC = (MessageChunk) msg;
-            OperationSubscription possibleSub = new ChunkSubscription(msgC.getOperation(), msgC.getFileId(), msgC.getChunkNo());
+            OperationSubscription possibleSub = new ChunkSubscription(msgC.getOperation(), msgC.getFileId(), msgC.getChunkNo(), msgC.getVersion());
             if (subscriptions.containsKey(possibleSub)) {
                 subscriptions.get(possibleSub).notify(msg);
                 return true;
             }
         }
 
-        OperationSubscription possibleFileSub = new FileSubscription(msg.getOperation(), msg.getFileId());
-        OperationSubscription possibleOpSub = new OperationSubscription(msg.getOperation());
+        OperationSubscription possibleFileSub = new FileSubscription(msg.getOperation(), msg.getFileId(), msg.getVersion());
+        OperationSubscription possibleOpSub = new OperationSubscription(msg.getOperation(), msg.getVersion());
 
         if (subscriptions.containsKey(possibleFileSub)) {
             subscriptions.get(possibleFileSub).notify(msg);
@@ -52,5 +54,22 @@ public abstract class SubscriptionConnection extends RunnableMC {
         }
 
         return false;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Message msg = this.getMessage();
+
+                if (msg.getSenderId().equals(peer.getPeerId()) || checkForSubscription(msg)) {
+                    continue;
+                }
+
+                System.out.println(String.format("[" + this.connectionName +"] Ignored: %s %s", msg.getOperation(), msg.getSenderId()));
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+        }
     }
 }

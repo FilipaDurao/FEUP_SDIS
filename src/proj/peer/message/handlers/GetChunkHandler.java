@@ -8,17 +8,15 @@ import proj.peer.operations.GetChunkOperation;
 
 
 public class GetChunkHandler extends SubscriptionHandler {
-    private Peer peer;
 
-    public GetChunkHandler(Peer peer) {
-        this.peer = peer;
-        this.sub = new OperationSubscription(GetChunkMessage.OPERATION);
+    public GetChunkHandler(Peer peer, String version) {
+        super(new OperationSubscription(GetChunkMessage.OPERATION, version), peer);
     }
 
     @Override
     public void notify(Message msg) {
         if (msg instanceof GetChunkMessage) {
-            System.out.println(String.format("Get Chunk Message Received: %s %s %s", msg.getOperation(), msg.getSenderId(), msg.getFileId()));
+            System.out.println(String.format("Get Chunk Message Received: %s %s", msg.getOperation(), msg.getSenderId()));
             this.peer.getScheduler().execute(new GetChunkOperation((GetChunkMessage) msg, peer));
         }
     }

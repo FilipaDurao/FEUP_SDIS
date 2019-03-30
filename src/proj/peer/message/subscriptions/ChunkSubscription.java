@@ -3,8 +3,8 @@ package proj.peer.message.subscriptions;
 public class ChunkSubscription extends FileSubscription{
     private Integer chunkNo;
 
-    public ChunkSubscription(String operation, String fileId, Integer chunkNo) {
-        super(operation, fileId);
+    public ChunkSubscription(String operation, String fileId, Integer chunkNo, String version) {
+        super(operation, fileId, version);
         this.chunkNo = chunkNo;
     }
 
@@ -23,6 +23,6 @@ public class ChunkSubscription extends FileSubscription{
 
     @Override
     public int hashCode() {
-        return (this.operation + this.fileId + chunkNo).hashCode();
+        return (this.operation + this.fileId + chunkNo + version).hashCode();
     }
 }

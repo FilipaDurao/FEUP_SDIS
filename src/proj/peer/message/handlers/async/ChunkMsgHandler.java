@@ -12,13 +12,13 @@ public class ChunkMsgHandler extends RetransmissionHandler {
     private byte[] body;
 
     public ChunkMsgHandler(Peer peer, GetChunkMessage msg, CountDownLatch countDownLatch) {
-        super(peer.getScheduler(), peer.getControl(), peer.getRestore(), msg, countDownLatch);
-        this.sub = new ChunkSubscription(ChunkMessage.OPERATION, msg.getFileId(), msg.getChunkNo());
+        super(new ChunkSubscription(ChunkMessage.OPERATION, msg.getFileId(), msg.getChunkNo(), msg.getVersion()), peer, peer.getControl(), peer.getRestore(), msg, countDownLatch);
     }
 
     @Override
     public void notify(Message msg) {
         if (msg instanceof ChunkMessage) {
+            System.out.println("Received chunk");
             this.cancel();
             this.body = ((ChunkMessage) msg).getBody();
             this.subscriptionConnection.unsubscribe(this.sub);
