@@ -31,7 +31,6 @@ public class FileRestorer {
 
             for (int i = 0;;i++) {
                 byte[] body = restoreChunk(filename, i);
-                System.out.println("Received CHUNK with body length: " + body.length);
                 stream.write(body);
                 if (body.length < MulticastConnection.CHUNK_SIZE) {
                     break;

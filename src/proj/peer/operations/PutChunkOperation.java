@@ -1,4 +1,4 @@
-package proj.peer.message.handlers.async;
+package proj.peer.operations;
 
 import proj.peer.Peer;
 import proj.peer.message.MessageSender;
@@ -9,12 +9,12 @@ import proj.peer.utils.RandomGenerator;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public class PutChunkHandler implements Runnable {
+public class PutChunkOperation implements Runnable {
 
     private PutChunkMessage msg;
     private Peer peer;
 
-    public PutChunkHandler(PutChunkMessage msg, Peer peer) {
+    public PutChunkOperation(PutChunkMessage msg, Peer peer) {
         this.msg = msg;
         this.peer = peer;
     }
