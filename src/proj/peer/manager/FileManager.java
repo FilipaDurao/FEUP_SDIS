@@ -1,6 +1,9 @@
 package proj.peer.manager;
 
+import proj.peer.log.NetworkLogger;
+
 import java.io.*;
+import java.util.logging.Level;
 
 public class FileManager implements Runnable{
 
@@ -23,7 +26,7 @@ public class FileManager implements Runnable{
             oos.close();
 
         } catch (IOException e) {
-            System.err.println("Failed saving of the file structure.");
+            NetworkLogger.printLog(Level.SEVERE, "Failed saving of the file structure.");
         }
 
     }
@@ -44,7 +47,7 @@ public class FileManager implements Runnable{
             this.fileStructure.checkFileStructure();
         } catch (Exception e) {
             this.fileStructure = new FileStructure("data/peer_" + peerId + "/backup");
-            System.err.println("Failed recovering of the file structure.");
+            NetworkLogger.printLog(Level.WARNING, "Failed recovering of the file structure.");
         }
     }
 

@@ -3,6 +3,7 @@ package proj.peer.message.handlers.async;
 import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
 import proj.peer.connection.SubscriptionConnection;
+import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.Message;
 import proj.peer.message.subscriptions.OperationSubscription;
 
@@ -11,6 +12,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public abstract class RetransmissionHandler extends AsyncHandler {
     protected ScheduledThreadPoolExecutor scheduler;
@@ -45,12 +47,12 @@ public abstract class RetransmissionHandler extends AsyncHandler {
             this.senderConnection.sendMessage(msg);
             this.attempts++;
         } catch (IOException e) {
-            System.err.println("Error sending scheduled message");
+            NetworkLogger.printLog(Level.SEVERE, "Error sending scheduled message - " + e.getMessage());
         }
         if (this.attempts < 5 && !this.successful) {
             this.future = this.scheduler.schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
         } else {
-            System.err.println(msg.getOperation() + " protocol failed.");
+            NetworkLogger.printLog(Level.SEVERE, msg.getOperation() + " protocol failed");
             this.subscriptionConnection.unsubscribe(this.sub);
             this.countDown();
         }

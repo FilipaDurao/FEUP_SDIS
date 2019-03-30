@@ -2,6 +2,7 @@ package proj.peer.rmi;
 
 import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
+import proj.peer.log.NetworkLogger;
 import proj.peer.message.handlers.async.ChunkMsgHandler;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.operations.SaveChunkOperation;
@@ -10,6 +11,7 @@ import proj.peer.utils.SHA256Encoder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
 
 public class FileRestorer {
     /**
@@ -47,7 +49,7 @@ public class FileRestorer {
             if (savingThread != null) {
                 savingThread.interrupt();
             }
-            System.out.println("Error Restoring File: " + e.getMessage());
+            NetworkLogger.printLog(Level.SEVERE, "Error Restoring File - " + e.getMessage());
             return false;
         }
         return true;

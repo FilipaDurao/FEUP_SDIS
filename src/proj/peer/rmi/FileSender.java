@@ -2,6 +2,7 @@ package proj.peer.rmi;
 
 import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
+import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.message.handlers.async.StoredInitiatorHandler;
 import proj.peer.message.subscriptions.ChunkSubscription;
@@ -12,6 +13,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
 
 /**
  * Sends a file through a multicast connection.
@@ -131,7 +133,7 @@ public class FileSender {
 
         for (StoredInitiatorHandler handler : this.handlers) {
             if (!handler.wasSuccessful()) {
-                System.out.println("Failed: :" + ((ChunkSubscription) handler.getSub()).getChunkNo());
+                NetworkLogger.printLog(Level.SEVERE, "Failed to get chunk no." + ((ChunkSubscription) handler.getSub()).getChunkNo());
                 return false;
             }
         }

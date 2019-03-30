@@ -1,5 +1,7 @@
 package proj.peer.manager;
 
+import proj.peer.log.NetworkLogger;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class FileStructure implements Serializable {
     private ConcurrentHashMap<String, FileInfo> savedFiles;
@@ -55,7 +58,7 @@ public class FileStructure implements Serializable {
             throw new Exception("File not found");
         }
 
-        System.out.println("Getting file");
+        NetworkLogger.printLog(Level.INFO, "Getting file from memory");
         return Files.readAllBytes(Paths.get(this.rootFolder.getAbsolutePath() + "/" + fileId + "/" + chunkId));
     }
 
@@ -95,7 +98,7 @@ public class FileStructure implements Serializable {
                 String filename = this.rootFolder.getAbsolutePath() + "/" + fileId + "/" + chunkInfo.getChunkNumber();
                 File f = new File(filename);
                 if (!f.exists()) {
-                    System.err.println("File missing: " + filename);
+                    NetworkLogger.printLog(Level.SEVERE, "Missing File - " + filename);
                 }
             }
         }

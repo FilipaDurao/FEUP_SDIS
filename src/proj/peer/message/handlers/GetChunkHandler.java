@@ -1,10 +1,13 @@
 package proj.peer.message.handlers;
 
 import proj.peer.Peer;
+import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.message.messages.Message;
 import proj.peer.message.subscriptions.OperationSubscription;
 import proj.peer.operations.GetChunkOperation;
+
+import java.util.logging.Level;
 
 
 public class GetChunkHandler extends SubscriptionHandler {
@@ -16,7 +19,7 @@ public class GetChunkHandler extends SubscriptionHandler {
     @Override
     public void notify(Message msg) {
         if (msg instanceof GetChunkMessage) {
-            System.out.println(String.format("Get Chunk Message Received: %s %s", msg.getOperation(), msg.getSenderId()));
+            NetworkLogger.printLog(Level.INFO, "Chunk request received");
             this.peer.getScheduler().execute(new GetChunkOperation((GetChunkMessage) msg, peer));
         }
     }

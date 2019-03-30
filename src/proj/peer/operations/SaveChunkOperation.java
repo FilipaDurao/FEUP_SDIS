@@ -1,11 +1,13 @@
 package proj.peer.operations;
 
 import proj.peer.connection.MulticastConnection;
+import proj.peer.log.NetworkLogger;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.logging.Level;
 
 public class SaveChunkOperation implements Runnable {
     private FileOutputStream stream;
@@ -28,13 +30,12 @@ public class SaveChunkOperation implements Runnable {
                     this.lastChunk = false;
                 }
                 stream.write(chunk);
-
             }
 
         } catch (IOException e) {
-            System.out.println("Error saving file: " + e.getMessage());
+            NetworkLogger.printLog(Level.SEVERE, "Error saving file - " + e.getMessage());
         } catch (InterruptedException e) {
-            System.out.println("Saving interrupted");
+            NetworkLogger.printLog(Level.SEVERE, "Saving interrupted");
         }
     }
 

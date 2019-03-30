@@ -1,6 +1,7 @@
 package proj.peer.connection;
 
 import proj.peer.Peer;
+import proj.peer.log.NetworkLogger;
 import proj.peer.message.handlers.SubscriptionHandlerInterface;
 import proj.peer.message.messages.Message;
 import proj.peer.message.messages.MessageChunk;
@@ -10,6 +11,7 @@ import proj.peer.message.subscriptions.OperationSubscription;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public abstract class SubscriptionConnection extends RunnableMC {
     protected Peer peer;
@@ -66,10 +68,14 @@ public abstract class SubscriptionConnection extends RunnableMC {
                     continue;
                 }
 
-                System.out.println(String.format("[" + this.connectionName +"] Ignored: %s %s", msg.getOperation(), msg.getSenderId()));
+                NetworkLogger.printLog(Level.INFO, String.format("Ignored Message - %s %s", msg.getOperation(), msg.getSenderId()), this.connectionName);
             } catch (Exception e) {
-                System.err.println(e.getMessage());
+                NetworkLogger.printLog(Level.SEVERE, "Error reading incoming message - " + e.getMessage(), this.connectionName);
             }
         }
+    }
+
+    public String getConnectionName() {
+        return connectionName;
     }
 }

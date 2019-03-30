@@ -1,12 +1,14 @@
 package proj.peer.operations;
 
 import proj.peer.Peer;
+import proj.peer.log.NetworkLogger;
 import proj.peer.message.MessageSender;
 import proj.peer.message.messages.ChunkMessage;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.utils.RandomGenerator;
 
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class GetChunkOperation implements Runnable {
 
@@ -28,7 +30,7 @@ public class GetChunkOperation implements Runnable {
                 this.peer.getScheduler().schedule(new MessageSender(peer.getRestore(), response), delay, TimeUnit.MILLISECONDS);
             }
         } catch (Exception e) {
-            System.err.println("Failure sending chunk: " + e.getMessage());
+            NetworkLogger.printLog(Level.SEVERE, "Failure sending chunk - " + e.getMessage());
         }
     }
 }

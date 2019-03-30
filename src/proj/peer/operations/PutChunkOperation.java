@@ -1,6 +1,7 @@
 package proj.peer.operations;
 
 import proj.peer.Peer;
+import proj.peer.log.NetworkLogger;
 import proj.peer.message.MessageSender;
 import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.message.messages.StoredMessage;
@@ -8,6 +9,7 @@ import proj.peer.utils.RandomGenerator;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class PutChunkOperation implements Runnable {
 
@@ -27,7 +29,7 @@ public class PutChunkOperation implements Runnable {
             int delay = RandomGenerator.getNumberInRange(0, 400);
             this.peer.getScheduler().schedule(new MessageSender(peer.getControl(), response), delay, TimeUnit.MILLISECONDS);
         } catch (IOException e) {
-            System.out.println("Error in PUTCHUNK operation: " + e.getMessage());
+            NetworkLogger.printLog(Level.SEVERE, "PUTCHUNK operation - " + e.getMessage());
         }
     }
 }

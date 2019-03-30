@@ -3,9 +3,8 @@ package proj.peer;
 import proj.peer.connection.BackupConnection;
 import proj.peer.connection.ControlConnection;
 import proj.peer.connection.RestoreConnection;
+import proj.peer.log.NetworkLogger;
 import proj.peer.manager.FileManager;
-import proj.peer.message.handlers.GetChunkHandler;
-import proj.peer.message.handlers.StoredGenericHandler;
 import proj.peer.rmi.RemoteBackup;
 import proj.peer.rmi.RemoteBackupInterface;
 
@@ -15,6 +14,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.logging.Level;
 
 public class Peer {
 
@@ -70,7 +70,7 @@ public class Peer {
 
         Runtime.getRuntime().addShutdownHook(new Thread(peer.fileManager));
 
-        System.out.println("Server Ready");
+        NetworkLogger.printLog(Level.INFO, "Server is running.");
     }
 
     private void startConnections() throws IOException {
@@ -96,15 +96,14 @@ public class Peer {
                 reg = LocateRegistry.getRegistry();
                 reg.rebind("RBackup" + this.peerId, stub);
             } catch (RemoteException e) {
-                System.out.println("Tries to create");
+                NetworkLogger.printLog(Level.INFO, "Tries to create Registry");
                 reg = LocateRegistry.createRegistry(1099);
                 reg.rebind("RBackup" + this.peerId, stub);
             }
 
-            System.out.println("Created RBackup" + this.peerId);
-
+            NetworkLogger.printLog(Level.INFO, "RMI established");
         } catch (RemoteException e) {
-            System.err.println(e.getMessage());
+            NetworkLogger.printLog(Level.SEVERE, "Failed establishing RMI - " + e.getMessage());
         }
     }
 

@@ -1,12 +1,14 @@
 package proj.peer.message.handlers.async;
 
 import proj.peer.Peer;
+import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.ChunkMessage;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.message.messages.Message;
 import proj.peer.message.subscriptions.ChunkSubscription;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
 
 public class ChunkMsgHandler extends RetransmissionHandler {
     private byte[] body;
@@ -18,9 +20,10 @@ public class ChunkMsgHandler extends RetransmissionHandler {
     @Override
     public void notify(Message msg) {
         if (msg instanceof ChunkMessage) {
-            System.out.println("Received chunk");
+            ChunkMessage chunkMessage = (ChunkMessage) msg;
+            NetworkLogger.printLog(Level.INFO, "Received requested chunk no." + chunkMessage.getChunkNo());
             this.cancel();
-            this.body = ((ChunkMessage) msg).getBody();
+            this.body = chunkMessage.getBody();
             this.subscriptionConnection.unsubscribe(this.sub);
             this.successful = true;
             this.countDown();
