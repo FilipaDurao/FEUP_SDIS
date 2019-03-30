@@ -22,7 +22,7 @@ public class FileRestorer {
 
     FileRestorer(Peer peer) {
         this.peer = peer;
-        this.restorePath = "data/restore_" + this.peer.getPeerId() + "/";
+        this.restorePath = "data/peer_" + this.peer.getPeerId() + "/restore/";
         fileFolder = new File(this.restorePath);
         fileFolder.mkdirs();
     }

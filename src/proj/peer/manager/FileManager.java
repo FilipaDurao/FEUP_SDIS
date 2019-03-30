@@ -43,7 +43,7 @@ public class FileManager implements Runnable{
             oos.close();
             this.fileStructure.checkFileStructure();
         } catch (Exception e) {
-            this.fileStructure = new FileStructure("data/backup_" + peerId);
+            this.fileStructure = new FileStructure("data/peer_" + peerId + "/backup");
             System.err.println("Failed recovering of the file structure.");
         }
     }
