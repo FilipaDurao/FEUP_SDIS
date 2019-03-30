@@ -4,9 +4,11 @@ import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
 import proj.peer.message.handlers.async.ChunkMsgHandler;
 import proj.peer.message.messages.GetChunkMessage;
+import proj.peer.operations.SaveChunkOperation;
 import proj.peer.utils.SHA256Encoder;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.concurrent.CountDownLatch;
 
 public class FileRestorer {
@@ -27,24 +29,31 @@ public class FileRestorer {
 
     public boolean restoreFile(String filename) {
 
-        try (FileOutputStream stream = new FileOutputStream(fileFolder.getAbsolutePath() + "/" + filename)) {
-
-            for (int i = 0;;i++) {
+        SaveChunkOperation chunkSaver = null;
+        Thread savingThread = null;
+        try {
+            chunkSaver = new SaveChunkOperation(new FileOutputStream(fileFolder.getAbsolutePath() + "/" + filename));
+            savingThread = new Thread(chunkSaver);
+            savingThread.start();
+            for (int i = 0; ; i++) {
                 byte[] body = restoreChunk(filename, i);
-                stream.write(body);
+                chunkSaver.addChunk(body);
                 if (body.length < MulticastConnection.CHUNK_SIZE) {
                     break;
                 }
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            if (savingThread != null) {
+                savingThread.interrupt();
+            }
+            System.out.println("Error Restoring File: " + e.getMessage());
             return false;
         }
         return true;
     }
 
-    private byte[] restoreChunk(String filename, Integer chunkNo) throws Exception  {
+    private byte[] restoreChunk(String filename, Integer chunkNo) throws Exception {
         GetChunkMessage msg = new GetChunkMessage(this.peer.getVersion(), this.peer.getPeerId(), SHA256Encoder.encode(filename), chunkNo);
         CountDownLatch countDownLatch = new CountDownLatch(1);
         ChunkMsgHandler handler = new ChunkMsgHandler(peer, msg, countDownLatch);
