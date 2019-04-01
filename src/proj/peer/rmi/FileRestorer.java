@@ -11,6 +11,8 @@ import proj.peer.utils.SHA256Encoder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class FileRestorer {
@@ -31,14 +33,14 @@ public class FileRestorer {
 
     public boolean restoreFile(String filename) {
 
-        SaveChunkOperation chunkSaver = null;
-        Thread savingThread = null;
+        SaveChunkOperation chunkSaver;
+        Future saveChunkFuture = null;
         try {
+            String encodedFilename = SHA256Encoder.encode(filename);
             chunkSaver = new SaveChunkOperation(new FileOutputStream(fileFolder.getAbsolutePath() + "/" + filename));
-            savingThread = new Thread(chunkSaver);
-            savingThread.start();
+            saveChunkFuture = this.peer.getScheduler().schedule(chunkSaver, 0, TimeUnit.SECONDS);
             for (int i = 0; ; i++) {
-                byte[] body = restoreChunk(filename, i);
+                byte[] body = restoreChunk(i, encodedFilename);
                 chunkSaver.addChunk(body);
                 if (body.length < MulticastConnection.CHUNK_SIZE) {
                     break;
@@ -46,8 +48,8 @@ public class FileRestorer {
             }
 
         } catch (Exception e) {
-            if (savingThread != null) {
-                savingThread.interrupt();
+            if (saveChunkFuture != null) {
+                saveChunkFuture.cancel(true);
             }
             NetworkLogger.printLog(Level.SEVERE, "Error Restoring File - " + e.getMessage());
             return false;
@@ -55,8 +57,8 @@ public class FileRestorer {
         return true;
     }
 
-    private byte[] restoreChunk(String filename, Integer chunkNo) throws Exception {
-        GetChunkMessage msg = new GetChunkMessage(this.peer.getVersion(), this.peer.getPeerId(), SHA256Encoder.encode(filename), chunkNo);
+    private byte[] restoreChunk(Integer chunkNo, String encode) throws Exception {
+        GetChunkMessage msg = new GetChunkMessage(this.peer.getVersion(), this.peer.getPeerId(), encode, chunkNo);
         CountDownLatch countDownLatch = new CountDownLatch(1);
         ChunkMsgHandler handler = new ChunkMsgHandler(peer, msg, countDownLatch);
         this.peer.getRestore().subscribe(handler);
