@@ -19,7 +19,7 @@ public class GetChunkHandler extends SubscriptionHandler {
     @Override
     public void notify(Message msg) {
         if (msg instanceof GetChunkMessage) {
-            NetworkLogger.printLog(Level.INFO, "Chunk request received");
+            NetworkLogger.printLog(Level.INFO, "Chunk request received " + msg.getTruncatedFilename() + " " + ((GetChunkMessage) msg).getChunkNo());
             this.peer.getScheduler().execute(new GetChunkOperation((GetChunkMessage) msg, peer));
         }
     }

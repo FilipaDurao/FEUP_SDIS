@@ -1,4 +1,4 @@
-package proj.peer.message;
+package proj.peer.operations;
 
 import proj.peer.connection.MulticastConnection;
 import proj.peer.connection.SubscriptionConnection;
@@ -8,12 +8,12 @@ import proj.peer.message.messages.Message;
 import java.io.IOException;
 import java.util.logging.Level;
 
-public class MessageSender implements Runnable  {
+public class SendMessageOperation implements Runnable  {
 
     private SubscriptionConnection connection;
     private Message msg;
 
-    public MessageSender(SubscriptionConnection connection, Message msg) {
+    public SendMessageOperation(SubscriptionConnection connection, Message msg) {
 
         this.connection = connection;
         this.msg = msg;

@@ -2,7 +2,6 @@ package proj.peer.operations;
 
 import proj.peer.Peer;
 import proj.peer.log.NetworkLogger;
-import proj.peer.message.MessageSender;
 import proj.peer.message.messages.ChunkMessage;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.utils.RandomGenerator;
@@ -27,7 +26,7 @@ public class GetChunkOperation implements Runnable {
                 byte[] body = this.peer.getFileManager().getChunk(msg.getFileId(), msg.getChunkNo());
                 ChunkMessage response = new ChunkMessage(peer.getVersion(), peer.getPeerId(), msg.getFileId(), msg.getChunkNo(), body);
                 int delay = RandomGenerator.getNumberInRange(0, 400);
-                this.peer.getScheduler().schedule(new MessageSender(peer.getRestore(), response), delay, TimeUnit.MILLISECONDS);
+                this.peer.getScheduler().schedule(new SendMessageOperation(peer.getRestore(), response), delay, TimeUnit.MILLISECONDS);
             }
         } catch (Exception e) {
             NetworkLogger.printLog(Level.SEVERE, "Failure sending chunk - " + e.getMessage());

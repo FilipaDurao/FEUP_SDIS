@@ -40,7 +40,16 @@ public class FileRestorer {
             chunkSaver = new SaveChunkOperation(new FileOutputStream(fileFolder.getAbsolutePath() + "/" + filename));
             saveChunkFuture = this.peer.getScheduler().schedule(chunkSaver, 0, TimeUnit.SECONDS);
             for (int i = 0; ; i++) {
-                byte[] body = restoreChunk(i, encodedFilename);
+                byte[] body = null;
+                if (this.peer.getFileManager().isChunkSaved(encodedFilename, i)) {
+                    body = this.peer.getFileManager().getChunk(encodedFilename, i);
+                } else {
+                    body = restoreChunk(i, encodedFilename);
+                }
+
+                if (body == null) {
+                    throw new Exception("Body not found");
+                }
                 chunkSaver.addChunk(body);
                 if (body.length < MulticastConnection.CHUNK_SIZE) {
                     break;

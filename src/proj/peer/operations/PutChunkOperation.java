@@ -2,7 +2,6 @@ package proj.peer.operations;
 
 import proj.peer.Peer;
 import proj.peer.log.NetworkLogger;
-import proj.peer.message.MessageSender;
 import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.message.messages.StoredMessage;
 import proj.peer.utils.RandomGenerator;
@@ -27,7 +26,7 @@ public class PutChunkOperation implements Runnable {
             this.peer.getFileManager().putChunk(msg.getFileId(), msg.getChunkNo(), msg.getBody(), msg.getReplicationDegree());
             StoredMessage response = new StoredMessage(peer.getVersion(), peer.getPeerId(), msg.getFileId(), msg.getChunkNo());
             int delay = RandomGenerator.getNumberInRange(0, 400);
-            this.peer.getScheduler().schedule(new MessageSender(peer.getControl(), response), delay, TimeUnit.MILLISECONDS);
+            this.peer.getScheduler().schedule(new SendMessageOperation(peer.getControl(), response), delay, TimeUnit.MILLISECONDS);
         } catch (IOException e) {
             NetworkLogger.printLog(Level.SEVERE, "PUTCHUNK operation - " + e.getMessage());
         }

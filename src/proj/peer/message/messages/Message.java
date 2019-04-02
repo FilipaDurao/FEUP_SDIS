@@ -46,4 +46,8 @@ public abstract class Message implements MessageInterface {
         return version;
     }
 
+    public String getTruncatedFilename() {
+        return this.fileId.substring(0, Math.min(this.fileId.length(), 5));
+    }
+
 }
