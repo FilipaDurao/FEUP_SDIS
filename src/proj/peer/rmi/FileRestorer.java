@@ -10,6 +10,7 @@ import proj.peer.utils.SHA256Encoder;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -35,12 +36,14 @@ public class FileRestorer {
 
         SaveChunkOperation chunkSaver;
         Future saveChunkFuture = null;
+        FileOutputStream stream = null;
         try {
             String encodedFilename = SHA256Encoder.encode(filename);
-            chunkSaver = new SaveChunkOperation(new FileOutputStream(fileFolder.getAbsolutePath() + "/" + filename));
+            stream = new FileOutputStream(fileFolder.getAbsolutePath() + "/" + filename);
+            chunkSaver = new SaveChunkOperation(stream);
             saveChunkFuture = this.peer.getScheduler().schedule(chunkSaver, 0, TimeUnit.SECONDS);
             for (int i = 0; ; i++) {
-                byte[] body = null;
+                byte[] body;
                 if (this.peer.getFileManager().isChunkSaved(encodedFilename, i)) {
                     body = this.peer.getFileManager().getChunk(encodedFilename, i);
                 } else {
@@ -55,10 +58,19 @@ public class FileRestorer {
                     break;
                 }
             }
+            stream.close();
 
         } catch (Exception e) {
             if (saveChunkFuture != null) {
                 saveChunkFuture.cancel(true);
+            }
+
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e1) {
+                    NetworkLogger.printLog(Level.WARNING, "Error closing output stream - " + e1.getMessage());
+                }
             }
             NetworkLogger.printLog(Level.SEVERE, "Error Restoring File - " + e.getMessage());
             return false;
