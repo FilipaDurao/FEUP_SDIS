@@ -7,8 +7,7 @@ import java.util.logging.Level;
 
 public class FileManager implements Runnable{
 
-    public static final String FILENAME_PREFIX = "savedFileManager-";
-    public static final String FILENAME_SUFIX = ".backup";
+    public static final String FILENAME = "localManager.ser";
     private FileStructure fileStructure;
     private String peerId;
 
@@ -17,10 +16,13 @@ public class FileManager implements Runnable{
         this.recoverFileStructure();
     }
 
+    private String getFilename() {
+        return "data/peer_" + peerId + "/" +  FILENAME;
+    }
 
     private void saveFileStructure() {
         try {
-            FileOutputStream fos = new FileOutputStream(FILENAME_PREFIX + this.peerId + FILENAME_SUFIX);
+            FileOutputStream fos = new FileOutputStream(this.getFilename());
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(this.fileStructure);
             oos.close();
@@ -34,7 +36,7 @@ public class FileManager implements Runnable{
 
     private void recoverFileStructure() throws Exception {
         try {
-            FileInputStream fos = new FileInputStream(FILENAME_PREFIX + this.peerId + FILENAME_SUFIX);
+            FileInputStream fos = new FileInputStream(this.getFilename());
             ObjectInputStream oos = new ObjectInputStream(fos);
             Object saved = oos.readObject();
             if (saved instanceof FileStructure) {
