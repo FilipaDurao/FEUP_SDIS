@@ -2,14 +2,14 @@ package proj.peer.manager;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FileInfo implements Serializable {
 
-    private HashMap<Integer, ChunkInfo> chunks;
+    private ConcurrentHashMap<Integer, ChunkInfo> chunks;
 
     public FileInfo() {
-        this.chunks = new HashMap<>();
+        this.chunks = new ConcurrentHashMap<>();
     }
 
     public void addChunk(Integer chunkNumber, Integer replicationDegree) {
@@ -27,5 +27,9 @@ public class FileInfo implements Serializable {
     public void addPeerId(Integer chunkNumber, String peerId) {
         if (this.chunks.containsKey(chunkNumber))
             this.chunks.get(chunkNumber).addPeer(peerId);
+    }
+
+    public void deleteChunk(Integer chunkId) {
+        this.chunks.remove(chunkId);
     }
 }

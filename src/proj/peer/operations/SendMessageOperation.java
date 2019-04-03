@@ -24,7 +24,10 @@ public class SendMessageOperation implements Runnable  {
         try {
             this.connection.sendMessage(this.msg);
         } catch (IOException e) {
-            NetworkLogger.printLog(Level.SEVERE, "Error sending message - " + e.getMessage(), this.connection.getConnectionName());
+            String[] obj = new String[2];
+            obj[0] =  this.connection.getConnectionName();
+            obj[1] = this.msg.getOperation();
+            NetworkLogger.printLog(Level.SEVERE, "Error sending message - " + e.getMessage(), obj);
         }
     }
 }

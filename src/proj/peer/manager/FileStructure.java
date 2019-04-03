@@ -77,10 +77,30 @@ public class FileStructure implements Serializable {
         }
 
         FileInfo chunks = this.savedFiles.get(fileId);
+        File folder = new File(this.rootFolder.getAbsolutePath() + "/" + fileId);
         for (ChunkInfo chunk : chunks.getChunks()) {
-            this.deleteChunk(fileId, chunk.getChunkNumber());
+            this.savedFiles.get(fileId).deleteChunk(chunk.getChunkNumber());
         }
+        deleteFolderFromMemory(folder);
+        this.savedFiles.remove(fileId);
 
+    }
+
+    private void deleteFolderFromMemory(File directory) {
+        if(directory.exists()){
+            File[] files = directory.listFiles();
+            if(null!=files){
+                for(int i=0; i<files.length; i++) {
+                    if(files[i].isDirectory()) {
+                        deleteFolderFromMemory(files[i]);
+                    }
+                    else {
+                        files[i].delete();
+                    }
+                }
+            }
+        }
+        directory.delete();
     }
 
     public boolean isChunkSaved(String fileId, Integer chunkId) {
