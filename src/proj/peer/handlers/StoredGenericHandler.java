@@ -1,9 +1,9 @@
-package proj.peer.message.handlers;
+package proj.peer.handlers;
 
 import proj.peer.Peer;
 import proj.peer.message.messages.Message;
 import proj.peer.message.messages.StoredMessage;
-import proj.peer.message.subscriptions.OperationSubscription;
+import proj.peer.handlers.subscriptions.OperationSubscription;
 
 public class StoredGenericHandler extends SubscriptionHandler {
 

@@ -4,8 +4,8 @@ import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.PutChunkMessage;
-import proj.peer.message.handlers.async.StoredInitiatorHandler;
-import proj.peer.message.subscriptions.ChunkSubscription;
+import proj.peer.handlers.async.StoredInitiatorHandler;
+import proj.peer.handlers.subscriptions.ChunkSubscription;
 import proj.peer.utils.SHA256Encoder;
 
 import java.io.File;

@@ -1,4 +1,4 @@
-package proj.peer.message.subscriptions;
+package proj.peer.handlers.subscriptions;
 
 public class FileSubscription extends OperationSubscription {
 

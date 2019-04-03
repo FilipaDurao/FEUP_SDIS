@@ -2,12 +2,12 @@ package proj.peer.connection;
 
 import proj.peer.Peer;
 import proj.peer.log.NetworkLogger;
-import proj.peer.message.handlers.SubscriptionHandlerInterface;
+import proj.peer.handlers.SubscriptionHandlerInterface;
 import proj.peer.message.messages.Message;
 import proj.peer.message.messages.MessageChunk;
-import proj.peer.message.subscriptions.ChunkSubscription;
-import proj.peer.message.subscriptions.FileSubscription;
-import proj.peer.message.subscriptions.OperationSubscription;
+import proj.peer.handlers.subscriptions.ChunkSubscription;
+import proj.peer.handlers.subscriptions.FileSubscription;
+import proj.peer.handlers.subscriptions.OperationSubscription;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;

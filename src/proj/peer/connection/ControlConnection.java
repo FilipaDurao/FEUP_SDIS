@@ -1,8 +1,8 @@
 package proj.peer.connection;
 
 import proj.peer.Peer;
-import proj.peer.message.handlers.GetChunkHandler;
-import proj.peer.message.handlers.StoredGenericHandler;
+import proj.peer.handlers.GetChunkHandler;
+import proj.peer.handlers.StoredGenericHandler;
 
 
 import java.io.IOException;

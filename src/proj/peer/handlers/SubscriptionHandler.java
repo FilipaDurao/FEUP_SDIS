@@ -1,7 +1,7 @@
-package proj.peer.message.handlers;
+package proj.peer.handlers;
 
 import proj.peer.Peer;
-import proj.peer.message.subscriptions.OperationSubscription;
+import proj.peer.handlers.subscriptions.OperationSubscription;
 
 public abstract class SubscriptionHandler implements SubscriptionHandlerInterface {
     protected OperationSubscription sub;

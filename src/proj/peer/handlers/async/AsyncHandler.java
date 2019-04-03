@@ -1,8 +1,8 @@
-package proj.peer.message.handlers.async;
+package proj.peer.handlers.async;
 
 import proj.peer.Peer;
-import proj.peer.message.handlers.SubscriptionHandler;
-import proj.peer.message.subscriptions.OperationSubscription;
+import proj.peer.handlers.SubscriptionHandler;
+import proj.peer.handlers.subscriptions.OperationSubscription;
 
 import java.util.concurrent.CountDownLatch;
 

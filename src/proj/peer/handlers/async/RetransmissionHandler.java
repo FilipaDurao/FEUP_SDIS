@@ -1,11 +1,11 @@
-package proj.peer.message.handlers.async;
+package proj.peer.handlers.async;
 
 import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
 import proj.peer.connection.SubscriptionConnection;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.Message;
-import proj.peer.message.subscriptions.OperationSubscription;
+import proj.peer.handlers.subscriptions.OperationSubscription;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;

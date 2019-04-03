@@ -1,7 +1,7 @@
 package proj.peer.connection;
 
 import proj.peer.Peer;
-import proj.peer.message.handlers.PutChunkHandler;
+import proj.peer.handlers.PutChunkHandler;
 
 import java.io.IOException;
 

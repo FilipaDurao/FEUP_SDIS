@@ -1,11 +1,11 @@
-package proj.peer.message.handlers.async;
+package proj.peer.handlers.async;
 
 import proj.peer.Peer;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.ChunkMessage;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.message.messages.Message;
-import proj.peer.message.subscriptions.ChunkSubscription;
+import proj.peer.handlers.subscriptions.ChunkSubscription;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;

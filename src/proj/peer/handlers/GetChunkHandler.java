@@ -1,10 +1,10 @@
-package proj.peer.message.handlers;
+package proj.peer.handlers;
 
 import proj.peer.Peer;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.message.messages.Message;
-import proj.peer.message.subscriptions.OperationSubscription;
+import proj.peer.handlers.subscriptions.OperationSubscription;
 import proj.peer.operations.GetChunkOperation;
 
 import java.util.logging.Level;

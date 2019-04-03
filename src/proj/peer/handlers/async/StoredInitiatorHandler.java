@@ -1,10 +1,10 @@
-package proj.peer.message.handlers.async;
+package proj.peer.handlers.async;
 
 import proj.peer.Peer;
 import proj.peer.message.messages.Message;
 import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.message.messages.StoredMessage;
-import proj.peer.message.subscriptions.ChunkSubscription;
+import proj.peer.handlers.subscriptions.ChunkSubscription;
 
 import java.util.HashSet;
 import java.util.concurrent.CountDownLatch;
