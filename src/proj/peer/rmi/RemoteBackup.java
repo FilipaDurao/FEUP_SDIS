@@ -48,6 +48,10 @@ public class RemoteBackup implements  RemoteBackupInterface{
 
     public int reclaim(Integer diskSpace) {
         System.out.println("Reclaim: " + diskSpace);
+        this.peer.getFileManager().setMaxSize(diskSpace * 1000);
+        while (this.peer.getFileManager().isPeerOversized()) {
+            // Remove a chunk
+        }
         return 0;
     }
 

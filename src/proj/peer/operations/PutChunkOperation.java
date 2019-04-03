@@ -27,7 +27,7 @@ public class PutChunkOperation implements Runnable {
             StoredMessage response = new StoredMessage(peer.getVersion(), peer.getPeerId(), msg.getFileId(), msg.getChunkNo());
             int delay = RandomGenerator.getNumberInRange(0, 400);
             this.peer.getScheduler().schedule(new SendMessageOperation(peer.getControl(), response), delay, TimeUnit.MILLISECONDS);
-        } catch (IOException e) {
+        } catch (Exception e) {
             NetworkLogger.printLog(Level.SEVERE, "PUTCHUNK operation - " + e.getMessage());
         }
     }

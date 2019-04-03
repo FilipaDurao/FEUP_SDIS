@@ -4,7 +4,6 @@ import proj.peer.log.NetworkLogger;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,14 +12,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class FileStructure implements Serializable {
+    public static final Integer DEFAULT_MAX_SIZE = 128000000;
     private ConcurrentHashMap<String, FileInfo> savedFiles;
     private File rootFolder;
     private Integer savedSize;
+    private Integer maxSize;
 
     public FileStructure(String rootFolderPath) throws Exception {
         this.savedFiles =  new ConcurrentHashMap<>();
         this.rootFolder = new File(rootFolderPath);
         this.savedSize = 0;
+        this.maxSize = DEFAULT_MAX_SIZE;
 
         if (!this.rootFolder.mkdirs() && !this.rootFolder.isDirectory()) {
             throw new Exception("Root folder is not a directory.");
@@ -29,7 +31,11 @@ public class FileStructure implements Serializable {
     }
 
 
-    public void putChunk(String fileId, Integer chunkId, byte[] content, Integer replicationDegree) throws IOException {
+    public void putChunk(String fileId, Integer chunkId, byte[] content, Integer replicationDegree) throws Exception {
+        if (content.length + this.savedSize > this.maxSize) {
+            throw new Exception("Not enough space to store");
+        }
+
         File fileFolder = new File(this.rootFolder.getAbsolutePath() + "/" + fileId);
         fileFolder.mkdirs();
 
@@ -143,5 +149,13 @@ public class FileStructure implements Serializable {
 
     public ConcurrentHashMap<String, FileInfo> getSavedFiles() {
         return savedFiles;
+    }
+
+    public Integer getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(Integer maxSize) {
+        this.maxSize = maxSize;
     }
 }

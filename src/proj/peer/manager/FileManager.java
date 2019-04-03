@@ -55,7 +55,7 @@ public class FileManager implements Runnable{
     }
 
 
-    public void putChunk(String fileId, Integer chunkId, byte[] content, Integer replicationDegree) throws IOException {
+    public void putChunk(String fileId, Integer chunkId, byte[] content, Integer replicationDegree) throws Exception {
         fileStructure.putChunk(fileId, chunkId, content, replicationDegree);
     }
 
@@ -90,6 +90,14 @@ public class FileManager implements Runnable{
     public int getFileSize() { return fileStructure.getSavedSize(); }
 
     public ConcurrentHashMap<String, FileInfo> getChunks() {return this.fileStructure.getSavedFiles();}
+
+    public void setMaxSize(Integer maxSize) {
+        this.fileStructure.setMaxSize(maxSize);
+    }
+
+    public boolean isPeerOversized() {
+        return this.fileStructure.getMaxSize() < this.fileStructure.getSavedSize();
+    }
 
     @Override
     public void run() {
