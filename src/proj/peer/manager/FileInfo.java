@@ -2,6 +2,7 @@ package proj.peer.manager;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FileInfo implements Serializable {
@@ -12,8 +13,8 @@ public class FileInfo implements Serializable {
         this.chunks = new ConcurrentHashMap<>();
     }
 
-    public void addChunk(Integer chunkNumber, Integer replicationDegree) {
-        this.chunks.put(chunkNumber, new ChunkInfo(chunkNumber, replicationDegree));
+    public void addChunk(Integer chunkNumber, Integer replicationDegree, Integer size) {
+        this.chunks.put(chunkNumber, new ChunkInfo(chunkNumber, replicationDegree, size));
     }
 
     public Collection<ChunkInfo> getChunks() {
@@ -29,7 +30,24 @@ public class FileInfo implements Serializable {
             this.chunks.get(chunkNumber).addPeer(peerId);
     }
 
-    public void deleteChunk(Integer chunkId) {
-        this.chunks.remove(chunkId);
+    public int deleteChunk(Integer chunkId) {
+        if (this.chunks.contains(chunkId) ) {
+            int size = this.chunks.get(chunkId).getSize();
+            this.chunks.remove(chunkId);
+            return size;
+        }
+        return 0;
+    }
+
+    public int getSize(Integer chunkId) {
+        return this.chunks.get(chunkId).getSize();
+    }
+
+    public int getSize() {
+        int size = 0;
+        for (Map.Entry<Integer, ChunkInfo> entry : chunks.entrySet()) {
+            size += entry.getValue().getSize();
+        }
+        return size;
     }
 }

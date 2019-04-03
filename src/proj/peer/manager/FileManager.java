@@ -3,6 +3,7 @@ package proj.peer.manager;
 import proj.peer.log.NetworkLogger;
 
 import java.io.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class FileManager implements Runnable{
@@ -55,7 +56,6 @@ public class FileManager implements Runnable{
 
 
     public void putChunk(String fileId, Integer chunkId, byte[] content, Integer replicationDegree) throws IOException {
-
         fileStructure.putChunk(fileId, chunkId, content, replicationDegree);
     }
 
@@ -86,6 +86,10 @@ public class FileManager implements Runnable{
     public boolean isFileSaved(String fileId) {
         return fileStructure.isFileSaved(fileId);
     }
+
+    public int getFileSize() { return fileStructure.getSavedSize(); }
+
+    public ConcurrentHashMap<String, FileInfo> getChunks() {return this.fileStructure.getSavedFiles();}
 
     @Override
     public void run() {

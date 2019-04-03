@@ -49,7 +49,7 @@ public class RemoteBackup implements  RemoteBackupInterface{
     }
 
     public int state() {
-        System.out.println("STATE");
+        System.out.println(this.peer.getFileManager().getFileSize());
         return 0;
     }
 }

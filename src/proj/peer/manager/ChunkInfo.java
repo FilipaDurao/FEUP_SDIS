@@ -6,12 +6,14 @@ import java.util.HashSet;
 public class ChunkInfo implements Serializable {
     private Integer chunkNumber;
     private Integer replicationDegree;
+    private Integer size;
     private HashSet<String> peerIds;
 
-    public ChunkInfo(Integer chunkNumber, Integer replicationDegree) {
+    public ChunkInfo(Integer chunkNumber, Integer replicationDegree, Integer size) {
 
         this.chunkNumber = chunkNumber;
         this.replicationDegree = replicationDegree;
+        this.size = size;
         this.peerIds = new HashSet<>();
     }
 
@@ -29,6 +31,10 @@ public class ChunkInfo implements Serializable {
 
     public int getNumberOfSaves() {
         return this.peerIds.size();
+    }
+
+    public Integer getSize() {
+        return size;
     }
 
     @Override

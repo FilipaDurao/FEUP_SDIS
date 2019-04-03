@@ -15,11 +15,12 @@ import java.util.logging.Level;
 public class FileStructure implements Serializable {
     private ConcurrentHashMap<String, FileInfo> savedFiles;
     private File rootFolder;
+    private Integer savedSize;
 
     public FileStructure(String rootFolderPath) throws Exception {
         this.savedFiles =  new ConcurrentHashMap<>();
-
         this.rootFolder = new File(rootFolderPath);
+        this.savedSize = 0;
 
         if (!this.rootFolder.mkdirs() && !this.rootFolder.isDirectory()) {
             throw new Exception("Root folder is not a directory.");
@@ -38,13 +39,18 @@ public class FileStructure implements Serializable {
 
         if (this.savedFiles.containsKey(fileId)) {
             FileInfo chunks = this.savedFiles.get(fileId);
-            chunks.addChunk(chunkId, replicationDegree);
+
+            if (chunks.contains(chunkId)) {
+                this.savedSize -= chunks.getSize(chunkId);
+            }
+            chunks.addChunk(chunkId, replicationDegree, content.length);
+
         } else {
             FileInfo info = new FileInfo();
-            info.addChunk(chunkId, replicationDegree);
+            info.addChunk(chunkId, replicationDegree, content.length);
             this.savedFiles.put(fileId, info);
         }
-
+        this.savedSize += content.length;
     }
 
     public void storeChunkPeer(String fileId, Integer chunkId, String peerId) {
@@ -69,7 +75,8 @@ public class FileStructure implements Serializable {
 
         File file = new File(this.rootFolder.getAbsolutePath() + "/" + fileId + "/" + chunkId);
         if (file.delete()) {
-            this.savedFiles.get(fileId).deleteChunk(chunkId);
+            int size = this.savedFiles.get(fileId).deleteChunk(chunkId);
+            this.savedSize -= size;
             return;
         }
         throw new Exception("Failed chunk deletion");
@@ -81,9 +88,9 @@ public class FileStructure implements Serializable {
             throw new Exception("File not found");
         }
 
-        FileInfo chunks = this.savedFiles.get(fileId);
         File folder = new File(this.rootFolder.getAbsolutePath() + "/" + fileId);
         if (deleteFolderFromMemory(folder)) {
+            this.savedSize -= this.savedFiles.get(fileId).getSize();
             this.savedFiles.remove(fileId);
             return;
         }
@@ -128,5 +135,13 @@ public class FileStructure implements Serializable {
                 }
             }
         }
+    }
+
+    public Integer getSavedSize() {
+        return savedSize;
+    }
+
+    public ConcurrentHashMap<String, FileInfo> getSavedFiles() {
+        return savedFiles;
     }
 }
