@@ -15,14 +15,16 @@ public class PutChunkMessage extends MessageWBody {
     public PutChunkMessage(byte[] messageBytes) throws Exception {
         super();
         byte[][] msgParts = this.split(messageBytes, Message.LINE_TERMINATOR_ARRAY);
-        if (msgParts.length >= 2)
+        if (msgParts.length >= 2) {
             this.body = msgParts[1];
-        else
+        }
+        else {
             this.body = new byte[0];
+        }
 
         String[] msgHeader = new String(msgParts[0], 0, msgParts[0].length).split(" ");
-        if (msgHeader.length != 6) {
-            throw new Exception("Malformed OPERATION message: Wrong number of arguments");
+        if (msgHeader.length < 6) {
+            throw new Exception("Malformed " + this.operation + " message: Wrong number of arguments");
         }
 
         this.operation = OPERATION;

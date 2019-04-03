@@ -29,13 +29,14 @@ public class MessageWBody extends MessageChunk {
         int foundElements = 0;
 
         byte[][] sliced = new byte[2][];
+        sliced[0]  = byteArray;
+        sliced[1] = new byte[0];
 
         for (int i = 0; i < byteArray.length; i++) {
             if (foundElements >= slicer.length) {
                 // Split byte in array
                 sliced[0] = Arrays.copyOfRange(byteArray, 0, i - foundElements);
                 sliced[1] = Arrays.copyOfRange(byteArray, i, byteArray.length);
-
                 break;
             }
 

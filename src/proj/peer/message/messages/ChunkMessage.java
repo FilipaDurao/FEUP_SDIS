@@ -17,7 +17,7 @@ public class ChunkMessage extends MessageWBody{
             this.body = new byte[0];
 
         String[] msgHeader = new String(msgParts[0], 0, msgParts[0].length).split(" ");
-        if (msgHeader.length != 5) {
+        if (msgHeader.length < 5) {
             throw new Exception("Malformed OPERATION message: Wrong number of arguments");
         }
 

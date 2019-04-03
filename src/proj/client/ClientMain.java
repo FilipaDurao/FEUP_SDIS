@@ -53,7 +53,8 @@ public class ClientMain {
             System.exit(-1);
         }
 
-        remoteBackup.state();
+        String res = remoteBackup.state();
+        System.out.println(res);
 
     }
 

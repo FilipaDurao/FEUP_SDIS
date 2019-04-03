@@ -12,6 +12,6 @@ public interface RemoteBackupInterface extends Remote {
 
     int reclaim(Integer diskSpace) throws  RemoteException;
 
-    int state() throws  RemoteException;
+    String state() throws  RemoteException;
 
 }

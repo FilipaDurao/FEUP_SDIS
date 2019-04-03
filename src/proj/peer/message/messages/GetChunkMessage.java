@@ -15,7 +15,7 @@ public class GetChunkMessage extends MessageChunk {
             throw new Exception("Malformed OPERATION message: Body included");
 
         String[] msgHeader = msgParts[0].split(" ");
-        if (msgHeader.length != 5) {
+        if (msgHeader.length < 5) {
             throw new Exception("Malformed OPERATION message: Wrong number of arguments");
         }
 
