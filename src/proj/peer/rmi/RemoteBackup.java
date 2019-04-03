@@ -53,7 +53,7 @@ public class RemoteBackup implements  RemoteBackupInterface{
 
     public String state() {
         StringBuilder res = new StringBuilder();
-        res.append("Total size: ").append(this.peer.getFileManager().getFileSize()).append("\n");
+        res.append("Total size: ").append(this.peer.getFileManager().getFileSize()).append(" bytes\n");
         for (Map.Entry<String, FileInfo> entry : this.peer.getFileManager().getChunks().entrySet()) {
             res.append("\t File saved: ").append(entry.getKey()).append("\n\t\tChunks: ");
             for (ChunkInfo chunkInfo : entry.getValue().getChunks()) {
