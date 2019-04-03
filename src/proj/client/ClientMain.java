@@ -9,7 +9,7 @@ import java.rmi.registry.Registry;
 public class ClientMain {
 
     public static void main(String[] args) {
-        if(args.length < 3) {
+        if(args.length < 2) {
             System.err.println("Usage:  <peer_p> <operation> <oper_1> <oper_2>");
             System.exit(-1);
         }
@@ -30,6 +30,12 @@ public class ClientMain {
             } else if (operation.toUpperCase().equals("DELETE")) {
                 delete(args, remoteBackup);
                 System.exit(0);
+            } else if (operation.toUpperCase().equals("RECLAIM")) {
+                reclaim(args, remoteBackup);
+                System.exit(0);
+            } else if (operation.toUpperCase().equals("STATE")) {
+                state(args, remoteBackup);
+                System.exit(0);
             }
 
 
@@ -39,6 +45,26 @@ public class ClientMain {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void state(String[] args, RemoteBackupInterface remoteBackup) throws RemoteException {
+        if (args.length < 2) {
+            System.err.println("Missing parameters in state");
+            System.exit(-1);
+        }
+
+        remoteBackup.state();
+
+    }
+
+    private static void reclaim(String[] args, RemoteBackupInterface remoteBackup) throws RemoteException {
+        if (args.length < 3) {
+            System.err.println("Missing parameters in reclaim");
+            System.exit(-1);
+        }
+
+        int diskSpace = Integer.valueOf(args[2]);
+        remoteBackup.reclaim(diskSpace);
     }
 
     private static void delete(String[] args, RemoteBackupInterface remoteBackup) throws RemoteException {
