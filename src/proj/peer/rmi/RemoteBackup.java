@@ -1,6 +1,11 @@
 package proj.peer.rmi;
 
 import proj.peer.Peer;
+import proj.peer.message.messages.DeleteMessage;
+import proj.peer.operations.SendMessageOperation;
+import proj.peer.utils.SHA256Encoder;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class RemoteBackup implements  RemoteBackupInterface{
@@ -28,8 +33,13 @@ public class RemoteBackup implements  RemoteBackupInterface{
     }
 
 
-    public int delete(String pathname) {
-        System.out.println("Delete: " + pathname);
+    public int delete(String filename) {
+        String encodedFilename = SHA256Encoder.encode(filename);
+        DeleteMessage deleteMessage = new DeleteMessage(Peer.DEFAULT_VERSION, this.peer.getPeerId(), encodedFilename);
+        SendMessageOperation sendMessageOperation = new SendMessageOperation(this.peer.getControl(), deleteMessage);
+        this.peer.getScheduler().schedule(sendMessageOperation, 0, TimeUnit.SECONDS);
+        this.peer.getScheduler().schedule(sendMessageOperation, 2, TimeUnit.SECONDS);
+        this.peer.getScheduler().schedule(sendMessageOperation, 4, TimeUnit.SECONDS);
         return 0;
     }
 

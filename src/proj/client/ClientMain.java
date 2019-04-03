@@ -27,12 +27,34 @@ public class ClientMain {
             } else if (operation.toUpperCase().equals("RESTORE")) {
                 restore(args, remoteBackup);
                 System.exit(0);
+            } else if (operation.toUpperCase().equals("DELETE")) {
+                delete(args, remoteBackup);
+                System.exit(0);
             }
+
+
 
             System.err.println("Unsupported operation: " + operation);
             System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void delete(String[] args, RemoteBackupInterface remoteBackup) throws RemoteException {
+       if (args.length < 3) {
+            System.err.println("Missing parameters in delete");
+            System.exit(-1);
+        }
+        String filename = args[2];
+
+        int res = remoteBackup.delete(filename);
+
+        System.out.println("Returned: " + res);
+        if (res != 0) {
+            System.out.println("Delete failed");
+        } else {
+            System.out.println("Succeeded");
         }
     }
 

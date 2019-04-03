@@ -27,7 +27,7 @@ public abstract class Message implements MessageInterface {
     }
 
     public byte[] getBytes() {
-        return this.toString().getBytes(StandardCharsets.ISO_8859_1);
+        return this.toString().getBytes();
     }
 
     public String getOperation() {

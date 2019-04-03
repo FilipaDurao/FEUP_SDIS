@@ -31,17 +31,12 @@ public class MulticastConnection {
         this.multiSocket.send(new DatagramPacket(msgBytes,msgBytes.length, InetAddress.getByName(multicast_name), multicast_port_number));
     }
 
-    public Message getMessage()  {
+    public Message getMessage() throws Exception {
         byte[] msgBytes = new byte[CHUNK_SIZE + MAX_HEADER_SIZE];
         DatagramPacket packet = new DatagramPacket(msgBytes, msgBytes.length);
 
-        try {
-            this.multiSocket.receive(packet);
-            return MessageFactory.getMessage(Arrays.copyOfRange(packet.getData(), 0, packet.getLength()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        this.multiSocket.receive(packet);
+        return MessageFactory.getMessage(Arrays.copyOfRange(packet.getData(), 0, packet.getLength()));
     }
     
 }

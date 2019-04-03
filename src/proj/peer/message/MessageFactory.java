@@ -20,7 +20,9 @@ public class MessageFactory {
         else if (operation.toUpperCase().equals(GetChunkMessage.OPERATION)) {
             return new GetChunkMessage(strMessage);
         }
-
+        else if (operation.toUpperCase().equals(DeleteMessage.OPERATION)) {
+            return new DeleteMessage(strMessage);
+        }
         throw new Exception("Message type not recognized: " + operation);
     }
 }
