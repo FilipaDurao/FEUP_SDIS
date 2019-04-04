@@ -2,15 +2,15 @@ package proj.peer.message.messages;
 
 import proj.peer.Peer;
 
-public class StoredMessage extends  MessageChunk{
+public class RemovedMessage extends MessageChunk {
 
-    public static final String OPERATION = "STORED";
+    public static final String OPERATION = "REMOVED";
 
-    public StoredMessage(String senderId, String fileId, Integer chunkNo) {
+    public RemovedMessage(String senderId, String fileId, Integer chunkNo) {
         super(Peer.DEFAULT_VERSION, OPERATION, senderId, fileId, chunkNo);
     }
 
-    public StoredMessage(String msgStr) throws Exception {
+    public RemovedMessage(String msgStr) throws Exception {
         super();
         String[] msgParts = msgStr.split(Message.CRLF + Message.CRLF);
         if (msgParts.length > 2)

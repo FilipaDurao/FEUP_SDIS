@@ -19,7 +19,7 @@ public class FileStructure implements Serializable {
     private Integer maxSize;
 
     public FileStructure(String rootFolderPath) throws Exception {
-        this.savedFiles =  new ConcurrentHashMap<>();
+        this.savedFiles = new ConcurrentHashMap<>();
         this.rootFolder = new File(rootFolderPath);
         this.savedSize = 0;
         this.maxSize = DEFAULT_MAX_SIZE;
@@ -106,14 +106,13 @@ public class FileStructure implements Serializable {
     }
 
     private boolean deleteFolderFromMemory(File directory) {
-        if(directory.exists()){
+        if (directory.exists()) {
             File[] files = directory.listFiles();
-            if(null!=files){
-                for(int i=0; i<files.length; i++) {
-                    if(files[i].isDirectory()) {
+            if (null != files) {
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].isDirectory()) {
                         deleteFolderFromMemory(files[i]);
-                    }
-                    else {
+                    } else {
                         files[i].delete();
                     }
                 }
@@ -133,7 +132,7 @@ public class FileStructure implements Serializable {
     public void checkFileStructure() {
         for (Map.Entry<String, FileInfo> entry : this.savedFiles.entrySet()) {
             String fileId = entry.getKey();
-            for (ChunkInfo chunkInfo :  entry.getValue().getChunks()) {
+            for (ChunkInfo chunkInfo : entry.getValue().getChunks()) {
                 String filename = this.rootFolder.getAbsolutePath() + "/" + fileId + "/" + chunkInfo.getChunkNumber();
                 File f = new File(filename);
                 if (!f.exists()) {

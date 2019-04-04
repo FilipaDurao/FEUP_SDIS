@@ -1,11 +1,13 @@
 package proj.peer.message.messages;
 
+import proj.peer.Peer;
+
 public class GetChunkMessage extends MessageChunk {
 
     public static final String OPERATION = "GETCHUNK";
 
-    public GetChunkMessage(String version, String senderId, String fileId, Integer chunkNo) {
-        super(version, OPERATION, senderId, fileId, chunkNo);
+    public GetChunkMessage(String senderId, String fileId, Integer chunkNo) {
+        super(Peer.DEFAULT_VERSION, OPERATION, senderId, fileId, chunkNo);
     }
 
     public GetChunkMessage(String msgStr) throws Exception {

@@ -1,17 +1,20 @@
 package proj.peer.rmi;
 
 import proj.peer.Peer;
+import proj.peer.log.NetworkLogger;
 import proj.peer.manager.ChunkInfo;
 import proj.peer.manager.FileInfo;
 import proj.peer.message.messages.DeleteMessage;
+import proj.peer.message.messages.RemovedMessage;
 import proj.peer.operations.SendMessageOperation;
 import proj.peer.utils.SHA256Encoder;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 
-public class RemoteBackup implements  RemoteBackupInterface{
+public class RemoteBackup implements RemoteBackupInterface {
 
     private final FileRestorer fileRestorer;
     private Peer peer;
@@ -47,10 +50,19 @@ public class RemoteBackup implements  RemoteBackupInterface{
     }
 
     public int reclaim(Integer diskSpace) {
-        System.out.println("Reclaim: " + diskSpace);
-        this.peer.getFileManager().setMaxSize(diskSpace * 1000);
-        while (this.peer.getFileManager().isPeerOversized()) {
-            // Remove a chunk
+        try {
+            this.peer.getFileManager().setMaxSize(diskSpace * 1000);
+            while (this.peer.getFileManager().isPeerOversized()) {
+                // Remove a chunk
+                RemovedMessage removedMessage = this.peer.getFileManager().deleteChunk();
+                if (removedMessage != null) {
+                    SendMessageOperation sendMessageOperation = new SendMessageOperation(this.peer.getControl(), removedMessage);
+                    this.peer.getScheduler().schedule(sendMessageOperation, 0, TimeUnit.SECONDS);
+                }
+            }
+        } catch (Exception e) {
+            NetworkLogger.printLog(Level.SEVERE, "Failed space reclaiming - " + e.getMessage());
+            return -1;
         }
         return 0;
     }

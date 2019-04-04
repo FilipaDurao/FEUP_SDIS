@@ -24,7 +24,7 @@ public class GetChunkOperation implements Runnable {
         try {
             if (this.peer.getFileManager().isChunkSaved(msg.getFileId(), msg.getChunkNo())) {
                 byte[] body = this.peer.getFileManager().getChunk(msg.getFileId(), msg.getChunkNo());
-                ChunkMessage response = new ChunkMessage(peer.getVersion(), peer.getPeerId(), msg.getFileId(), msg.getChunkNo(), body);
+                ChunkMessage response = new ChunkMessage(peer.getPeerId(), msg.getFileId(), msg.getChunkNo(), body);
                 int delay = RandomGenerator.getNumberInRange(0, 400);
                 this.peer.getScheduler().schedule(new SendMessageOperation(peer.getRestore(), response), delay, TimeUnit.MILLISECONDS);
             }

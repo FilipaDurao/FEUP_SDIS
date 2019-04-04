@@ -10,6 +10,7 @@ public class DeleteMessage extends Message {
     public DeleteMessage(String msgStr) throws Exception {
         super();
 
+        msgStr.replaceAll("\\s+", " ");
         String[] msgHeader = msgStr.split(" ");
         if (msgHeader.length < 5) {
             throw new Exception("Malformed OPERATION message: Wrong number of arguments");

@@ -1,12 +1,14 @@
 package proj.peer.manager;
 
 import proj.peer.log.NetworkLogger;
+import proj.peer.message.messages.RemovedMessage;
 
 import java.io.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class FileManager implements Runnable{
+public class FileManager implements Runnable {
 
     public static final String FILENAME = "localManager.ser";
     private FileStructure fileStructure;
@@ -18,7 +20,7 @@ public class FileManager implements Runnable{
     }
 
     private String getFilename() {
-        return "data/peer_" + peerId + "/" +  FILENAME;
+        return "data/peer_" + peerId + "/" + FILENAME;
     }
 
     private void saveFileStructure() {
@@ -69,9 +71,33 @@ public class FileManager implements Runnable{
         return fileStructure.getChunk(fileId, chunkId);
     }
 
-    public void deleteChunk(String fileId, Integer chunkId) throws Exception {
+    public RemovedMessage deleteChunk() throws Exception {
+        String fileId = null;
+        Integer chunkId = null;
+        for (Map.Entry<String, FileInfo> entry : this.fileStructure.getSavedFiles().entrySet()) {
+            for (ChunkInfo chunkInfo : entry.getValue().getChunks()) {
+                if (chunkInfo.getReplicationDegree() < chunkInfo.getNumberOfSaves()) {
+                    fileId = entry.getKey();
+                    chunkId = chunkInfo.getChunkNumber();
+                    fileStructure.deleteChunk(fileId, chunkId);
+                    NetworkLogger.printLog(Level.INFO, "Deleted chunk - " + fileId.substring(0, 5) + " - " + chunkId);
+                    return null;
+                }
 
+                if (fileId == null || chunkId == null) {
+                    fileId = entry.getKey();
+                    chunkId = chunkInfo.getChunkNumber();
+                }
+            }
+        }
+
+        if (fileId == null || chunkId == null) {
+            throw new Exception("No chunks stored");
+        }
+        
         fileStructure.deleteChunk(fileId, chunkId);
+        NetworkLogger.printLog(Level.INFO, "Deleted file - " + fileId.substring(0, 5) + " - " + chunkId);
+        return new RemovedMessage(peerId, fileId, chunkId);
     }
 
     public void deleteFile(String fileId) throws Exception {
@@ -87,9 +113,13 @@ public class FileManager implements Runnable{
         return fileStructure.isFileSaved(fileId);
     }
 
-    public int getFileSize() { return fileStructure.getSavedSize(); }
+    public int getFileSize() {
+        return fileStructure.getSavedSize();
+    }
 
-    public ConcurrentHashMap<String, FileInfo> getChunks() {return this.fileStructure.getSavedFiles();}
+    public ConcurrentHashMap<String, FileInfo> getChunks() {
+        return this.fileStructure.getSavedFiles();
+    }
 
     public void setMaxSize(Integer maxSize) {
         this.fileStructure.setMaxSize(maxSize);

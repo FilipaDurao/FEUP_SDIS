@@ -1,5 +1,7 @@
 package proj.peer.message.messages;
 
+import proj.peer.Peer;
+
 import java.nio.ByteBuffer;
 
 public class PutChunkMessage extends MessageWBody {
@@ -7,8 +9,8 @@ public class PutChunkMessage extends MessageWBody {
     public static final String OPERATION = "PUTCHUNK";
     private Integer replicationDegree;
 
-    public PutChunkMessage(String version, String senderId, String fileId, Integer chunkNo, Integer replicationDegree, byte[] body) {
-        super(version, OPERATION, senderId, fileId, chunkNo, body);
+    public PutChunkMessage(String senderId, String fileId, Integer chunkNo, Integer replicationDegree, byte[] body) {
+        super(Peer.DEFAULT_VERSION, OPERATION, senderId, fileId, chunkNo, body);
         this.replicationDegree = replicationDegree;
     }
 

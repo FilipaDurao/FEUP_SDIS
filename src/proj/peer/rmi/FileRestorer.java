@@ -79,7 +79,7 @@ public class FileRestorer {
     }
 
     private byte[] restoreChunk(Integer chunkNo, String encode) throws Exception {
-        GetChunkMessage msg = new GetChunkMessage(this.peer.getVersion(), this.peer.getPeerId(), encode, chunkNo);
+        GetChunkMessage msg = new GetChunkMessage(this.peer.getPeerId(), encode, chunkNo);
         CountDownLatch countDownLatch = new CountDownLatch(1);
         ChunkMsgHandler handler = new ChunkMsgHandler(peer, msg, countDownLatch);
         this.peer.getRestore().subscribe(handler);

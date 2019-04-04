@@ -75,7 +75,7 @@ public class FileSender {
      * @return Handler for the message subscription and retransmission.
      */
     private StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo) {
-        PutChunkMessage msg = new PutChunkMessage(peer.getVersion(), peer.getPeerId(), encodedFileName, chunkNo, replicationDegree, body);
+        PutChunkMessage msg = new PutChunkMessage(peer.getPeerId(), encodedFileName, chunkNo, replicationDegree, body);
         StoredInitiatorHandler handler = new StoredInitiatorHandler(this.peer, msg, this.chunkSavedSignal);
         handler.run();
         this.peer.getControl().subscribe(handler);

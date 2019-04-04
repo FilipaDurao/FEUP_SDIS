@@ -24,7 +24,7 @@ public class PutChunkOperation implements Runnable {
     public void run() {
         try {
             this.peer.getFileManager().putChunk(msg.getFileId(), msg.getChunkNo(), msg.getBody(), msg.getReplicationDegree());
-            StoredMessage response = new StoredMessage(peer.getVersion(), peer.getPeerId(), msg.getFileId(), msg.getChunkNo());
+            StoredMessage response = new StoredMessage(peer.getPeerId(), msg.getFileId(), msg.getChunkNo());
             int delay = RandomGenerator.getNumberInRange(0, 400);
             this.peer.getScheduler().schedule(new SendMessageOperation(peer.getControl(), response), delay, TimeUnit.MILLISECONDS);
         } catch (Exception e) {

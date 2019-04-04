@@ -31,7 +31,7 @@ public class FileInfo implements Serializable {
     }
 
     public int deleteChunk(Integer chunkId) {
-        if (this.chunks.contains(chunkId) ) {
+        if (this.chunks.containsKey(chunkId) ) {
             int size = this.chunks.get(chunkId).getSize();
             this.chunks.remove(chunkId);
             return size;

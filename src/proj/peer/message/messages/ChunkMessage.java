@@ -1,11 +1,13 @@
 package proj.peer.message.messages;
 
+import proj.peer.Peer;
+
 public class ChunkMessage extends MessageWBody{
 
     public static final String OPERATION = "CHUNK";
 
-    public ChunkMessage(String version, String senderId, String fileId, Integer chunkNo, byte[] body) {
-        super(version, OPERATION, senderId, fileId, chunkNo, body);
+    public ChunkMessage(String senderId, String fileId, Integer chunkNo, byte[] body) {
+        super(Peer.DEFAULT_VERSION, OPERATION, senderId, fileId, chunkNo, body);
     }
 
     public ChunkMessage(byte[] messageBytes) throws Exception {
