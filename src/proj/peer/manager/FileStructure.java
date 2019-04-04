@@ -157,4 +157,18 @@ public class FileStructure implements Serializable {
     public void setMaxSize(Integer maxSize) {
         this.maxSize = maxSize;
     }
+
+    public ChunkInfo getChunkInfo(String fileId, Integer chunkNo) throws Exception {
+        if(isChunkSaved(fileId, chunkNo)) {
+            return  this.savedFiles.get(fileId).getChunkInfo(chunkNo);
+        }
+
+        throw new Exception("Chunk not found");
+    }
+
+    public void removeChunkPeer(String fileId, Integer chunkId, String peerId) {
+        if (this.savedFiles.containsKey(fileId)) {
+            this.savedFiles.get(fileId).removePeerId(chunkId, peerId);
+        }
+    }
 }

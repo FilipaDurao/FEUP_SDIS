@@ -2,19 +2,20 @@ package proj.peer.manager;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ChunkInfo implements Serializable {
     private Integer chunkNumber;
     private Integer replicationDegree;
     private Integer size;
-    private HashSet<String> peerIds;
+    private ConcurrentHashMap<String, Boolean> peerIds;
 
     public ChunkInfo(Integer chunkNumber, Integer replicationDegree, Integer size) {
 
         this.chunkNumber = chunkNumber;
         this.replicationDegree = replicationDegree;
         this.size = size;
-        this.peerIds = new HashSet<>();
+        this.peerIds = new ConcurrentHashMap<>();
     }
 
     public Integer getChunkNumber() {
@@ -26,7 +27,7 @@ public class ChunkInfo implements Serializable {
     }
 
     public void addPeer(String id) {
-        this.peerIds.add(id);
+        this.peerIds.put(id, true);
     }
 
     public int getNumberOfSaves() {
@@ -40,8 +41,12 @@ public class ChunkInfo implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (o instanceof ChunkInfo) {
-            return ((ChunkInfo) o).getChunkNumber() == this.getChunkNumber();
+            return ((ChunkInfo) o).getChunkNumber().equals(this.getChunkNumber());
         }
         return false;
+    }
+
+    public void removePeer(String peerId) {
+        this.peerIds.remove(peerId);
     }
 }

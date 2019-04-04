@@ -65,6 +65,9 @@ public class FileManager implements Runnable {
         fileStructure.storeChunkPeer(fileId, chunkId, peerId);
     }
 
+    public void removeChunkPeer(String fileId, Integer chunkId, String peerId) {
+        fileStructure.removeChunkPeer(fileId, chunkId, peerId);
+    }
 
     public byte[] getChunk(String fileId, Integer chunkId) throws Exception {
 
@@ -94,9 +97,9 @@ public class FileManager implements Runnable {
         if (fileId == null || chunkId == null) {
             throw new Exception("No chunks stored");
         }
-        
+
         fileStructure.deleteChunk(fileId, chunkId);
-        NetworkLogger.printLog(Level.INFO, "Deleted file - " + fileId.substring(0, 5) + " - " + chunkId);
+        NetworkLogger.printLog(Level.INFO, "Deleted chunk - " + fileId.substring(0, 5) + " - " + chunkId);
         return new RemovedMessage(peerId, fileId, chunkId);
     }
 
@@ -132,5 +135,10 @@ public class FileManager implements Runnable {
     @Override
     public void run() {
         this.saveFileStructure();
+    }
+
+
+    public ChunkInfo getChunkInfo(String fileId, Integer chunkNo) throws Exception {
+        return this.fileStructure.getChunkInfo(fileId, chunkNo);
     }
 }

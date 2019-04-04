@@ -23,6 +23,9 @@ public class MessageFactory {
         else if (operation.toUpperCase().equals(DeleteMessage.OPERATION)) {
             return new DeleteMessage(strMessage);
         }
+        else if (operation.toUpperCase().equals(RemovedMessage.OPERATION)) {
+            return new RemovedMessage(strMessage);
+        }
         throw new Exception("Message type not recognized: " + operation);
     }
 }

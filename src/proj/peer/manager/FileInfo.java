@@ -50,4 +50,16 @@ public class FileInfo implements Serializable {
         }
         return size;
     }
+
+    public ChunkInfo getChunkInfo(Integer chunkNo) throws Exception {
+        if (contains(chunkNo)) {
+            return this.chunks.get(chunkNo);
+        }
+        throw  new Exception("Chunk not found");
+    }
+
+    public void removePeerId(Integer chunkNumber, String peerId) {
+        if (this.chunks.containsKey(chunkNumber))
+            this.chunks.get(chunkNumber).removePeer(peerId);
+    }
 }
