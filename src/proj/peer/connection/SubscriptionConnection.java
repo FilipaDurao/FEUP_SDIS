@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public abstract class SubscriptionConnection extends RunnableMC {
+public abstract class SubscriptionConnection extends MulticastConnection implements Runnable {
     protected Peer peer;
     protected ConcurrentHashMap<OperationSubscription, SubscriptionHandlerInterface> subscriptions;
     private String connectionName;
