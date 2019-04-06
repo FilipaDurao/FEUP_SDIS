@@ -32,11 +32,13 @@ public class ResaveOperation implements Runnable {
                     PutChunkMessage msg = new PutChunkMessage(peer.getPeerId(), this.fileId, chunkNo, chunkInfo.getReplicationDegree(), body);
                     CountDownLatch latch = new CountDownLatch(1);
                     StoredInitiatorHandler handler = new StoredInitiatorHandler(this.peer, msg, latch);
-                    handler.run();
                     this.peer.getControl().subscribe(handler);
+                    handler.addStoredId(this.peer.getPeerId());
                     ResaveHandler stopHandler = new ResaveHandler(fileId, chunkNo, this.peer.getControl(), handler, this.peer);
                     this.peer.getControl().subscribe(stopHandler);
                     this.peer.getScheduler().submit(new LatchedUnsubscribeOperation(stopHandler, latch));
+
+                    handler.startAsync();
                 }
 
             }

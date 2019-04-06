@@ -10,11 +10,11 @@ import proj.peer.handlers.subscriptions.ChunkSubscription;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
-public class ChunkInitiatorHandler extends RetransmissionHandler {
+public class ChunkInitiatorHandler extends AsyncHandler {
     private byte[] body;
 
     public ChunkInitiatorHandler(Peer peer, GetChunkMessage msg, CountDownLatch countDownLatch) {
-        super(new ChunkSubscription(ChunkMessage.OPERATION, msg.getFileId(), msg.getChunkNo(), msg.getVersion()), peer, peer.getControl(), peer.getRestore(), msg, countDownLatch);
+        super(new ChunkSubscription(ChunkMessage.OPERATION, msg.getFileId(), msg.getChunkNo(), msg.getVersion()), peer.getRestore(), peer.getControl(), msg, countDownLatch, peer);
     }
 
     @Override
@@ -29,11 +29,6 @@ public class ChunkInitiatorHandler extends RetransmissionHandler {
             this.countDown();
         }
 
-    }
-
-    @Override
-    public boolean wasSuccessful() {
-        return this.successful;
     }
 
     public byte[] getBody() {

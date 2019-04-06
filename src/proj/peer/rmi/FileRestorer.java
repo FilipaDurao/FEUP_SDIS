@@ -82,7 +82,7 @@ public class FileRestorer {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         ChunkInitiatorHandler handler = new ChunkInitiatorHandler(peer, msg, countDownLatch);
         this.peer.getRestore().subscribe(handler);
-        handler.run();
+        handler.startAsync();
         countDownLatch.await();
         if (!handler.wasSuccessful())
             throw new Exception("Chunk retrieval not successful.");

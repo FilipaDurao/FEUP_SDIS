@@ -1,5 +1,5 @@
 package proj.peer.handlers.async;
 
-public interface AsyncHandlerInterface extends Runnable{
+public interface AsyncHandlerInterface{
     boolean wasSuccessful();
 }
