@@ -15,10 +15,10 @@ public class ControlConnection extends SubscriptionConnection {
 
     public ControlConnection(Peer peer, String multicast_name, Integer multicast_port_number) throws IOException {
         super(CONNECTION_NAME, multicast_name, multicast_port_number, peer);
-        this.subscribe(new StoredGenericHandler(peer, Peer.DEFAULT_VERSION));
-        this.subscribe(new GetChunkHandler(peer, Peer.DEFAULT_VERSION));
-        this.subscribe(new DeleteHandler(peer));
-        this.subscribe(new RemovedHandler(peer));
+        this.subscribe(new StoredGenericHandler(peer, this));
+        this.subscribe(new GetChunkHandler(peer, this));
+        this.subscribe(new DeleteHandler(peer, this));
+        this.subscribe(new RemovedHandler(peer, this));
     }
 
 }

@@ -17,7 +17,6 @@ import java.util.logging.Level;
 public abstract class RetransmissionHandler extends AsyncHandler {
     protected ScheduledThreadPoolExecutor scheduler;
     protected MulticastConnection senderConnection;
-    protected SubscriptionConnection subscriptionConnection;
     protected Message msg;
     protected Integer attempts;
     protected volatile Boolean successful;
@@ -25,9 +24,8 @@ public abstract class RetransmissionHandler extends AsyncHandler {
 
 
     public RetransmissionHandler(OperationSubscription sub, Peer peer, MulticastConnection senderConnection, SubscriptionConnection subscriptionConnection, Message msg, CountDownLatch countDownLatch) {
-        super(sub, peer, countDownLatch);
+        super(sub, subscriptionConnection, peer, countDownLatch);
         this.senderConnection = senderConnection;
-        this.subscriptionConnection = subscriptionConnection;
         this.scheduler = peer.getScheduler();
         this.msg = msg;
         this.attempts = 0;

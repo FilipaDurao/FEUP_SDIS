@@ -3,7 +3,7 @@ package proj.peer.rmi;
 import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
 import proj.peer.log.NetworkLogger;
-import proj.peer.handlers.async.ChunkMsgHandler;
+import proj.peer.handlers.async.ChunkInitiatorHandler;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.operations.SaveChunkOperation;
 import proj.peer.utils.SHA256Encoder;
@@ -58,7 +58,6 @@ public class FileRestorer {
                     break;
                 }
             }
-            stream.close();
 
         } catch (Exception e) {
             if (saveChunkFuture != null) {
@@ -81,7 +80,7 @@ public class FileRestorer {
     private byte[] restoreChunk(Integer chunkNo, String encode) throws Exception {
         GetChunkMessage msg = new GetChunkMessage(this.peer.getPeerId(), encode, chunkNo);
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        ChunkMsgHandler handler = new ChunkMsgHandler(peer, msg, countDownLatch);
+        ChunkInitiatorHandler handler = new ChunkInitiatorHandler(peer, msg, countDownLatch);
         this.peer.getRestore().subscribe(handler);
         handler.run();
         countDownLatch.await();

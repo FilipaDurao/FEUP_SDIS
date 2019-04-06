@@ -31,7 +31,7 @@ public class SaveChunkOperation implements Runnable {
                 }
                 stream.write(chunk);
             }
-
+            stream.close();
         } catch (IOException e) {
             NetworkLogger.printLog(Level.SEVERE, "Error saving file - " + e.getMessage());
         } catch (InterruptedException e) {
