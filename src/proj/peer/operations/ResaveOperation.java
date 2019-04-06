@@ -1,11 +1,13 @@
 package proj.peer.operations;
 
 import proj.peer.Peer;
+import proj.peer.handlers.ResaveHandler;
 import proj.peer.handlers.async.StoredInitiatorHandler;
 import proj.peer.log.NetworkLogger;
 import proj.peer.manager.ChunkInfo;
 import proj.peer.message.messages.PutChunkMessage;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 public class ResaveOperation implements Runnable {
@@ -28,9 +30,13 @@ public class ResaveOperation implements Runnable {
                 if (chunkInfo.getNumberOfSaves() < chunkInfo.getReplicationDegree()) {
                     byte[] body = this.peer.getFileManager().getChunk(this.fileId, this.chunkNo);
                     PutChunkMessage msg = new PutChunkMessage(peer.getPeerId(), this.fileId, chunkNo, chunkInfo.getReplicationDegree(), body);
-                    StoredInitiatorHandler handler = new StoredInitiatorHandler(this.peer, msg, null);
+                    CountDownLatch latch = new CountDownLatch(1);
+                    StoredInitiatorHandler handler = new StoredInitiatorHandler(this.peer, msg, latch);
                     handler.run();
                     this.peer.getControl().subscribe(handler);
+                    ResaveHandler stopHandler = new ResaveHandler(fileId, chunkNo, this.peer.getControl(), handler, this.peer);
+                    this.peer.getControl().subscribe(stopHandler);
+                    this.peer.getScheduler().submit(new LatchedUnsubscribeOperation(stopHandler, latch));
                 }
 
             }

@@ -24,7 +24,7 @@ public class ChunkInitiatorHandler extends RetransmissionHandler {
             NetworkLogger.printLog(Level.INFO, "Received requested chunk no." + chunkMessage.getChunkNo());
             this.cancel();
             this.body = chunkMessage.getBody();
-            this.subscriptionConnection.unsubscribe(this.sub);
+            this.unsubscribe();
             this.successful = true;
             this.countDown();
         }

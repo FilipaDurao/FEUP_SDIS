@@ -19,8 +19,6 @@ public class StoredInitiatorHandler extends RetransmissionHandler {
     }
 
 
-
-
     @Override
     public void notify(Message response) {
         if (response instanceof StoredMessage) {
@@ -28,7 +26,7 @@ public class StoredInitiatorHandler extends RetransmissionHandler {
                 this.storedIds.add(response.getSenderId());
                 if (this.storedIds.size() >= ((PutChunkMessage) this.msg).getReplicationDegree()) {
                     this.cancel();
-                    this.subscriptionConnection.unsubscribe(this.sub);
+                    this.unsubscribe();
                     this.successful = true;
                     this.countDown();
                 }

@@ -31,7 +31,7 @@ public class ChunkInfo implements Serializable {
     }
 
     public int getNumberOfSaves() {
-        return this.peerIds.size();
+        return this.peerIds.size() + 1;
     }
 
     public Integer getSize() {

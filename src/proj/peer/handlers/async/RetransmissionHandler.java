@@ -20,7 +20,7 @@ public abstract class RetransmissionHandler extends AsyncHandler {
     protected Message msg;
     protected Integer attempts;
     protected volatile Boolean successful;
-    protected Future future;
+    protected volatile Future future;
 
 
     public RetransmissionHandler(OperationSubscription sub, Peer peer, MulticastConnection senderConnection, SubscriptionConnection subscriptionConnection, Message msg, CountDownLatch countDownLatch) {
@@ -51,7 +51,7 @@ public abstract class RetransmissionHandler extends AsyncHandler {
             this.future = this.scheduler.schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
         } else {
             NetworkLogger.printLog(Level.SEVERE, msg.getOperation() + " protocol failed");
-            this.subscriptionConnection.unsubscribe(this.sub);
+            this.unsubscribe();
             this.countDown();
         }
 
