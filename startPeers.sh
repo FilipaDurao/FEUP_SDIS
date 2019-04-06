@@ -1,6 +1,5 @@
 #!/bin/bash
 
-./killAllPeers.sh
 
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 CLASSPATH="/out_peer"
@@ -25,6 +24,8 @@ index=$INITIAL_INDEX
 
 INPLACE=false
 TILE=false
+KILL_PEERS=false
+RESET=false
 
 VERSION="1.0"
 
@@ -65,6 +66,14 @@ case $key in
     INPLACE=true
     shift # past argument
     ;;
+    -k|--kill)
+    KILL_PEERS=true
+    shift # past argument
+    ;;
+    -r|--reset)
+    RESET=true
+    shift # past argument
+    ;;
     -c|--columns)
     TILE=true
     COLUMNS="$2"
@@ -80,6 +89,15 @@ done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
 NPEERS=${1:-3}
+
+
+if [[ "$KILL_PEERS" == true ]]; then
+    ./killAllPeers.sh
+fi
+
+if [[ "$RESET" == true ]]; then
+    rm -rf $SCRIPTPATH"/data"
+fi
 
 if ! [[ "$NPEERS" =~ ^[0-9]+$ ]]
     then
