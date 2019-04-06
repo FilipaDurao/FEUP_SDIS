@@ -43,6 +43,7 @@ public abstract class RetransmissionHandler extends AsyncHandler {
     public void run() {
         try {
             this.senderConnection.sendMessage(msg);
+            NetworkLogger.printLog(Level.INFO, "Message sent - " + msg.getOperation() + " " + msg.getTruncatedFilename());
             this.attempts++;
         } catch (IOException e) {
             NetworkLogger.printLog(Level.SEVERE, "Error sending scheduled message - " + e.getMessage());
