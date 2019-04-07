@@ -2,9 +2,9 @@ package proj.peer.operations;
 
 import proj.peer.Peer;
 import proj.peer.connection.SubscriptionConnection;
-import proj.peer.handlers.async.AsyncHandler;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.Message;
+import proj.peer.utils.CallbackInterface;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
@@ -15,16 +15,16 @@ public class RetransmitMessageOperation implements Runnable {
     private Peer peer;
     private Message msg;
     private SubscriptionConnection senderConnection;
-    private AsyncHandler asyncHandler;
+    private CallbackInterface callbackInterface;
     private int attempts;
     private boolean successful;
     private Future future;
 
-    public RetransmitMessageOperation(Peer peer, Message msg, SubscriptionConnection senderConnection, AsyncHandler asyncHandler) {
+    public RetransmitMessageOperation(Peer peer, Message msg, SubscriptionConnection senderConnection, CallbackInterface callbackInterface) {
         this.peer = peer;
         this.msg = msg;
         this.senderConnection = senderConnection;
-        this.asyncHandler = asyncHandler;
+        this.callbackInterface = callbackInterface;
         this.attempts = 0;
         this.successful = false;
     }
@@ -41,7 +41,7 @@ public class RetransmitMessageOperation implements Runnable {
         if (this.attempts < 5 && !this.successful) {
             this.future = this.peer.getScheduler().schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
         } else {
-            this.asyncHandler.shutdown();
+            this.callbackInterface.callback();
         }
     }
 

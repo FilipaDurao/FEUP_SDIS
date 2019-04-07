@@ -1,10 +1,7 @@
 package proj.peer.connection;
 
 import proj.peer.Peer;
-import proj.peer.handlers.DeleteHandler;
-import proj.peer.handlers.GetChunkHandler;
-import proj.peer.handlers.RemovedHandler;
-import proj.peer.handlers.StoredGenericHandler;
+import proj.peer.handlers.*;
 
 
 import java.io.IOException;
@@ -19,6 +16,10 @@ public class ControlConnection extends SubscriptionConnection {
         this.subscribe(new GetChunkHandler(peer, this));
         this.subscribe(new DeleteHandler(peer, this));
         this.subscribe(new RemovedHandler(peer, this));
+
+        if (!this.peer.getVersion().equals(Peer.DEFAULT_VERSION)) {
+            this.subscribe(new GetChunkTCPHandler(peer, this));
+        }
     }
 
 }

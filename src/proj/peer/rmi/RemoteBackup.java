@@ -9,6 +9,7 @@ import proj.peer.message.messages.RemovedMessage;
 import proj.peer.operations.SendMessageOperation;
 import proj.peer.utils.SHA256Encoder;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -19,9 +20,12 @@ public class RemoteBackup implements RemoteBackupInterface {
     private final FileRestorer fileRestorer;
     private Peer peer;
 
-    public RemoteBackup(Peer peer) {
+    public RemoteBackup(Peer peer) throws IOException {
         this.peer = peer;
-        this.fileRestorer = new FileRestorer(peer);
+        if (this.peer.getVersion().equals(Peer.DEFAULT_VERSION))
+            this.fileRestorer = new FileRestorer(peer);
+        else
+            this.fileRestorer = new FileRestorerTCP(peer);
     }
 
     public int backup(String pathname, Integer replicationDegree) {

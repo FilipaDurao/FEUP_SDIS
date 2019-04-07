@@ -64,6 +64,7 @@ public class Peer {
         String restoreName = args[6];
         Integer restorePort = Integer.valueOf(args[7]);
 
+        System.out.println(version);
         Peer peer = new Peer(version, peerId, controlName, controlPort, backupName, backupPort, restoreName, restorePort);
         peer.establishRMI();
         peer.startConnections();
@@ -86,7 +87,7 @@ public class Peer {
         new Thread(this.restore).start();
     }
 
-    private void establishRMI() {
+    private void establishRMI() throws IOException {
         RemoteBackup reBackup = new RemoteBackup(this);
         RemoteBackupInterface stub;
         try {

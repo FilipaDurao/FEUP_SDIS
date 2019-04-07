@@ -20,7 +20,7 @@ public class FileRestorer {
     /**
      * Peer associated with the sender.
      */
-    private Peer peer;
+    protected Peer peer;
 
     private String restorePath;
     private final File fileFolder;
@@ -77,7 +77,7 @@ public class FileRestorer {
         return true;
     }
 
-    private byte[] restoreChunk(Integer chunkNo, String encode) throws Exception {
+    protected byte[] restoreChunk(Integer chunkNo, String encode) throws Exception {
         GetChunkMessage msg = new GetChunkMessage(this.peer.getPeerId(), encode, chunkNo);
         CountDownLatch countDownLatch = new CountDownLatch(1);
         ChunkInitiatorHandler handler = new ChunkInitiatorHandler(peer, msg, countDownLatch);

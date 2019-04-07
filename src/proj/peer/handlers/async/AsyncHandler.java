@@ -7,11 +7,12 @@ import proj.peer.handlers.subscriptions.OperationSubscription;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.Message;
 import proj.peer.operations.RetransmitMessageOperation;
+import proj.peer.utils.CallbackInterface;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
-public abstract class AsyncHandler extends SubscriptionHandler implements AsyncHandlerInterface {
+public abstract class AsyncHandler extends SubscriptionHandler implements AsyncHandlerInterface, CallbackInterface {
     private final RetransmitMessageOperation operation;
     private final SubscriptionConnection senderConnection;
     private CountDownLatch countDownLatch;
@@ -32,8 +33,8 @@ public abstract class AsyncHandler extends SubscriptionHandler implements AsyncH
             this.countDownLatch.countDown();
     }
 
-    public synchronized void shutdown() {
-        if (this.successful)
+    public synchronized void callback() {
+        if (!this.successful)
             NetworkLogger.printLog(Level.SEVERE, msg.getOperation() + " protocol failed");
         this.unsubscribe();
         this.countDown();
