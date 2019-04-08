@@ -8,8 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FileInfo implements Serializable {
 
     private ConcurrentHashMap<Integer, ChunkInfo> chunks;
+    private String filename;
 
-    public FileInfo() {
+    public FileInfo(String filename) {
+        this.filename = filename;
         this.chunks = new ConcurrentHashMap<>();
     }
 
@@ -61,5 +63,9 @@ public class FileInfo implements Serializable {
     public void removePeerId(Integer chunkNumber, String peerId) {
         if (this.chunks.containsKey(chunkNumber))
             this.chunks.get(chunkNumber).removePeer(peerId);
+    }
+
+    public String getFilename() {
+        return filename;
     }
 }

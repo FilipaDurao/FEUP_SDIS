@@ -77,7 +77,7 @@ public class FileManager implements Runnable {
     public RemovedMessage deleteChunk() throws Exception {
         String fileId = null;
         Integer chunkId = null;
-        for (Map.Entry<String, FileInfo> entry : this.fileStructure.getSavedFiles().entrySet()) {
+        for (Map.Entry<String, FileInfo> entry : this.fileStructure.getLocalFiles().entrySet()) {
             for (ChunkInfo chunkInfo : entry.getValue().getChunks()) {
                 if (chunkInfo.getReplicationDegree() < chunkInfo.getNumberOfSaves()) {
                     fileId = entry.getKey();
@@ -120,8 +120,16 @@ public class FileManager implements Runnable {
         return fileStructure.getSavedSize();
     }
 
+    public int getMaxSize() {
+        return fileStructure.getMaxSize();
+    }
+
     public ConcurrentHashMap<String, FileInfo> getChunks() {
-        return this.fileStructure.getSavedFiles();
+        return this.fileStructure.getLocalFiles();
+    }
+
+    public ConcurrentHashMap<String, FileInfo> getRemoteChunks() {
+        return this.fileStructure.getRemoteFiles();
     }
 
     public void setMaxSize(Integer maxSize) {
@@ -132,6 +140,14 @@ public class FileManager implements Runnable {
         return this.fileStructure.getMaxSize() < this.fileStructure.getSavedSize();
     }
 
+    public void addRemoteFile(String filename, String encoded) {
+        this.fileStructure.addRemoteFile(filename, encoded);
+    }
+
+    public void removeRemoteFile(String fileId) {
+        this.fileStructure.removeRemoteFile(fileId);
+    }
+
     @Override
     public void run() {
         this.saveFileStructure();
@@ -140,5 +156,9 @@ public class FileManager implements Runnable {
 
     public ChunkInfo getChunkInfo(String fileId, Integer chunkNo) throws Exception {
         return this.fileStructure.getChunkInfo(fileId, chunkNo);
+    }
+
+    public void addRemoteChunk(String fileId, Integer chunkId, Integer replication, Integer size) {
+        this.fileStructure.addRemoteChunk(fileId, chunkId, replication, size);
     }
 }

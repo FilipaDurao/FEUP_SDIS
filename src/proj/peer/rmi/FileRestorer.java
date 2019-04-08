@@ -32,13 +32,12 @@ public class FileRestorer {
         fileFolder.mkdirs();
     }
 
-    public boolean restoreFile(String filename) {
+    public boolean restoreFile(String filename, String encodedFilename) {
 
         SaveChunkOperation chunkSaver;
         Future saveChunkFuture = null;
         FileOutputStream stream = null;
         try {
-            String encodedFilename = SHA256Encoder.encode(this.peer.getPeerId() + "/" + filename);
             stream = new FileOutputStream(fileFolder.getAbsolutePath() + "/" + filename);
             chunkSaver = new SaveChunkOperation(stream);
             saveChunkFuture = this.peer.getScheduler().schedule(chunkSaver, 0, TimeUnit.SECONDS);

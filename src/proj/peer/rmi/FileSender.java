@@ -50,6 +50,7 @@ public class FileSender {
      * File to send.
      */
     private File file;
+    private String encodedFileName;
 
 
     /**
@@ -64,6 +65,7 @@ public class FileSender {
         this.replicationDegree = replicationDegree;
         this.handlers = new ArrayList<>();
         this.file = new File(pathname);
+        encodedFileName = SHA256Encoder.encode(this.peer.getPeerId() + "/" + file.getName());
     }
 
     /**
@@ -75,6 +77,7 @@ public class FileSender {
      * @return Handler for the message subscription and retransmission.
      */
     private StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo) {
+        this.peer.getFileManager().addRemoteChunk(encodedFileName, chunkNo, replicationDegree, body.length);
         PutChunkMessage msg = new PutChunkMessage(peer.getPeerId(), encodedFileName, chunkNo, replicationDegree, body);
         StoredInitiatorHandler handler = new StoredInitiatorHandler(this.peer, msg, this.chunkSavedSignal);
         handler.startAsync();
@@ -91,7 +94,6 @@ public class FileSender {
         try (RandomAccessFile data = new RandomAccessFile(file, "r")) {
             byte[] buffer = new byte[MulticastConnection.CHUNK_SIZE];
             double nChunks = data.length() / (double) MulticastConnection.CHUNK_SIZE;
-            String encodedFileName = SHA256Encoder.encode(this.peer.getPeerId() + "/" + file.getName());
 
             this.chunkSavedSignal = new CountDownLatch((int) (Math.ceil(nChunks) + ((nChunks == Math.floor(nChunks)) ? 1 : 0)));
 
@@ -140,4 +142,11 @@ public class FileSender {
         return true;
     }
 
+    public String getEncodedFileName() {
+        return encodedFileName;
+    }
+
+    public String getFileName() {
+        return this.file.getName();
+    }
 }

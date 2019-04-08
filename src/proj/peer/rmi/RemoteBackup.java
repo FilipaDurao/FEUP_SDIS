@@ -26,15 +26,25 @@ public class RemoteBackup implements RemoteBackupInterface {
 
     public int backup(String pathname, Integer replicationDegree) {
         FileSender fileSender = new FileSender(peer, pathname, replicationDegree);
+        this.peer.getFileManager().addRemoteFile(fileSender.getFileName(), fileSender.getEncodedFileName());
 
-        if (!fileSender.sendFile()) return -2;
-        if (!fileSender.waitOperation()) return -1;
+        if (!fileSender.sendFile()) {
+            this.peer.getFileManager().removeRemoteFile(fileSender.getEncodedFileName());
+            return -2;
+        }
+        if (!fileSender.waitOperation()) {
+            this.peer.getFileManager().removeRemoteFile(fileSender.getEncodedFileName());
+            return -1;
+        }
 
+        System.out.println("Added file to info");
         return 0;
     }
 
     public int restore(String filename) {
-        if (!this.fileRestorer.restoreFile(filename)) return -1;
+        String encoded = SHA256Encoder.encode(this.peer.getPeerId() + "/" + filename);
+        if (!this.fileRestorer.restoreFile(filename, encoded)) return -1;
+
         return 0;
     }
 
@@ -46,6 +56,7 @@ public class RemoteBackup implements RemoteBackupInterface {
         this.peer.getScheduler().schedule(sendMessageOperation, 0, TimeUnit.SECONDS);
         this.peer.getScheduler().schedule(sendMessageOperation, 2, TimeUnit.SECONDS);
         this.peer.getScheduler().schedule(sendMessageOperation, 4, TimeUnit.SECONDS);
+        this.peer.getFileManager().removeRemoteFile(encodedFilename);
         return 0;
     }
 
@@ -69,14 +80,29 @@ public class RemoteBackup implements RemoteBackupInterface {
 
     public String state() {
         StringBuilder res = new StringBuilder();
-        res.append("Total size: ").append(this.peer.getFileManager().getFileSize()).append(" bytes\n");
+
+        res.append("REMOTE STATE\n");
+        for (Map.Entry<String, FileInfo> entry : this.peer.getFileManager().getRemoteChunks().entrySet()) {
+            buildFileInfo(res, entry);
+        }
+
+        res.append("LOCAL STATE\n");
+        res.append("Max Size: ").append(this.peer.getFileManager().getMaxSize() / 1000).append(" KBytes\n");
+        res.append("Total size: ").append(this.peer.getFileManager().getFileSize() / 1000).append(" KBytes\n");
         for (Map.Entry<String, FileInfo> entry : this.peer.getFileManager().getChunks().entrySet()) {
-            res.append("\t File saved: ").append(entry.getKey()).append("\n\t\tChunks: ");
-            for (ChunkInfo chunkInfo : entry.getValue().getChunks()) {
-                res.append(chunkInfo.getChunkNumber()).append(" ");
-            }
-            res.append("\n");
+            buildFileInfo(res, entry);
         }
         return res.toString();
+    }
+
+    private void buildFileInfo(StringBuilder res, Map.Entry<String, FileInfo> entry) {
+        res.append("\tFile saved: ").append(entry.getKey()).append("\n\tChunks: \n");
+        for (ChunkInfo chunkInfo : entry.getValue().getChunks()) {
+            res.append("\t\t").append(chunkInfo.getChunkNumber()).append(":\n");
+            res.append("\t\t\tSize: ").append(chunkInfo.getSize()).append("\n");
+            res.append("\t\t\tReplication degree: ").append(chunkInfo.getReplicationDegree()).append("\n");
+            res.append("\t\t\tPerceived degree: ").append(chunkInfo.getNumberOfSaves()).append("\n");
+        }
+        res.append("\n");
     }
 }
