@@ -200,4 +200,8 @@ public class FileStructure implements Serializable {
     public ConcurrentHashMap<String, FileInfo> getRemoteFiles() {
         return remoteFiles;
     }
+
+    public boolean isFileRemotlyStored(String fileId) {
+        return this.remoteFiles.containsKey(fileId);
+    }
 }

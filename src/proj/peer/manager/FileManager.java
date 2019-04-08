@@ -161,4 +161,8 @@ public class FileManager implements Runnable {
     public void addRemoteChunk(String fileId, Integer chunkId, Integer replication, Integer size) {
         this.fileStructure.addRemoteChunk(fileId, chunkId, replication, size);
     }
+
+    public boolean isFileRemotlyStored(String fileId) {
+        return this.fileStructure.isFileRemotlyStored(fileId);
+    }
 }

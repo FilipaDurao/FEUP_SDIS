@@ -43,6 +43,7 @@ public class RemoteBackup implements RemoteBackupInterface {
 
     public int restore(String filename) {
         String encoded = SHA256Encoder.encode(this.peer.getPeerId() + "/" + filename);
+        if (!this.peer.getFileManager().isFileRemotlyStored(encoded)) return -2;
         if (!this.fileRestorer.restoreFile(filename, encoded)) return -1;
 
         return 0;
