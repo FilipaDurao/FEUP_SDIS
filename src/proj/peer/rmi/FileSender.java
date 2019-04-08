@@ -91,7 +91,7 @@ public class FileSender {
         try (RandomAccessFile data = new RandomAccessFile(file, "r")) {
             byte[] buffer = new byte[MulticastConnection.CHUNK_SIZE];
             double nChunks = data.length() / (double) MulticastConnection.CHUNK_SIZE;
-            String encodedFileName = SHA256Encoder.encode(file.getName());
+            String encodedFileName = SHA256Encoder.encode(this.peer.getPeerId() + "/" + file.getName());
 
             this.chunkSavedSignal = new CountDownLatch((int) (Math.ceil(nChunks) + ((nChunks == Math.floor(nChunks)) ? 1 : 0)));
 

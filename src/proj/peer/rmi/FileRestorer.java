@@ -38,7 +38,7 @@ public class FileRestorer {
         Future saveChunkFuture = null;
         FileOutputStream stream = null;
         try {
-            String encodedFilename = SHA256Encoder.encode(filename);
+            String encodedFilename = SHA256Encoder.encode(this.peer.getPeerId() + "/" + filename);
             stream = new FileOutputStream(fileFolder.getAbsolutePath() + "/" + filename);
             chunkSaver = new SaveChunkOperation(stream);
             saveChunkFuture = this.peer.getScheduler().schedule(chunkSaver, 0, TimeUnit.SECONDS);
