@@ -1,4 +1,4 @@
-package proj.peer.handlers.subscriptions;
+package proj.peer.subscriptions;
 
 public class ChunkSubscription extends FileSubscription{
     private Integer chunkNo;

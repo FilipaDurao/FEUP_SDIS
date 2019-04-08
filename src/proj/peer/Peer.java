@@ -3,6 +3,7 @@ package proj.peer;
 import proj.peer.connection.BackupConnection;
 import proj.peer.connection.ControlConnection;
 import proj.peer.connection.RestoreConnection;
+import proj.peer.connection.tcp.ServerConnection;
 import proj.peer.log.NetworkLogger;
 import proj.peer.manager.FileManager;
 import proj.peer.rmi.RemoteBackup;
@@ -35,6 +36,7 @@ public class Peer {
 
     private FileManager fileManager;
     private RestoreConnection restore;
+    private ServerConnection tcprestore;
 
     public Peer(String version, String peerId, String controlName, Integer controlPort, String backupName, Integer backupPort, String restoreName, Integer restorePort) throws Exception {
         this.version = version;
@@ -66,8 +68,8 @@ public class Peer {
 
         System.out.println(version);
         Peer peer = new Peer(version, peerId, controlName, controlPort, backupName, backupPort, restoreName, restorePort);
-        peer.establishRMI();
         peer.startConnections();
+        peer.establishRMI();
 
         Runtime.getRuntime().addShutdownHook(new Thread(peer.fileManager));
 
@@ -85,6 +87,9 @@ public class Peer {
 
         this.restore = new RestoreConnection(this, restoreName, restorePort);
         new Thread(this.restore).start();
+
+        this.tcprestore = new ServerConnection(this);
+        new Thread(this.tcprestore).start();
     }
 
     private void establishRMI() throws IOException {
@@ -122,6 +127,10 @@ public class Peer {
 
     public RestoreConnection getRestore() {
         return restore;
+    }
+
+    public ServerConnection getTcprestore() {
+        return tcprestore;
     }
 
     public FileManager getFileManager() {

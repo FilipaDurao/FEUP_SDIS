@@ -4,58 +4,36 @@ import proj.peer.Peer;
 import proj.peer.log.NetworkLogger;
 import proj.peer.handlers.SubscriptionHandlerInterface;
 import proj.peer.message.messages.Message;
-import proj.peer.message.messages.MessageChunk;
-import proj.peer.handlers.subscriptions.ChunkSubscription;
-import proj.peer.handlers.subscriptions.FileSubscription;
-import proj.peer.handlers.subscriptions.OperationSubscription;
+import proj.peer.subscriptions.OperationSubscription;
+import proj.peer.subscriptions.SubscriptionManager;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public abstract class SubscriptionConnection extends MulticastConnection implements Runnable {
+public abstract class SubscriptionConnection extends MulticastConnection implements Runnable, SubscriptionConnectionInterface {
+    protected SubscriptionManager subscriptionManager;
     protected Peer peer;
-    protected ConcurrentHashMap<OperationSubscription, SubscriptionHandlerInterface> subscriptions;
     private String connectionName;
 
     SubscriptionConnection(String connectionName, String multicast_name, Integer multicast_port_number, Peer peer) throws IOException {
         super(multicast_name, multicast_port_number);
         this.connectionName =  connectionName;
         this.peer = peer;
-        this.subscriptions = new ConcurrentHashMap<>();
+        this.subscriptionManager = new SubscriptionManager();
     }
 
     public void subscribe(SubscriptionHandlerInterface handler) {
-        this.subscriptions.put(handler.getSub(), handler);
+        subscriptionManager.subscribe(handler);
     }
 
     public void unsubscribe(OperationSubscription sub) {
-        if (subscriptions.containsKey(sub))
-            this.subscriptions.remove(sub);
+        subscriptionManager.unsubscribe(sub);
     }
 
-    protected boolean checkForSubscription(Message msg) {
-        if (msg instanceof MessageChunk) {
-            MessageChunk msgC = (MessageChunk) msg;
-            OperationSubscription possibleSub = new ChunkSubscription(msgC.getOperation(), msgC.getFileId(), msgC.getChunkNo(), msgC.getVersion());
-            if (subscriptions.containsKey(possibleSub)) {
-                subscriptions.get(possibleSub).notify(msg);
-                return true;
-            }
-        }
+    public boolean checkForSubscription(Message msg) {
 
-        OperationSubscription possibleFileSub = new FileSubscription(msg.getOperation(), msg.getFileId(), msg.getVersion());
-        OperationSubscription possibleOpSub = new OperationSubscription(msg.getOperation(), msg.getVersion());
-
-        if (subscriptions.containsKey(possibleFileSub)) {
-            subscriptions.get(possibleFileSub).notify(msg);
-            return true;
-        } else if (subscriptions.containsKey(possibleOpSub)) {
-            subscriptions.get(possibleOpSub).notify(msg);
-            return true;
-        }
-
-        return false;
+        return subscriptionManager.checkForSubscription(msg);
     }
 
     @Override
@@ -64,7 +42,7 @@ public abstract class SubscriptionConnection extends MulticastConnection impleme
             try {
                 Message msg = this.getMessage();
 
-                if (msg.getSenderId().equals(peer.getPeerId()) || checkForSubscription(msg)) {
+                if (msg.getSenderId().equals(peer.getPeerId()) || subscriptionManager.checkForSubscription(msg)) {
                     continue;
                 }
 

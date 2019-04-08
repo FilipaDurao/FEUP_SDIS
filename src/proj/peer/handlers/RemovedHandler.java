@@ -1,14 +1,14 @@
 package proj.peer.handlers;
 
 import proj.peer.Peer;
-import proj.peer.connection.SubscriptionConnection;
-import proj.peer.handlers.subscriptions.OperationSubscription;
+import proj.peer.connection.SubscriptionConnectionInterface;
+import proj.peer.subscriptions.OperationSubscription;
 import proj.peer.message.messages.Message;
 import proj.peer.message.messages.RemovedMessage;
 import proj.peer.operations.ResaveOperation;
 
 public class RemovedHandler extends SubscriptionHandler {
-    public RemovedHandler(Peer peer, SubscriptionConnection subscriptionConnection) {
+    public RemovedHandler(Peer peer, SubscriptionConnectionInterface subscriptionConnection) {
         super(new OperationSubscription(RemovedMessage.OPERATION, Peer.DEFAULT_VERSION), subscriptionConnection, peer);
     }
 

@@ -1,7 +1,7 @@
 package proj.peer.handlers;
 
 import proj.peer.message.messages.Message;
-import proj.peer.handlers.subscriptions.OperationSubscription;
+import proj.peer.subscriptions.OperationSubscription;
 
 
 public interface SubscriptionHandlerInterface {

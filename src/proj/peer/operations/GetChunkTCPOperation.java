@@ -28,11 +28,12 @@ public class GetChunkTCPOperation implements Runnable {
     public void run() {
         try {
             if (this.peer.getFileManager().isChunkSaved(msg.getFileId(), msg.getChunkNo())) {
+                NetworkLogger.printLog(Level.INFO, "Sending ");
                 byte[] body = this.peer.getFileManager().getChunk(msg.getFileId(), msg.getChunkNo());
-
+                ChunkMessage message = new ChunkMessage(this.peer.getPeerId(), msg.getFileId(), msg.getChunkNo(), body);
                 Socket socket = new Socket(InetAddress.getByName(msg.getHostname()), msg.getPort());
-                DataOutputStream stream = new DataOutputStream(socket.getOutputStream());
-                stream.write(body);
+                ObjectOutputStream stream = new ObjectOutputStream(socket.getOutputStream());
+                stream.writeObject(message);
                 socket.close();
             }
         } catch (Exception e) {

@@ -11,7 +11,7 @@ public class BackupConnection extends SubscriptionConnection {
 
     public BackupConnection(Peer peer, String multicast_name, Integer multicast_port_number) throws IOException {
         super(CONNECTION_NAME, multicast_name, multicast_port_number, peer);
-        this.subscribe(new PutChunkHandler(peer, this));
+        subscriptionManager.subscribe(new PutChunkHandler(peer, this));
     }
 
 }

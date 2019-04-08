@@ -1,11 +1,11 @@
 package proj.peer.handlers;
 
 import proj.peer.Peer;
-import proj.peer.connection.SubscriptionConnection;
+import proj.peer.connection.SubscriptionConnectionInterface;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.message.messages.Message;
-import proj.peer.handlers.subscriptions.OperationSubscription;
+import proj.peer.subscriptions.OperationSubscription;
 import proj.peer.operations.GetChunkOperation;
 
 import java.util.logging.Level;
@@ -13,7 +13,7 @@ import java.util.logging.Level;
 
 public class GetChunkHandler extends SubscriptionHandler {
 
-    public GetChunkHandler(Peer peer, SubscriptionConnection subscriptionConnection) {
+    public GetChunkHandler(Peer peer, SubscriptionConnectionInterface subscriptionConnection) {
         super(new OperationSubscription(GetChunkMessage.OPERATION, Peer.DEFAULT_VERSION), subscriptionConnection, peer);
     }
 

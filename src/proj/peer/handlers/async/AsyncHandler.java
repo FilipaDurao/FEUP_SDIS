@@ -1,9 +1,11 @@
 package proj.peer.handlers.async;
 
 import proj.peer.Peer;
+import proj.peer.connection.MulticastConnection;
 import proj.peer.connection.SubscriptionConnection;
+import proj.peer.connection.SubscriptionConnectionInterface;
 import proj.peer.handlers.SubscriptionHandler;
-import proj.peer.handlers.subscriptions.OperationSubscription;
+import proj.peer.subscriptions.OperationSubscription;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.Message;
 import proj.peer.operations.RetransmitMessageOperation;
@@ -19,7 +21,7 @@ public abstract class AsyncHandler extends SubscriptionHandler implements AsyncH
     protected volatile boolean successful;
     protected Message msg;
 
-    AsyncHandler(OperationSubscription sub, SubscriptionConnection subscriptionConnection, SubscriptionConnection senderConnection, Message message, CountDownLatch countDownLatch, Peer peer) {
+    AsyncHandler(OperationSubscription sub, SubscriptionConnectionInterface subscriptionConnection, SubscriptionConnection senderConnection, Message message, CountDownLatch countDownLatch, Peer peer) {
         super(sub, subscriptionConnection, peer);
         this.countDownLatch = countDownLatch;
         this.senderConnection = senderConnection;

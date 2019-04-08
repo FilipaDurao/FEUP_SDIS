@@ -1,9 +1,10 @@
 package proj.peer.message.messages;
 
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 
-public abstract class Message implements MessageInterface {
+public abstract class Message implements MessageInterface, Serializable {
 
     public final static String CRLF = "" + (char) 0xD + (char) 0xA;
     public final static byte[] LINE_TERMINATOR_ARRAY = {0xD, 0xA, 0xD, 0xA};

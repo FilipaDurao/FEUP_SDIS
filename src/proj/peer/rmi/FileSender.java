@@ -5,7 +5,7 @@ import proj.peer.connection.MulticastConnection;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.handlers.async.StoredInitiatorHandler;
-import proj.peer.handlers.subscriptions.ChunkSubscription;
+import proj.peer.subscriptions.ChunkSubscription;
 import proj.peer.utils.SHA256Encoder;
 
 import java.io.File;

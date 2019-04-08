@@ -5,7 +5,7 @@ import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.ChunkMessage;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.message.messages.Message;
-import proj.peer.handlers.subscriptions.ChunkSubscription;
+import proj.peer.subscriptions.ChunkSubscription;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;

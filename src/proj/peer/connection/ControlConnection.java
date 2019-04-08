@@ -12,13 +12,13 @@ public class ControlConnection extends SubscriptionConnection {
 
     public ControlConnection(Peer peer, String multicast_name, Integer multicast_port_number) throws IOException {
         super(CONNECTION_NAME, multicast_name, multicast_port_number, peer);
-        this.subscribe(new StoredGenericHandler(peer, this));
-        this.subscribe(new GetChunkHandler(peer, this));
-        this.subscribe(new DeleteHandler(peer, this));
-        this.subscribe(new RemovedHandler(peer, this));
+        subscriptionManager.subscribe(new StoredGenericHandler(peer, this));
+        subscriptionManager.subscribe(new GetChunkHandler(peer, this));
+        subscriptionManager.subscribe(new DeleteHandler(peer, this));
+        subscriptionManager.subscribe(new RemovedHandler(peer, this));
 
         if (!this.peer.getVersion().equals(Peer.DEFAULT_VERSION)) {
-            this.subscribe(new GetChunkTCPHandler(peer, this));
+            subscriptionManager.subscribe(new GetChunkTCPHandler(peer, this));
         }
     }
 

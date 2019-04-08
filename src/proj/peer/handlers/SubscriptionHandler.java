@@ -1,15 +1,15 @@
 package proj.peer.handlers;
 
 import proj.peer.Peer;
-import proj.peer.connection.SubscriptionConnection;
-import proj.peer.handlers.subscriptions.OperationSubscription;
+import proj.peer.connection.SubscriptionConnectionInterface;
+import proj.peer.subscriptions.OperationSubscription;
 
 public abstract class SubscriptionHandler implements SubscriptionHandlerInterface {
     protected OperationSubscription sub;
-    protected SubscriptionConnection subscriptionConnection;
+    protected SubscriptionConnectionInterface subscriptionConnection;
     protected Peer peer;
 
-    public SubscriptionHandler(OperationSubscription sub, SubscriptionConnection subscriptionConnection, Peer peer) {
+    public SubscriptionHandler(OperationSubscription sub, SubscriptionConnectionInterface subscriptionConnection, Peer peer) {
         this.sub = sub;
         this.subscriptionConnection = subscriptionConnection;
         this.peer = peer;
@@ -19,7 +19,7 @@ public abstract class SubscriptionHandler implements SubscriptionHandlerInterfac
         return this.sub;
     }
 
-    public SubscriptionConnection getSubscriptionConnection() {
+    public SubscriptionConnectionInterface getSubscriptionConnection() {
         return subscriptionConnection;
     }
 

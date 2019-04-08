@@ -1,8 +1,8 @@
 package proj.peer.handlers;
 
 import proj.peer.Peer;
-import proj.peer.connection.SubscriptionConnection;
-import proj.peer.handlers.subscriptions.ChunkSubscription;
+import proj.peer.connection.SubscriptionConnectionInterface;
+import proj.peer.subscriptions.ChunkSubscription;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.ChunkMessage;
 import proj.peer.message.messages.Message;
@@ -13,7 +13,7 @@ import java.util.logging.Level;
 public class ChunkSenderHandler extends SubscriptionHandler {
     private Future sendChunk;
 
-    public ChunkSenderHandler(String fileId, Integer chunkNo, Future sendChunk, SubscriptionConnection subscriptionConnection, Peer peer) {
+    public ChunkSenderHandler(String fileId, Integer chunkNo, Future sendChunk, SubscriptionConnectionInterface subscriptionConnection, Peer peer) {
         super(new ChunkSubscription(ChunkMessage.OPERATION, fileId, chunkNo, Peer.DEFAULT_VERSION), subscriptionConnection, peer);
         this.sendChunk = sendChunk;
     }
