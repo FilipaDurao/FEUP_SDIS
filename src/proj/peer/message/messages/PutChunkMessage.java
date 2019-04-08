@@ -24,7 +24,7 @@ public class PutChunkMessage extends MessageWBody {
             this.body = new byte[0];
         }
 
-        String[] msgHeader = new String(msgParts[0], 0, msgParts[0].length).split(" ");
+        String[] msgHeader = new String(msgParts[0], 0, msgParts[0].length).split("\\s+");
         if (msgHeader.length < 6) {
             throw new Exception("Malformed " + this.operation + " message: Wrong number of arguments");
         }
