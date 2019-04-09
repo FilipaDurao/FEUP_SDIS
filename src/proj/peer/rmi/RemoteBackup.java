@@ -37,7 +37,6 @@ public class RemoteBackup implements RemoteBackupInterface {
             return -1;
         }
 
-        System.out.println("Added file to info");
         return 0;
     }
 
