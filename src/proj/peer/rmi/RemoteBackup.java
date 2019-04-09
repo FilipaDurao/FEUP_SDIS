@@ -21,7 +21,12 @@ public class RemoteBackup implements RemoteBackupInterface {
 
     public RemoteBackup(Peer peer) {
         this.peer = peer;
-        this.fileRestorer = new FileRestorer(peer);
+
+        if (this.peer.getPeerId().equals(Peer.DEFAULT_VERSION)) {
+            this.fileRestorer = new FileRestorer(peer);
+        } else {
+            this.fileRestorer = new FileRestorerTCP(peer);
+        }
     }
 
     public int backup(String pathname, Integer replicationDegree) {

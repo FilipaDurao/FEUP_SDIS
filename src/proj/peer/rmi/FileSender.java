@@ -110,7 +110,6 @@ public class FileSender {
                 this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, new byte[0], i));
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
 
@@ -128,7 +127,6 @@ public class FileSender {
         try {
             this.chunkSavedSignal.await();
         } catch (InterruptedException e) {
-            e.printStackTrace();
             return false;
         }
 

@@ -10,6 +10,10 @@ public class GetChunkMessage extends MessageChunk {
         super(Peer.DEFAULT_VERSION, OPERATION, senderId, fileId, chunkNo);
     }
 
+    public GetChunkMessage(String version, String senderId, String fileId, Integer chunkNo) {
+        super(version, OPERATION, senderId, fileId, chunkNo);
+    }
+
     public GetChunkMessage(String msgStr) throws Exception {
         super();
         String[] msgParts = msgStr.split(Message.CRLF + Message.CRLF);

@@ -11,7 +11,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 public class ChunkInitiatorHandler extends AsyncHandler {
-    private byte[] body;
+    protected byte[] body;
 
     public ChunkInitiatorHandler(Peer peer, GetChunkMessage msg, CountDownLatch countDownLatch) {
         super(new ChunkSubscription(ChunkMessage.OPERATION, msg.getFileId(), msg.getChunkNo(), msg.getVersion()), peer.getRestore(), peer.getControl(), msg, countDownLatch, peer);
@@ -28,7 +28,6 @@ public class ChunkInitiatorHandler extends AsyncHandler {
             this.successful = true;
             this.countDown();
         }
-
     }
 
     public byte[] getBody() {

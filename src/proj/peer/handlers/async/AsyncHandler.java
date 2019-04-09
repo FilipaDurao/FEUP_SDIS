@@ -33,7 +33,7 @@ public abstract class AsyncHandler extends SubscriptionHandler implements AsyncH
     }
 
     public synchronized void shutdown() {
-        if (this.successful)
+        if (!this.successful)
             NetworkLogger.printLog(Level.SEVERE, msg.getOperation() + " protocol failed");
         this.unsubscribe();
         this.countDown();

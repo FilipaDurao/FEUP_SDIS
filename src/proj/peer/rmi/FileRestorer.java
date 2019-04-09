@@ -2,11 +2,11 @@ package proj.peer.rmi;
 
 import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
+import proj.peer.connection.RestoreConnection;
 import proj.peer.log.NetworkLogger;
 import proj.peer.handlers.async.ChunkInitiatorHandler;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.operations.SaveChunkOperation;
-import proj.peer.utils.SHA256Encoder;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,10 +20,10 @@ public class FileRestorer {
     /**
      * Peer associated with the sender.
      */
-    private Peer peer;
+    protected Peer peer;
 
-    private String restorePath;
-    private final File fileFolder;
+    protected String restorePath;
+    protected File fileFolder;
 
     FileRestorer(Peer peer) {
         this.peer = peer;
@@ -46,7 +46,7 @@ public class FileRestorer {
                 if (this.peer.getFileManager().isChunkSaved(encodedFilename, i)) {
                     body = this.peer.getFileManager().getChunk(encodedFilename, i);
                 } else {
-                    body = restoreChunk(i, encodedFilename);
+                    body = initiateRestoreChunk(i, encodedFilename);
                 }
 
                 if (body == null) {
@@ -76,11 +76,15 @@ public class FileRestorer {
         return true;
     }
 
-    private byte[] restoreChunk(Integer chunkNo, String encode) throws Exception {
+    protected byte[] initiateRestoreChunk(Integer chunkNo, String encode) throws Exception {
         GetChunkMessage msg = new GetChunkMessage(this.peer.getPeerId(), encode, chunkNo);
         CountDownLatch countDownLatch = new CountDownLatch(1);
         ChunkInitiatorHandler handler = new ChunkInitiatorHandler(peer, msg, countDownLatch);
-        this.peer.getRestore().subscribe(handler);
+        return restoreChunk(countDownLatch, handler, this.peer.getRestore());
+    }
+
+    protected byte[] restoreChunk(CountDownLatch countDownLatch, ChunkInitiatorHandler handler, RestoreConnection restore) throws Exception {
+        restore.subscribe(handler);
         handler.startAsync();
         countDownLatch.await();
         if (!handler.wasSuccessful())
