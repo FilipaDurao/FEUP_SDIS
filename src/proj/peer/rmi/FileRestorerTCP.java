@@ -14,11 +14,12 @@ public class FileRestorerTCP extends FileRestorer {
         super(peer);
     }
 
-    protected void initiateRestoreChunk(Integer chunkNo, String encode, SaveChunkOperation chunkSaver, CountDownLatch latch) throws Exception {
+    protected ChunkInitiatorHandler initiateRestoreChunk(Integer chunkNo, String encode, SaveChunkOperation chunkSaver, CountDownLatch latch) throws Exception {
         GetChunkMessage msg = new GetChunkMessage(this.peer.getVersion(), this.peer.getPeerId(), encode, chunkNo);
         ChunkInitiatorHandler handler = new ChunkInitiatorTCPHandler(peer, msg, chunkSaver, latch);
         this.peer.getRestore().subscribe(handler);
         handler.startAsync();
+        return handler;
     }
 
 
