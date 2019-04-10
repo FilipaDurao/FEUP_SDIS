@@ -8,7 +8,7 @@ public class ChunkMessageTCP extends ChunkMessage{
         super();
 
         String message = new String(messageBytes, 0, messageBytes.length);
-        String[] msgParts = message.split(Message.CRLF + Message.CRLF);
+        String[] msgParts = message.split(Message.CRLF);
 
         if(msgParts.length < 2) {
             throw new Exception("Malformed message");
@@ -47,7 +47,7 @@ public class ChunkMessageTCP extends ChunkMessage{
                 this.senderId,
                 this.fileId,
                 this.chunkNo,
-                Message.CRLF + Message.CRLF,
+                Message.CRLF,
                 this.hostname,
                 this.port,
                 Message.CRLF + Message.CRLF);
