@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class FileRestorer {
+    public static final int WINDOW_SIZE = 5;
     /**
      * Peer associated with the sender.
      */
@@ -45,10 +46,10 @@ public class FileRestorer {
             saveChunkFuture = this.peer.getScheduler().schedule(chunkSaver, 0, TimeUnit.SECONDS);
             CountDownLatch latch = null;
             for (int i = 0; i < nChunks ; i++) {
-                if(i % 5 == 0) {
+                if(i % WINDOW_SIZE == 0) {
                     if (latch != null)
                         latch.await();
-                    latch = new CountDownLatch(5);
+                    latch = new CountDownLatch(WINDOW_SIZE);
                 }
                 initiateRestoreChunk(i, encodedFilename, chunkSaver, latch);
             }
