@@ -9,6 +9,7 @@ import proj.peer.message.messages.RemovedMessage;
 import proj.peer.operations.SendMessageOperation;
 import proj.peer.utils.SHA256Encoder;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -34,10 +35,12 @@ public class RemoteBackup implements RemoteBackupInterface {
         this.peer.getFileManager().addRemoteFile(fileSender.getFileName(), fileSender.getEncodedFileName());
 
         if (!fileSender.sendFile()) {
+            delete(new File(pathname).getName());
             this.peer.getFileManager().removeRemoteFile(fileSender.getEncodedFileName());
             return -2;
         }
         if (!fileSender.waitOperation()) {
+            delete(new File(pathname).getName());
             this.peer.getFileManager().removeRemoteFile(fileSender.getEncodedFileName());
             return -1;
         }
@@ -65,7 +68,7 @@ public class RemoteBackup implements RemoteBackupInterface {
 
 
     public int delete(String filename) {
-        String encodedFilename = SHA256Encoder.encode(filename);
+        String encodedFilename = SHA256Encoder.encode(this.peer.getPeerId() + "/"  + filename);
         DeleteMessage deleteMessage = new DeleteMessage(Peer.DEFAULT_VERSION, this.peer.getPeerId(), encodedFilename);
         SendMessageOperation sendMessageOperation = new SendMessageOperation(this.peer.getControl(), deleteMessage);
         this.peer.getScheduler().schedule(sendMessageOperation, 0, TimeUnit.SECONDS);

@@ -11,9 +11,12 @@ import proj.peer.operations.GetTCPMessageOperation;
 import proj.peer.operations.SaveChunkOperation;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 public class ChunkInitiatorTCPHandler extends ChunkInitiatorHandler implements BodyReceiver {
+    private Future future;
+
     public ChunkInitiatorTCPHandler(Peer peer, GetChunkMessage msg, SaveChunkOperation chunkSaver, CountDownLatch countDownLatch) {
         super(peer, msg, chunkSaver, countDownLatch);
     }
@@ -23,8 +26,15 @@ public class ChunkInitiatorTCPHandler extends ChunkInitiatorHandler implements B
         if (msg instanceof ChunkMessageTCP) {
             ChunkMessageTCP chunkMessage = (ChunkMessageTCP) msg;
             NetworkLogger.printLog(Level.INFO, "Received TCP chunk - " + chunkMessage.getTruncatedFilename() + " - " + chunkMessage.getChunkNo() + " - " + chunkMessage.getHostname() + " - " + chunkMessage.getPort());
-            this.peer.getScheduler().submit(new GetTCPMessageOperation(chunkMessage.getHostname(), chunkMessage.getPort(), this));
+            future =  this.peer.getScheduler().submit(new GetTCPMessageOperation(chunkMessage.getHostname(), chunkMessage.getPort(), this));
         }
+    }
+
+    @Override
+    public synchronized void shutdown() {
+        if(this.future != null)
+            this.future.cancel(true);
+        super.shutdown();
     }
 
     @Override

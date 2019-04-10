@@ -34,12 +34,10 @@ public class GetChunkTCPOperation  implements Runnable{
     @Override
     public void run() {
         try {
-            System.out.println("Started");
             serverSocket = new ServerSocket(0);
             serverSocket.setSoTimeout(1000);
             ChunkMessageTCP response = new ChunkMessageTCP(peer.getVersion(), peer.getPeerId(), msg.getFileId(), msg.getChunkNo(), IpFinder.getIp(), serverSocket.getLocalPort());
             this.peer.getRestore().sendMessage(response);
-            System.out.println("Message sent");
             this.sent = true;
             socket = serverSocket.accept();
             byte[] body = this.peer.getFileManager().getChunk(msg.getFileId(), msg.getChunkNo());

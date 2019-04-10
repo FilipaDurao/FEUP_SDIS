@@ -29,6 +29,7 @@ public class GetTCPMessageOperation implements Runnable {
             this.bodyReceiver.setBody(message);
         } catch (Exception e) {
             NetworkLogger.printLog(Level.WARNING, "Error retrieving TCP message - " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
