@@ -50,7 +50,6 @@ public class GetChunkTCPOperation  implements Runnable{
 
         } catch (Exception e) {
             NetworkLogger.printLog(Level.SEVERE, "Error in TCP get chunk - " + e.getMessage());
-            e.printStackTrace();
         }
 
         this.countDownLatch.countDown();
