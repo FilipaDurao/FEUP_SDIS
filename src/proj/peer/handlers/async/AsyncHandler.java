@@ -7,8 +7,10 @@ import proj.peer.handlers.subscriptions.OperationSubscription;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.Message;
 import proj.peer.operations.RetransmitMessageOperation;
+import proj.peer.utils.RandomGenerator;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public abstract class AsyncHandler extends SubscriptionHandler implements AsyncHandlerInterface {
@@ -41,7 +43,8 @@ public abstract class AsyncHandler extends SubscriptionHandler implements AsyncH
     }
 
     public void startAsync() {
-        this.peer.getScheduler().submit(this.operation);
+        int delay = RandomGenerator.getNumberInRange(0, 400);
+        this.peer.getScheduler().schedule(this.operation, delay, TimeUnit.MILLISECONDS);
     }
 
     public void cancel() {

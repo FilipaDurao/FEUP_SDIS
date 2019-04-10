@@ -8,13 +8,14 @@ import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.message.messages.Message;
 import proj.peer.message.messages.MessageChunk;
 import proj.peer.operations.GetTCPMessageOperation;
+import proj.peer.operations.SaveChunkOperation;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 public class ChunkInitiatorTCPHandler extends ChunkInitiatorHandler implements BodyReceiver {
-    public ChunkInitiatorTCPHandler(Peer peer, GetChunkMessage msg, CountDownLatch countDownLatch) {
-        super(peer, msg, countDownLatch);
+    public ChunkInitiatorTCPHandler(Peer peer, GetChunkMessage msg, SaveChunkOperation chunkSaver, CountDownLatch countDownLatch) {
+        super(peer, msg, chunkSaver, countDownLatch);
     }
 
     @Override
@@ -30,6 +31,7 @@ public class ChunkInitiatorTCPHandler extends ChunkInitiatorHandler implements B
     public void setBody(byte[] body) {
         NetworkLogger.printLog(Level.INFO, "Received requested chunk no." + ((MessageChunk) msg).getChunkNo());
         this.body = body;
+        this.chunkSaver.addChunk(((MessageChunk) this.msg).getChunkNo(), body);
         this.successful = true;
         this.shutdown();
     }

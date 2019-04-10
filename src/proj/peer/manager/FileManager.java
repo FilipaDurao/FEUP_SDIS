@@ -150,6 +150,8 @@ public class FileManager implements Runnable {
         this.fileStructure.removeRemoteFile(fileId);
     }
 
+
+
     @Override
     public void run() {
         this.saveFileStructure();
@@ -166,5 +168,9 @@ public class FileManager implements Runnable {
 
     public boolean isFileRemotlyStored(String fileId) {
         return this.fileStructure.isFileRemotlyStored(fileId);
+    }
+
+    public int getRemoteNChunks(String fileId) throws Exception {
+        return this.fileStructure.getRemoteNChunks(fileId);
     }
 }

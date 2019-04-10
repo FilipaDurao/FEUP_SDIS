@@ -5,6 +5,7 @@ import proj.peer.connection.SubscriptionConnection;
 import proj.peer.handlers.async.AsyncHandler;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.Message;
+import proj.peer.message.messages.MessageChunk;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
@@ -33,15 +34,21 @@ public class RetransmitMessageOperation implements Runnable {
     public void run() {
         try {
             this.senderConnection.sendMessage(msg);
-            NetworkLogger.printLog(Level.INFO, "Message sent - " + msg.getOperation() + " " + msg.getTruncatedFilename(), this.senderConnection.getConnectionName());
+            if (this.msg instanceof MessageChunk) {
+                NetworkLogger.printLog(Level.INFO, "Message sent - " + this.msg.getOperation() + " " + this.msg.getTruncatedFilename() + " " + ((MessageChunk) this.msg).getChunkNo(), this.senderConnection.getConnectionName());
+            } else {
+                NetworkLogger.printLog(Level.INFO, "Message sent - " + this.msg.getOperation() + " " + this.msg.getTruncatedFilename(), this.senderConnection.getConnectionName());
+            }
             this.attempts++;
+
+            if (this.attempts < 5 && !this.successful) {
+                this.future = this.peer.getScheduler().schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
+            } else {
+                this.asyncHandler.shutdown();
+            }
+
         } catch (IOException e) {
             NetworkLogger.printLog(Level.SEVERE, "Error sending scheduled message - " + e.getMessage());
-        }
-        if (this.attempts < 5 && !this.successful) {
-            this.future = this.peer.getScheduler().schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
-        } else {
-            this.asyncHandler.shutdown();
         }
     }
 

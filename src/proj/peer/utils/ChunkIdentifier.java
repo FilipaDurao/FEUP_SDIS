@@ -2,26 +2,20 @@ package proj.peer.utils;
 
 public class ChunkIdentifier {
 
-    private String fileId;
     private Integer chunkNo;
+    private byte[] body;
 
-    ChunkIdentifier(String fileId, Integer chunkNo) {
+    public ChunkIdentifier(Integer chunkNo, byte[] body) {
 
-        this.fileId = fileId;
         this.chunkNo = chunkNo;
+        this.body = body;
     }
 
-    @Override
-    public int hashCode() {
-        return (chunkNo + fileId).hashCode();
+    public Integer getChunkNo() {
+        return chunkNo;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof ChunkIdentifier) {
-            ChunkIdentifier other = (ChunkIdentifier) o;
-            return other.chunkNo.equals(this.chunkNo) && this.fileId.equals(other.fileId);
-        }
-        return false;
+    public byte[] getBody() {
+        return body;
     }
 }

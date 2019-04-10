@@ -78,7 +78,7 @@ public class Peer {
     }
 
     private void startConnections() throws IOException {
-        this.scheduler = new ScheduledThreadPoolExecutor(3);
+        this.scheduler = new ScheduledThreadPoolExecutor(7);
         this.scheduler.setRemoveOnCancelPolicy(true);
 
         this.backup = new BackupConnection(this, backupName, backupPort);

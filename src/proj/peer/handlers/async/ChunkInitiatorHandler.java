@@ -6,15 +6,18 @@ import proj.peer.message.messages.ChunkMessage;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.message.messages.Message;
 import proj.peer.handlers.subscriptions.ChunkSubscription;
+import proj.peer.operations.SaveChunkOperation;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 public class ChunkInitiatorHandler extends AsyncHandler {
     protected byte[] body;
+    protected SaveChunkOperation chunkSaver;
 
-    public ChunkInitiatorHandler(Peer peer, GetChunkMessage msg, CountDownLatch countDownLatch) {
+    public ChunkInitiatorHandler(Peer peer, GetChunkMessage msg, SaveChunkOperation chunkSaver, CountDownLatch countDownLatch) {
         super(new ChunkSubscription(ChunkMessage.OPERATION, msg.getFileId(), msg.getChunkNo(), msg.getVersion()), peer.getRestore(), peer.getControl(), msg, countDownLatch, peer);
+        this.chunkSaver = chunkSaver;
     }
 
     @Override
@@ -22,13 +25,10 @@ public class ChunkInitiatorHandler extends AsyncHandler {
         if (msg instanceof ChunkMessage) {
             ChunkMessage chunkMessage = (ChunkMessage) msg;
             NetworkLogger.printLog(Level.INFO, "Received requested chunk no." + chunkMessage.getChunkNo());
-            this.body = chunkMessage.getBody();
+            this.chunkSaver.addChunk(chunkMessage.getChunkNo(), chunkMessage.getBody());
             this.successful = true;
             this.shutdown();
         }
     }
 
-    public byte[] getBody() {
-        return this.body;
-    }
 }
