@@ -8,7 +8,7 @@ PEERCLASS="proj.peer.Peer"
 COMPILERPATH="/src"
 CCLASSPATH="/src/proj/peer/Peer.java"
 
-PEERPREFIX="19"
+PEERPREFIX="peer-p"
 
 MCNAME="230.1.2.3"
 MCPORT="5678"
@@ -37,8 +37,8 @@ function startConsole() {
         exit 0
     fi
 
-    x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $VERSION $PEERPREFIX$index $MCNAME $MCPORT $MDBNAME $MDBPORT $MDRNAME $MDRPORT &
-    echo "Launched peer with id $PEER$index"
+    x-terminal-emulator -e java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $VERSION $index $PEERPREFIX$index $MCNAME $MCPORT $MDBNAME $MDBPORT $MDRNAME $MDRPORT &
+    echo "Launched peer with id $PEERPREFIX$index"
     let index++
     sleep .2
 }
@@ -50,8 +50,8 @@ function startInPlace() {
         exit 0
     fi
 
-    java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $VERSION $PEERPREFIX$index  $MCNAME $MCPORT $MDBNAME $MDBPORT $MDRNAME $MDRPORT &
-    echo "Launched peer with id $PEER$index"
+    java -cp $SCRIPTPATH$CLASSPATH $PEERCLASS $VERSION $index $PEERPREFIX$index $MCNAME $MCPORT $MDBNAME $MDBPORT $MDRNAME $MDRPORT &
+    echo "Launched peer with id $PEERPREFIX$index"
     let index++
     sleep .2
 }

@@ -21,6 +21,7 @@ public class Peer {
     public static final String DEFAULT_VERSION = "1.0";
     private String version;
     private String peerId;
+    private String peer_ap;
     private String controlName;
     private Integer controlPort;
     private String backupName;
@@ -36,9 +37,10 @@ public class Peer {
     private FileManager fileManager;
     private RestoreConnection restore;
 
-    public Peer(String version, String peerId, String controlName, Integer controlPort, String backupName, Integer backupPort, String restoreName, Integer restorePort) throws Exception {
+    public Peer(String version, String peerId, String peer_ap, String controlName, Integer controlPort, String backupName, Integer backupPort, String restoreName, Integer restorePort) throws Exception {
         this.version = version;
         this.peerId = peerId;
+        this.peer_ap = peer_ap;
         this.controlName = controlName;
         this.controlPort = controlPort;
         this.backupName = backupName;
@@ -50,21 +52,22 @@ public class Peer {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 8) {
-            System.err.println("Usage: java Peer <version> <peer_ap> <control_name> <control_port> <backup_name> <backup_port>  <restore_name> <restore_port>");
+        if (args.length < 9) {
+            System.err.println("Usage: java Peer <version> <peer_id> <peer_ap> <control_name> <control_port> <backup_name> <backup_port>  <restore_name> <restore_port>");
             System.exit(-1);
         }
 
         String version = args[0];
         String peerId = args[1];
-        String controlName = args[2];
-        Integer controlPort = Integer.valueOf(args[3]);
-        String backupName = args[4];
-        Integer backupPort = Integer.valueOf(args[5]);
-        String restoreName = args[6];
-        Integer restorePort = Integer.valueOf(args[7]);
+        String peer_ap = args[2];
+        String controlName = args[3];
+        Integer controlPort = Integer.valueOf(args[4]);
+        String backupName = args[5];
+        Integer backupPort = Integer.valueOf(args[6]);
+        String restoreName = args[7];
+        Integer restorePort = Integer.valueOf(args[8]);
 
-        Peer peer = new Peer(version, peerId, controlName, controlPort, backupName, backupPort, restoreName, restorePort);
+        Peer peer = new Peer(version, peerId, peer_ap, controlName, controlPort, backupName, backupPort, restoreName, restorePort);
         peer.establishRMI();
         peer.startConnections();
 
@@ -94,11 +97,11 @@ public class Peer {
             Registry reg;
             try {
                 reg = LocateRegistry.getRegistry();
-                reg.rebind("RBackup" + this.peerId, stub);
+                reg.rebind(this.peer_ap, stub);
             } catch (RemoteException e) {
                 NetworkLogger.printLog(Level.INFO, "Tries to create Registry");
                 reg = LocateRegistry.createRegistry(1099);
-                reg.rebind("RBackup" + this.peerId, stub);
+                reg.rebind(this.peer_ap, stub);
             }
 
             NetworkLogger.printLog(Level.INFO, "RMI established");

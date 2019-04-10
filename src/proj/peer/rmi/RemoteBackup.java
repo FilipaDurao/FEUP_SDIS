@@ -72,6 +72,7 @@ public class RemoteBackup implements RemoteBackupInterface {
                 // Remove a chunk
                 RemovedMessage removedMessage = this.peer.getFileManager().deleteChunk();
                 if (removedMessage != null) {
+                    System.out.println("Sent message");
                     SendMessageOperation sendMessageOperation = new SendMessageOperation(this.peer.getControl(), removedMessage);
                     this.peer.getScheduler().schedule(sendMessageOperation, 0, TimeUnit.SECONDS);
                 }

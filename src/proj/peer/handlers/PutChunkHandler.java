@@ -21,7 +21,8 @@ public class PutChunkHandler extends SubscriptionHandler {
     public void notify(Message msg) {
         if (msg instanceof PutChunkMessage) {
             NetworkLogger.printLog(Level.INFO, "Received PUTCHUNK message - " + msg.getTruncatedFilename() + " - " + ((PutChunkMessage) msg).getChunkNo());
-            this.peer.getScheduler().execute(new PutChunkOperation((PutChunkMessage) msg, peer));
+            if (!this.peer.getFileManager().isFileRemotlyStored(msg.getFileId()))
+                this.peer.getScheduler().execute(new PutChunkOperation((PutChunkMessage) msg, peer));
         }
     }
 }

@@ -19,7 +19,7 @@ public class ClientMain {
 
         try {
             Registry reg = LocateRegistry.getRegistry("localhost");
-            RemoteBackupInterface remoteBackup = (RemoteBackupInterface) reg.lookup("RBackup" + peer_p);
+            RemoteBackupInterface remoteBackup = (RemoteBackupInterface) reg.lookup(peer_p);
 
             if (operation.toUpperCase().equals("BACKUP")) {
                 backup(args, remoteBackup);

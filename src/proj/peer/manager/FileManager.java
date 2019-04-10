@@ -82,9 +82,7 @@ public class FileManager implements Runnable {
                 if (chunkInfo.getReplicationDegree() < chunkInfo.getNumberOfSaves()) {
                     fileId = entry.getKey();
                     chunkId = chunkInfo.getChunkNumber();
-                    fileStructure.deleteChunk(fileId, chunkId);
-                    NetworkLogger.printLog(Level.INFO, "Deleted chunk - " + fileId.substring(0, 5) + " - " + chunkId);
-                    return null;
+                    return deleteChunkFromMemory(fileId, chunkId);
                 }
 
                 if (fileId == null || chunkId == null) {
@@ -98,6 +96,10 @@ public class FileManager implements Runnable {
             throw new Exception("No chunks stored");
         }
 
+        return deleteChunkFromMemory(fileId, chunkId);
+    }
+
+    private RemovedMessage deleteChunkFromMemory(String fileId, Integer chunkId) throws Exception {
         fileStructure.deleteChunk(fileId, chunkId);
         NetworkLogger.printLog(Level.INFO, "Deleted chunk - " + fileId.substring(0, 5) + " - " + chunkId);
         return new RemovedMessage(peerId, fileId, chunkId);

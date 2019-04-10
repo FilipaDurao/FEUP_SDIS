@@ -8,6 +8,7 @@ import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.utils.IpFinder;
 import proj.peer.utils.RandomGenerator;
 
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -19,7 +20,8 @@ public class GetChunkTCPOperation  implements Runnable{
     private Peer peer;
     private CountDownLatch countDownLatch;
     private GetChunkMessage msg;
-    private Future future;
+    private ServerSocket serverSocket;
+    private Socket socket;
 
     public GetChunkTCPOperation(GetChunkMessage msg, Peer peer, CountDownLatch countDownLatch) {
         this.msg = msg;
@@ -30,21 +32,33 @@ public class GetChunkTCPOperation  implements Runnable{
     @Override
     public void run() {
         try {
-            ServerSocket serverSocket = new ServerSocket(0);
+            serverSocket = new ServerSocket(0);
             serverSocket.setSoTimeout(1000);
             ChunkMessageTCP response = new ChunkMessageTCP(peer.getVersion(), peer.getPeerId(), msg.getFileId(), msg.getChunkNo(), IpFinder.getIp(), serverSocket.getLocalPort());
             this.peer.getRestore().sendMessage(response);
 
-            Socket socket = serverSocket.accept();
+            socket = serverSocket.accept();
             byte[] body = this.peer.getFileManager().getChunk(msg.getFileId(), msg.getChunkNo());
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(body);
-
+            socket.close();
+            serverSocket.close();
             this.countDownLatch.countDown();
 
         } catch (Exception e) {
             NetworkLogger.printLog(Level.SEVERE, "Error in TCP get chunk - " + e.getMessage());
+            e.printStackTrace();
         }
+
+    }
+
+    public void closeSockets() throws IOException {
+        System.out.println("Closing sockets");
+        if (this.serverSocket != null)
+            this.serverSocket.close();
+
+        if (this.socket !=  null)
+            this.socket.close();
 
     }
 }
