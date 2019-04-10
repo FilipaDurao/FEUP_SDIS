@@ -44,12 +44,14 @@ public class SaveChunkOperation implements Runnable {
     }
 
     private boolean ended() {
-        for (int i = 0; i < nChunks; i++) {
-            if(!this.unorderedChunks.contains(i)) {
+        int i = 0;
+        for (Integer chunkNo : this.unorderedChunks) {
+            if (i != chunkNo) {
                 return false;
             }
+            i++;
         }
-        return true;
+        return i == nChunks;
     }
 
     public void addChunk(Integer chunkNo, byte[] chunk) {
