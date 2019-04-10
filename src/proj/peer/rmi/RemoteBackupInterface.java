@@ -8,6 +8,8 @@ public interface RemoteBackupInterface extends Remote {
 
     int restore(String filename) throws RemoteException;
 
+    int restore_enh(String filename) throws RemoteException, Exception;
+
     int delete(String pathname) throws RemoteException;
 
     int reclaim(Integer diskSpace) throws  RemoteException;

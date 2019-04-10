@@ -17,7 +17,7 @@ public class LatchedUnsubscribeOperation extends UnsubscribeOperation {
     @Override
     public void run() {
         try {
-            this.countDownLatch.wait();
+            this.countDownLatch.await();
             super.run();
         } catch (InterruptedException e) {
             NetworkLogger.printLog(Level.WARNING, "Failed to unsubscribe - " + e.getMessage());

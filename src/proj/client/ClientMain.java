@@ -36,12 +36,34 @@ public class ClientMain {
             } else if (operation.toUpperCase().equals("STATE")) {
                 state(args, remoteBackup);
                 System.exit(0);
+            } else if (operation.toUpperCase().equals("RESTOREENH")) {
+                restore_ehn(args, remoteBackup);
+
+                System.exit(0);
             }
 
 
 
             System.err.println("Unsupported operation: " + operation);
             System.exit(-1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void restore_ehn(String[] args, RemoteBackupInterface remoteBackup) {
+        if (args.length < 3) {
+            System.err.println("Missing parameters in restore");
+            System.exit(-1);
+        }
+        String filename = args[2];
+
+        int res = 0;
+        try {
+            res = remoteBackup.restore_enh(filename);
+
+
+            checkSuccess(res, "Restore failed");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,12 +99,7 @@ public class ClientMain {
 
         int res = remoteBackup.delete(filename);
 
-        System.out.println("Returned: " + res);
-        if (res != 0) {
-            System.out.println("Delete failed");
-        } else {
-            System.out.println("Succeeded");
-        }
+        checkSuccess(res, "Delete failed");
     }
 
     private static void restore(String[] args, RemoteBackupInterface remoteBackup) throws RemoteException {
@@ -94,13 +111,17 @@ public class ClientMain {
 
         int res = remoteBackup.restore(filename);
 
+        checkSuccess(res, "Restore failed");
+
+    }
+
+    private static void checkSuccess(int res, String s) {
         System.out.println("Returned: " + res);
         if (res != 0) {
-            System.out.println("Restore failed");
+            System.out.println(s);
         } else {
             System.out.println("Succeeded");
         }
-
     }
 
     private static void backup(String[] args, RemoteBackupInterface remoteBackup) throws Exception {
@@ -113,11 +134,6 @@ public class ClientMain {
         Integer replicationDegree = Integer.valueOf(args[3]);
         int res = remoteBackup.backup(pathname, replicationDegree);
 
-        System.out.println("Returned: " + res);
-        if (res != 0) {
-            System.out.println("Backup failed");
-        } else {
-            System.out.println("Succeeded");
-        }
+        checkSuccess(res, "Backup failed");
     }
 }

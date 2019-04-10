@@ -7,6 +7,7 @@ import proj.peer.log.NetworkLogger;
 import proj.peer.manager.FileManager;
 import proj.peer.rmi.RemoteBackup;
 import proj.peer.rmi.RemoteBackupInterface;
+import proj.peer.utils.SchedulerPrinter;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -14,6 +15,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class Peer {
@@ -78,6 +80,8 @@ public class Peer {
 
     private void startConnections() throws IOException {
         this.scheduler = new ScheduledThreadPoolExecutor(3);
+        this.scheduler.setRemoveOnCancelPolicy(true);
+        new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new SchedulerPrinter(this.scheduler), 0, 1, TimeUnit.SECONDS);
 
         this.backup = new BackupConnection(this, backupName, backupPort);
         new Thread(this.backup).start();

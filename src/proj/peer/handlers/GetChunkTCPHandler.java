@@ -29,7 +29,7 @@ public class GetChunkTCPHandler extends SubscriptionHandler {
                 CountDownLatch latch = new CountDownLatch(1);
                 GetChunkTCPOperation getChunkTCPOperation = new GetChunkTCPOperation(chunkMessage, peer, latch);
                 Future future = this.peer.getScheduler().schedule(getChunkTCPOperation, delay, TimeUnit.MILLISECONDS);
-                ChunkTCPSenderHandler handler = new ChunkTCPSenderHandler(chunkMessage.getFileId(), chunkMessage.getChunkNo(), future, getChunkTCPOperation, peer.getRestore(), peer);
+                ChunkTCPSenderHandler handler = new ChunkTCPSenderHandler(chunkMessage.getFileId(), chunkMessage.getChunkNo(), future, latch, getChunkTCPOperation, peer.getRestore(), peer);
                 this.peer.getRestore().subscribe(handler);
                 this.peer.getScheduler().submit(new LatchedUnsubscribeOperation(handler, latch));
             }

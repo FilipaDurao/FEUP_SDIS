@@ -22,11 +22,13 @@ public class GetChunkTCPOperation  implements Runnable{
     private GetChunkMessage msg;
     private ServerSocket serverSocket;
     private Socket socket;
+    private volatile Boolean sent;
 
     public GetChunkTCPOperation(GetChunkMessage msg, Peer peer, CountDownLatch countDownLatch) {
         this.msg = msg;
         this.peer = peer;
         this.countDownLatch = countDownLatch;
+        this.sent = false;
     }
 
     @Override
@@ -36,24 +38,25 @@ public class GetChunkTCPOperation  implements Runnable{
             serverSocket.setSoTimeout(1000);
             ChunkMessageTCP response = new ChunkMessageTCP(peer.getVersion(), peer.getPeerId(), msg.getFileId(), msg.getChunkNo(), IpFinder.getIp(), serverSocket.getLocalPort());
             this.peer.getRestore().sendMessage(response);
-
+            this.sent = true;
             socket = serverSocket.accept();
             byte[] body = this.peer.getFileManager().getChunk(msg.getFileId(), msg.getChunkNo());
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(body);
             socket.close();
             serverSocket.close();
-            this.countDownLatch.countDown();
 
         } catch (Exception e) {
             NetworkLogger.printLog(Level.SEVERE, "Error in TCP get chunk - " + e.getMessage());
             e.printStackTrace();
         }
 
+        this.countDownLatch.countDown();
     }
 
     public void closeSockets() throws IOException {
-        System.out.println("Closing sockets");
+        if(this.sent)
+            return;
         if (this.serverSocket != null)
             this.serverSocket.close();
 

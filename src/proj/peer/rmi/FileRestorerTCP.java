@@ -1,7 +1,6 @@
 package proj.peer.rmi;
 
 import proj.peer.Peer;
-import proj.peer.connection.RestoreConnection;
 import proj.peer.handlers.async.ChunkInitiatorHandler;
 import proj.peer.handlers.async.ChunkInitiatorTCPHandler;
 import proj.peer.message.messages.GetChunkMessage;

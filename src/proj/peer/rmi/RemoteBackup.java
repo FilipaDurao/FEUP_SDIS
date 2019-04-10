@@ -16,16 +16,16 @@ import java.util.logging.Level;
 
 public class RemoteBackup implements RemoteBackupInterface {
 
-    private final FileRestorer fileRestorer;
+    private FileRestorer fileRestorer;
+    private FileRestorerTCP fileRestorerTCP = null;
     private Peer peer;
 
     public RemoteBackup(Peer peer) {
         this.peer = peer;
 
-        if (this.peer.getPeerId().equals(Peer.DEFAULT_VERSION)) {
             this.fileRestorer = new FileRestorer(peer);
-        } else {
-            this.fileRestorer = new FileRestorerTCP(peer);
+        if (!this.peer.getVersion().equals(Peer.DEFAULT_VERSION)) {
+            this.fileRestorerTCP = new FileRestorerTCP(peer);
         }
     }
 
@@ -53,6 +53,16 @@ public class RemoteBackup implements RemoteBackupInterface {
         return 0;
     }
 
+    public int restore_enh(String filename) throws Exception {
+        if (this.fileRestorerTCP == null)
+            throw  new Exception("TCP version not supported");
+        String encoded = SHA256Encoder.encode(this.peer.getPeerId() + "/" + filename);
+        if (!this.peer.getFileManager().isFileRemotlyStored(encoded)) return -2;
+        if (!this.fileRestorerTCP.restoreFile(filename, encoded)) return -1;
+
+        return 0;
+    }
+
 
     public int delete(String filename) {
         String encodedFilename = SHA256Encoder.encode(filename);
@@ -72,7 +82,6 @@ public class RemoteBackup implements RemoteBackupInterface {
                 // Remove a chunk
                 RemovedMessage removedMessage = this.peer.getFileManager().deleteChunk();
                 if (removedMessage != null) {
-                    System.out.println("Sent message");
                     SendMessageOperation sendMessageOperation = new SendMessageOperation(this.peer.getControl(), removedMessage);
                     this.peer.getScheduler().schedule(sendMessageOperation, 0, TimeUnit.SECONDS);
                 }
