@@ -27,7 +27,7 @@ public class SaveChunkOperation implements Runnable {
             while (!this.lastChunk) {
                 byte[] chunk = this.chunks.take();
                 if (chunk.length < MulticastConnection.CHUNK_SIZE) {
-                    this.lastChunk = false;
+                    this.lastChunk = true;
                 }
                 stream.write(chunk);
             }

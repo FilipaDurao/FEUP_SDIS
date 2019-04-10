@@ -29,10 +29,8 @@ public class ChunkInitiatorTCPHandler extends ChunkInitiatorHandler implements B
     @Override
     public void setBody(byte[] body) {
         NetworkLogger.printLog(Level.INFO, "Received requested chunk no." + ((MessageChunk) msg).getChunkNo());
-        this.cancel();
         this.body = body;
-        this.unsubscribe();
         this.successful = true;
-        this.countDown();
+        this.shutdown();
     }
 }

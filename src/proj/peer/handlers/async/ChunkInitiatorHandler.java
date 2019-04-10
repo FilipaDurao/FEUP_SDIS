@@ -22,11 +22,9 @@ public class ChunkInitiatorHandler extends AsyncHandler {
         if (msg instanceof ChunkMessage) {
             ChunkMessage chunkMessage = (ChunkMessage) msg;
             NetworkLogger.printLog(Level.INFO, "Received requested chunk no." + chunkMessage.getChunkNo());
-            this.cancel();
             this.body = chunkMessage.getBody();
-            this.unsubscribe();
             this.successful = true;
-            this.countDown();
+            this.shutdown();
         }
     }
 
