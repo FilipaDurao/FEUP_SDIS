@@ -9,15 +9,19 @@ import java.util.logging.LogRecord;
 public class LogFormatter extends Formatter {
 
     private  SimpleDateFormat dateFormat;
+    private  String peerId;
 
-    public LogFormatter() {
+    public LogFormatter(String peerId) {
+        this.peerId = peerId;
         dateFormat = new SimpleDateFormat("hh:mm:ss");
     }
 
     @Override
     public String format(LogRecord record) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(dateFormat.format(new Date(record.getMillis()))).append(" - [").append(record.getLevel().getName()).append("] - ");
+        stringBuilder.append(dateFormat.format(new Date(record.getMillis())));
+        stringBuilder.append(" - [").append(this.peerId).append("]");
+        stringBuilder.append(" - [").append(record.getLevel().getName()).append("] - ");
         Object[] parameters = record.getParameters();
         if (parameters != null) {
             stringBuilder.append("[");
@@ -33,5 +37,9 @@ public class LogFormatter extends Formatter {
         stringBuilder.append(record.getMessage()).append("\n");
 
         return stringBuilder.toString();
+    }
+
+    public void setPeerId(String peerId) {
+        this.peerId = peerId;
     }
 }

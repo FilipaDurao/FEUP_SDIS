@@ -22,8 +22,8 @@ public class MulticastConnection {
         this.multicast_port_number = multicast_port_number;
         this.multiSocket = new MulticastSocket(this.multicast_port_number);
         multiSocket.joinGroup(InetAddress.getByName(this.multicast_name));
-        multiSocket.setLoopbackMode(false);
-        multiSocket.setTimeToLive(1);
+        // multiSocket.setLoopbackMode(false);
+        // multiSocket.setTimeToLive(1);
     }
 
     public void sendMessage(Message msg) throws IOException {

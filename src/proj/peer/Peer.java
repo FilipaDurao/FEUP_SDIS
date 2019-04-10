@@ -50,6 +50,7 @@ public class Peer {
         this.restorePort = restorePort;
 
         this.fileManager = new FileManager(this.peerId);
+        NetworkLogger.setPeerId(peerId);
     }
 
     public static void main(String[] args) throws Exception {
@@ -73,7 +74,6 @@ public class Peer {
         peer.startConnections();
 
         Runtime.getRuntime().addShutdownHook(new Thread(peer.fileManager));
-
         NetworkLogger.printLog(Level.INFO, "Server is running.");
     }
 

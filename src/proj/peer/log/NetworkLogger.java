@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 public class NetworkLogger extends Logger {
     private static NetworkLogger ourInstance = new NetworkLogger();
+    private final LogFormatter formatter;
 
     public static NetworkLogger getInstance() {
         return ourInstance;
@@ -14,7 +15,8 @@ public class NetworkLogger extends Logger {
     private NetworkLogger() {
         super("NetworkLogger", null);
         ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new LogFormatter());
+        formatter = new LogFormatter("");
+        handler.setFormatter(formatter);
         this.addHandler(handler);
     }
 
@@ -28,5 +30,9 @@ public class NetworkLogger extends Logger {
 
     public static void printLog(Level level, String msg, Object param) {
         NetworkLogger.getInstance().log(level, msg, param);
+    }
+
+    public static void setPeerId(String peerId) {
+        NetworkLogger.getInstance().formatter.setPeerId(peerId);
     }
 }
