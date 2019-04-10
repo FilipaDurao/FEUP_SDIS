@@ -101,6 +101,7 @@ public class RemoteBackup implements RemoteBackupInterface {
 
         res.append("REMOTE STATE\n");
         for (Map.Entry<String, FileInfo> entry : this.peer.getFileManager().getRemoteChunks().entrySet()) {
+            res.append("\tReal file name: ").append(entry.getValue().getFilename()).append("\n");
             buildFileInfo(res, entry);
         }
 
@@ -114,7 +115,7 @@ public class RemoteBackup implements RemoteBackupInterface {
     }
 
     private void buildFileInfo(StringBuilder res, Map.Entry<String, FileInfo> entry) {
-        res.append("\tFile saved: ").append(entry.getKey()).append("\n\tChunks: \n");
+        res.append("\tSaved file name: ").append(entry.getKey()).append("\n\tChunks: \n");
         for (ChunkInfo chunkInfo : entry.getValue().getChunks()) {
             res.append("\t\t").append(chunkInfo.getChunkNumber()).append(":\n");
             res.append("\t\t\tSize: ").append(chunkInfo.getSize()).append("\n");
