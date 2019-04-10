@@ -12,7 +12,6 @@ public class DeleteMessage extends Message {
 
         String[] msgHeader = msgStr.split("\\s+");
         if (msgHeader.length < 4) {
-            System.out.println(msgHeader.length);
             throw new Exception("Malformed "+ OPERATION + " message: Wrong number of arguments");
         }
 

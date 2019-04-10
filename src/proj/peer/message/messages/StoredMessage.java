@@ -10,6 +10,10 @@ public class StoredMessage extends  MessageChunk{
         super(Peer.DEFAULT_VERSION, OPERATION, senderId, fileId, chunkNo);
     }
 
+    protected StoredMessage(String version, String senderId, String fileId, Integer chunkNo) {
+        super(version, OPERATION, senderId, fileId, chunkNo);
+    }
+
     public StoredMessage(String msgStr) throws Exception {
         super();
         String[] msgParts = msgStr.split(Message.CRLF + Message.CRLF);
@@ -26,6 +30,10 @@ public class StoredMessage extends  MessageChunk{
         this.senderId = msgHeader[2];
         this.fileId = msgHeader[3];
         this.chunkNo = Integer.valueOf(msgHeader[4]);
+    }
+
+    public StoredMessage() {
+
     }
 
     @Override

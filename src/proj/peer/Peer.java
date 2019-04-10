@@ -20,6 +20,7 @@ import java.util.logging.Level;
 public class Peer {
 
     public static final String DEFAULT_VERSION = "1.0";
+    public static final int POOL_SIZE = 7;
     private String version;
     private String peerId;
     private String peer_ap;
@@ -78,7 +79,7 @@ public class Peer {
     }
 
     private void startConnections() throws IOException {
-        this.scheduler = new ScheduledThreadPoolExecutor(7);
+        this.scheduler = new ScheduledThreadPoolExecutor(POOL_SIZE);
         this.scheduler.setRemoveOnCancelPolicy(true);
 
         this.backup = new BackupConnection(this, backupName, backupPort);

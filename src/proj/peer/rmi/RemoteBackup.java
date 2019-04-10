@@ -24,7 +24,7 @@ public class RemoteBackup implements RemoteBackupInterface {
     public RemoteBackup(Peer peer) {
         this.peer = peer;
 
-            this.fileRestorer = new FileRestorer(peer);
+        this.fileRestorer = new FileRestorer(peer);
         if (!this.peer.getVersion().equals(Peer.DEFAULT_VERSION)) {
             this.fileRestorerTCP = new FileRestorerTCP(peer);
         }
@@ -32,6 +32,18 @@ public class RemoteBackup implements RemoteBackupInterface {
 
     public int backup(String pathname, Integer replicationDegree) {
         FileSender fileSender = new FileSender(peer, pathname, replicationDegree);
+        return startBackup(pathname, fileSender);
+    }
+
+    public int backup_enh(String pathname, Integer replicationDegree) throws Exception {
+        if (this.peer.getVersion().equals(Peer.DEFAULT_VERSION)) {
+            throw new Exception("TCP not supported");
+        }
+        FileSender fileSender = new FileSenderTCP(peer, pathname, replicationDegree);
+        return startBackup(pathname, fileSender);
+    }
+
+    private int startBackup(String pathname, FileSender fileSender) {
         this.peer.getFileManager().addRemoteFile(fileSender.getFileName(), fileSender.getEncodedFileName());
 
         if (!fileSender.sendFile()) {

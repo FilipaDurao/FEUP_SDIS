@@ -6,32 +6,36 @@ import proj.peer.message.messages.*;
 
 public class MessageFactory {
 
-    public static Message getMessage(byte[] msgStr) throws Exception {
-        String strMessage = new String(msgStr, 0, Math.min(MulticastConnection.MAX_HEADER_SIZE, msgStr.length));
+    public static Message getMessage(byte[] msgBytes) throws Exception {
+        String strMessage = new String(msgBytes, 0, Math.min(MulticastConnection.MAX_HEADER_SIZE, msgBytes.length));
         String[] header = strMessage.split("\\s+");
         String operation = header[0];
         String version = header[1];
 
         if (version.toUpperCase().equals(Peer.DEFAULT_VERSION)) {
 
-            if (operation.toUpperCase().equals(PutChunkMessage.OPERATION)) {
-                return new PutChunkMessage(msgStr);
-            } else if (operation.toUpperCase().equals(StoredMessage.OPERATION)) {
+            if (PutChunkMessage.OPERATION.equals(operation.toUpperCase())) {
+                return new PutChunkMessage(msgBytes);
+            } else if (StoredMessage.OPERATION.equals(operation.toUpperCase())) {
                 return new StoredMessage(strMessage);
-            } else if (operation.toUpperCase().equals(ChunkMessage.OPERATION)) {
-                return new ChunkMessage(msgStr);
-            } else if (operation.toUpperCase().equals(GetChunkMessage.OPERATION)) {
+            } else if (ChunkMessage.OPERATION.equals(operation.toUpperCase())) {
+                return new ChunkMessage(msgBytes);
+            } else if (GetChunkMessage.OPERATION.equals(operation.toUpperCase())) {
                 return new GetChunkMessage(strMessage);
-            } else if (operation.toUpperCase().equals(DeleteMessage.OPERATION)) {
+            } else if (DeleteMessage.OPERATION.equals(operation.toUpperCase())) {
                 return new DeleteMessage(strMessage);
-            } else if (operation.toUpperCase().equals(RemovedMessage.OPERATION)) {
+            } else if (RemovedMessage.OPERATION.equals(operation.toUpperCase())) {
                 return new RemovedMessage(strMessage);
             }
         } else {
-            if (operation.toUpperCase().equals(ChunkMessage.OPERATION)) {
-                return new ChunkMessageTCP(msgStr);
-            } else if (operation.toUpperCase().equals(GetChunkMessage.OPERATION)) {
+            if (ChunkMessage.OPERATION.equals(operation.toUpperCase())) {
+                return new ChunkMessageTCP(msgBytes);
+            } else if (GetChunkMessage.OPERATION.equals(operation.toUpperCase())) {
                 return new GetChunkMessage(strMessage);
+            } else if (PutChunkMessage.OPERATION.equals(operation.toUpperCase())) {
+                return new PutChunkMessage(msgBytes);
+            } else if (StoredMessage.OPERATION.equals(operation.toUpperCase())) {
+                return new StoredMessageTCP(strMessage);
             }
         }
 

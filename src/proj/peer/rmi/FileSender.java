@@ -24,7 +24,7 @@ public class FileSender {
     /**
      * Peer associated with the sender.
      */
-    private Peer peer;
+    protected Peer peer;
 
     /**
      * Path to the file.
@@ -34,23 +34,23 @@ public class FileSender {
     /**
      * Replication degree of the file.
      */
-    private Integer replicationDegree;
+    protected Integer replicationDegree;
 
     /**
      * Saves all handlers for the messages sent.
      */
-    private ArrayList<StoredInitiatorHandler> handlers;
+    protected ArrayList<StoredInitiatorHandler> handlers;
 
     /**
      * Latch that waits fot all handlers to conclude.
      */
-    private CountDownLatch chunkSavedSignal;
+    protected CountDownLatch chunkSavedSignal;
 
     /**
      * File to send.
      */
-    private File file;
-    private String encodedFileName;
+    protected File file;
+    protected String encodedFileName;
 
 
     /**
@@ -76,7 +76,7 @@ public class FileSender {
      * @param chunkNo Chunk number of the message.
      * @return Handler for the message subscription and retransmission.
      */
-    private StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo) {
+    protected StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo) {
         this.peer.getFileManager().addRemoteChunk(encodedFileName, chunkNo, replicationDegree, body.length);
         PutChunkMessage msg = new PutChunkMessage(peer.getPeerId(), encodedFileName, chunkNo, replicationDegree, body);
         StoredInitiatorHandler handler = new StoredInitiatorHandler(this.peer, msg, this.chunkSavedSignal);

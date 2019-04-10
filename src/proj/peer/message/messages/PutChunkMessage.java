@@ -14,6 +14,11 @@ public class PutChunkMessage extends MessageWBody {
         this.replicationDegree = replicationDegree;
     }
 
+    public PutChunkMessage(String version, String senderId, String fileId, Integer chunkNo, Integer replicationDegree) {
+        super(version, OPERATION, senderId, fileId, chunkNo, new byte[0]);
+        this.replicationDegree = replicationDegree;
+    }
+
     public PutChunkMessage(byte[] messageBytes) throws Exception {
         super();
         byte[][] msgParts = this.split(messageBytes, Message.LINE_TERMINATOR_ARRAY);

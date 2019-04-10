@@ -37,7 +37,11 @@ public class ClientMain {
                 state(args, remoteBackup);
                 System.exit(0);
             } else if (operation.toUpperCase().equals("RESTOREENH")) {
-                restore_ehn(args, remoteBackup);
+                restore_enh(args, remoteBackup);
+
+                System.exit(0);
+            } else if (operation.toUpperCase().equals("BACKUPENH")) {
+                backup_enh(args, remoteBackup);
 
                 System.exit(0);
             }
@@ -51,9 +55,22 @@ public class ClientMain {
         }
     }
 
-    private static void restore_ehn(String[] args, RemoteBackupInterface remoteBackup) {
+    private static void backup_enh(String[] args, RemoteBackupInterface remoteBackup) throws Exception {
+        if (args.length < 4) {
+            System.err.println("Missing parameters in backup enhanced");
+            System.exit(-1);
+        }
+
+        String pathname = args[2];
+        Integer replicationDegree = Integer.valueOf(args[3]);
+        int res = remoteBackup.backup_enh(pathname, replicationDegree);
+
+        checkSuccess(res, "Backup failed");
+    }
+
+    private static void restore_enh(String[] args, RemoteBackupInterface remoteBackup) {
         if (args.length < 3) {
-            System.err.println("Missing parameters in restore");
+            System.err.println("Missing parameters in restore enhanced");
             System.exit(-1);
         }
         String filename = args[2];
