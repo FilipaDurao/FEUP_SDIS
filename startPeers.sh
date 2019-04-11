@@ -97,7 +97,7 @@ if [[ "$KILL_PEERS" == true ]]; then
 fi
 
 if [[ "$RESET" == true ]]; then
-    rm -rf $SCRIPTPATH"/data"
+    rm -rf $SCRIPTPATH"/peer_"*
 fi
 
 if ! [[ "$NPEERS" =~ ^[0-9]+$ ]]

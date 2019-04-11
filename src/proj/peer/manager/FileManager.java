@@ -20,7 +20,7 @@ public class FileManager implements Runnable {
     }
 
     private String getFilename() {
-        return "data/peer_" + peerId + "/" + FILENAME;
+        return "peer_" + peerId + "/" + FILENAME;
     }
 
     private void saveFileStructure() {
@@ -51,7 +51,7 @@ public class FileManager implements Runnable {
             oos.close();
             this.fileStructure.checkFileStructure();
         } catch (Exception e) {
-            this.fileStructure = new FileStructure("data/peer_" + peerId + "/backup");
+            this.fileStructure = new FileStructure("peer_" + peerId + "/backup");
             NetworkLogger.printLog(Level.WARNING, "Failed recovering of the file structure.");
         }
     }
