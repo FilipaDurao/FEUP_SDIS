@@ -10,7 +10,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class FileSenderTCP extends FileSender {
     /**
-     * Sends a file via a multicast connection.
+     * Sends a file via a tcp connection.
      *
      * @param peer              Peer associated with the sender.
      * @param pathname          Path to the file.
@@ -22,6 +22,7 @@ public class FileSenderTCP extends FileSender {
 
     @Override
     protected StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo) {
+        this.peer.getFileManager().addRemoteChunk(encodedFileName, chunkNo, replicationDegree, 0);
         PutChunkMessage msg = new PutChunkMessage(peer.getVersion(), peer.getPeerId(), encodedFileName, chunkNo, replicationDegree);
         StoredInitiatorHandler handler = new StoredInitiatorTCPHandler(this.peer, msg, this.chunkSavedSignal, this.file.getAbsolutePath());
         handler.startAsync();

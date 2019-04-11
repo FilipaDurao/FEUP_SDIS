@@ -32,7 +32,7 @@ VERSION="1.5"
 
 function startConsole() {
     let STARTEDP=$index-$INITIAL_INDEX+1
-    if [[ $STARTEDP -gt $NPEERS ]]; then 
+    if [[ ${STARTEDP} -gt $NPEERS ]]; then
         echo "Ending launch..."
         exit 0
     fi
@@ -45,7 +45,7 @@ function startConsole() {
 
 function startInPlace() {
     let STARTEDP=$index-$INITIAL_INDEX+1
-    if [[ $STARTEDP -gt $NPEERS ]]; then 
+    if [[ ${STARTEDP} -gt $NPEERS ]]; then
         echo "Ending launch..."
         exit 0
     fi
@@ -93,6 +93,7 @@ NPEERS=${1:-3}
 
 if [[ "$KILL_PEERS" == true ]]; then
     ./killAllPeers.sh
+    sleep 0.5
 fi
 
 if [[ "$RESET" == true ]]; then
