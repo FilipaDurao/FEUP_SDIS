@@ -31,7 +31,11 @@ public class StoredInitiatorTCPHandler extends StoredInitiatorHandler {
                     this.sendingChunk += 1;
                     // TODO: Start operation to send chunk
                     this.peer.getScheduler().submit(
-                            new StoredTCPOperation(this.filename,
+                            new StoredTCPOperation(
+                                    this.peer,
+                                    response.getSenderId(),
+                                    response.getFileId(),
+                                    this.filename,
                                     ((MessageChunk) response).getChunkNo(),
                                     ((StoredMessageTCP) response).getHostname(),
                                     ((StoredMessageTCP) response).getPort(),

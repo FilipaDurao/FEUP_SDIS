@@ -1,5 +1,6 @@
 package proj.peer.operations;
 
+import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
 import proj.peer.handlers.async.StoredInitiatorTCPHandler;
 import proj.peer.log.NetworkLogger;
@@ -16,14 +17,19 @@ import java.util.logging.Level;
 public class StoredTCPOperation implements Runnable {
 
     private boolean success;
+    private Peer peer;
+    private String peerId;
+    private String fileId;
     private String pathname;
     private Integer chunkNo;
     private String hostname;
     private Integer port;
     private StoredInitiatorTCPHandler handler;
 
-    public StoredTCPOperation(String pathname, Integer chunkNo, String hostname, Integer port, StoredInitiatorTCPHandler handler) {
-
+    public StoredTCPOperation(Peer peer, String peerId, String fileId, String pathname, Integer chunkNo, String hostname, Integer port, StoredInitiatorTCPHandler handler) {
+        this.peer = peer;
+        this.peerId = peerId;
+        this.fileId = fileId;
         this.pathname = pathname;
         this.chunkNo = chunkNo;
         this.hostname = hostname;
@@ -46,12 +52,14 @@ public class StoredTCPOperation implements Runnable {
                 length = file.read(buffer);
             }
 
+            this.peer.getFileManager().setChunkSize(this.fileId, this.chunkNo, length);
             // Send chunk
             Socket socket = new Socket(InetAddress.getByName(this.hostname), this.port);
             socket.setKeepAlive(true);
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(Arrays.copyOfRange(buffer, 0, length));
             if(  (boolean) new ObjectInputStream(socket.getInputStream()).readObject()) {
+                this.peer.getFileManager().storeChunkPeer(fileId, chunkNo, peerId);
                 this.handler.markSuccess();
                 this.success = true;
             }

@@ -70,4 +70,9 @@ public class FileInfo implements Serializable {
     public String getFilename() {
         return filename;
     }
+
+    public void setChunkSize(Integer chunkNo, int length) {
+        if (this.chunks.containsKey(chunkNo))
+            this.chunks.get(chunkNo).setSize(length);
+    }
 }

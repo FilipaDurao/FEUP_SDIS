@@ -15,13 +15,13 @@ import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-public class PutchunkTCPOperation implements Runnable {
+public class PutChunkTCPOperation implements Runnable {
     private PutChunkMessage msg;
     private Peer peer;
     private ServerSocket serverSocket;
     private Socket socket;
 
-    public PutchunkTCPOperation(PutChunkMessage msg, Peer peer) {
+    public PutChunkTCPOperation(PutChunkMessage msg, Peer peer) {
         this.msg = msg;
         this.peer = peer;
     }

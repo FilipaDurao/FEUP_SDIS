@@ -201,15 +201,21 @@ public class FileStructure implements Serializable {
         return remoteFiles;
     }
 
-    public boolean isFileRemotlyStored(String fileId) {
+    public boolean isFileRemotelyStored(String fileId) {
         return this.remoteFiles.containsKey(fileId);
     }
 
     public int getRemoteNChunks(String fileId) throws Exception {
-        if (!isFileRemotlyStored(fileId))
+        if (!isFileRemotelyStored(fileId))
             throw new Exception("File not found");
 
         return this.remoteFiles.get(fileId).getChunks().size();
+
+    }
+
+    public void setChunkSize(String fileId, Integer chunkNo, int length) {
+        if (isFileRemotelyStored(fileId))
+            this.remoteFiles.get(fileId).setChunkSize(chunkNo, length);
 
     }
 }

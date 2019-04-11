@@ -167,10 +167,14 @@ public class FileManager implements Runnable {
     }
 
     public boolean isFileRemotlyStored(String fileId) {
-        return this.fileStructure.isFileRemotlyStored(fileId);
+        return this.fileStructure.isFileRemotelyStored(fileId);
     }
 
     public int getRemoteNChunks(String fileId) throws Exception {
         return this.fileStructure.getRemoteNChunks(fileId);
+    }
+
+    public void setChunkSize(String fileId, Integer chunkNo, int length) {
+        this.fileStructure.setChunkSize(fileId, chunkNo, length);
     }
 }

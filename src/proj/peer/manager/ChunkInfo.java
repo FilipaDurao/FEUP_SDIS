@@ -53,4 +53,8 @@ public class ChunkInfo implements Serializable {
     public void removePeer(String peerId) {
         this.peerIds.remove(peerId);
     }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
 }
