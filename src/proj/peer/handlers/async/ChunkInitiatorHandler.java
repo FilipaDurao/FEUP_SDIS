@@ -6,16 +6,16 @@ import proj.peer.message.messages.ChunkMessage;
 import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.message.messages.Message;
 import proj.peer.handlers.subscriptions.ChunkSubscription;
-import proj.peer.operations.SaveChunkOperation;
+import proj.peer.operations.SaveFileOperation;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 public class ChunkInitiatorHandler extends AsyncHandler {
     protected byte[] body;
-    protected SaveChunkOperation chunkSaver;
+    protected SaveFileOperation chunkSaver;
 
-    public ChunkInitiatorHandler(Peer peer, GetChunkMessage msg, SaveChunkOperation chunkSaver, CountDownLatch countDownLatch) {
+    public ChunkInitiatorHandler(Peer peer, GetChunkMessage msg, SaveFileOperation chunkSaver, CountDownLatch countDownLatch) {
         super(new ChunkSubscription(ChunkMessage.OPERATION, msg.getFileId(), msg.getChunkNo(), msg.getVersion()), peer.getRestore(), peer.getControl(), msg, countDownLatch, peer);
         this.chunkSaver = chunkSaver;
     }

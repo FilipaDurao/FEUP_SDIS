@@ -8,7 +8,7 @@ import proj.peer.message.messages.GetChunkMessage;
 import proj.peer.message.messages.Message;
 import proj.peer.message.messages.MessageChunk;
 import proj.peer.operations.GetTCPMessageOperation;
-import proj.peer.operations.SaveChunkOperation;
+import proj.peer.operations.SaveFileOperation;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -17,7 +17,7 @@ import java.util.logging.Level;
 public class ChunkInitiatorTCPHandler extends ChunkInitiatorHandler implements BodyReceiver {
     private Future future;
 
-    public ChunkInitiatorTCPHandler(Peer peer, GetChunkMessage msg, SaveChunkOperation chunkSaver, CountDownLatch countDownLatch) {
+    public ChunkInitiatorTCPHandler(Peer peer, GetChunkMessage msg, SaveFileOperation chunkSaver, CountDownLatch countDownLatch) {
         super(peer, msg, chunkSaver, countDownLatch);
     }
 

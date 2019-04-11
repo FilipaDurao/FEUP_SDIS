@@ -4,6 +4,7 @@ import proj.peer.connection.MulticastConnection;
 import proj.peer.handlers.async.StoredInitiatorTCPHandler;
 import proj.peer.log.NetworkLogger;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
@@ -33,12 +34,17 @@ public class StoredTCPOperation implements Runnable {
 
     @Override
     public void run() {
+            RandomAccessFile file = null;
         try {
             // Read from file
             byte[] buffer = new byte[MulticastConnection.CHUNK_SIZE];
-            RandomAccessFile file = new RandomAccessFile(this.pathname, "r");
-            file.seek(this.chunkNo * MulticastConnection.CHUNK_SIZE);
-            int length = file.read(buffer);
+            int length = 0;
+            file = new RandomAccessFile(this.pathname, "r");
+            int startingPoint = this.chunkNo * MulticastConnection.CHUNK_SIZE;
+            if (startingPoint < file.length()) {
+                file.seek(startingPoint);
+                length = file.read(buffer);
+            }
 
             // Send chunk
             Socket socket = new Socket(InetAddress.getByName(this.hostname), this.port);
@@ -49,10 +55,17 @@ public class StoredTCPOperation implements Runnable {
                 this.handler.markSuccess();
                 this.success = true;
             }
-
+            file.close();
             socket.close();
         } catch (Exception e) {
             NetworkLogger.printLog(Level.WARNING, "Failure sending PUTCHUNK through TCP - " + e.getMessage());
+            if (file != null) {
+                try {
+                    file.close();
+                } catch (IOException e1) {
+                    NetworkLogger.printLog(Level.WARNING, "Error closing file - " + e.getMessage());
+                }
+            }
         }
         if (!this.success)
             this.handler.markFailure();

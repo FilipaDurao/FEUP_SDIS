@@ -33,23 +33,26 @@ public class RetransmitMessageOperation implements Runnable {
     @Override
     public void run() {
         try {
+            this.attempts++;
+
             this.senderConnection.sendMessage(msg);
             if (this.msg instanceof MessageChunk) {
                 NetworkLogger.printLog(Level.INFO, "Message sent - " + this.msg.getOperation() + " " + this.msg.getTruncatedFilename() + " " + ((MessageChunk) this.msg).getChunkNo(), this.senderConnection.getConnectionName());
             } else {
                 NetworkLogger.printLog(Level.INFO, "Message sent - " + this.msg.getOperation() + " " + this.msg.getTruncatedFilename(), this.senderConnection.getConnectionName());
             }
-            this.attempts++;
-
-            if (this.attempts < 5 && !this.successful) {
-                this.future = this.peer.getScheduler().schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
-            } else {
-                this.asyncHandler.shutdown();
-            }
 
         } catch (IOException e) {
             NetworkLogger.printLog(Level.SEVERE, "Error sending scheduled message - " + e.getMessage());
         }
+
+        if (this.attempts < 5 && !this.successful) {
+            this.future = this.peer.getScheduler().schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
+        } else {
+            this.asyncHandler.shutdown();
+        }
+
+
     }
 
     public void cancel() {

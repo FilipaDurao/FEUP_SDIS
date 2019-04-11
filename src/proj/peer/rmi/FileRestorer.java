@@ -4,7 +4,7 @@ import proj.peer.Peer;
 import proj.peer.handlers.async.ChunkInitiatorHandler;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.GetChunkMessage;
-import proj.peer.operations.SaveChunkOperation;
+import proj.peer.operations.SaveFileOperation;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,14 +34,14 @@ public class FileRestorer {
 
     public boolean restoreFile(String filename, String encodedFilename) {
 
-        SaveChunkOperation chunkSaver;
+        SaveFileOperation chunkSaver;
         Future saveChunkFuture = null;
         RandomAccessFile stream = null;
         try {
             int nChunks = this.peer.getFileManager().getRemoteNChunks(encodedFilename);
             ArrayList<ChunkInitiatorHandler> handlers = new ArrayList<>();
             stream = new RandomAccessFile(fileFolder.getAbsolutePath() + "/" + filename, "rw");
-            chunkSaver = new SaveChunkOperation(stream, nChunks);
+            chunkSaver = new SaveFileOperation(stream, nChunks);
             saveChunkFuture = this.peer.getScheduler().schedule(chunkSaver, 0, TimeUnit.SECONDS);
             CountDownLatch latch = null;
             for (int i = 0; i < nChunks ; i++) {
@@ -55,9 +55,18 @@ public class FileRestorer {
                                 throw new Exception("Get chunk not successful");
                         }
                     }
-                    latch = new CountDownLatch(WINDOW_SIZE);
+                    latch = new CountDownLatch(Math.min(WINDOW_SIZE, nChunks - i));
                 }
                 handlers.add(initiateRestoreChunk(i, encodedFilename, chunkSaver, latch));
+            }
+
+
+            if (latch != null) {
+                latch.await();
+                for (ChunkInitiatorHandler handler : handlers) {
+                    if (!handler.wasSuccessful())
+                        throw new Exception("Get chunk not successful");
+                }
             }
 
         } catch (Exception e) {
@@ -78,7 +87,7 @@ public class FileRestorer {
         return true;
     }
 
-    protected ChunkInitiatorHandler initiateRestoreChunk(Integer chunkNo, String encode, SaveChunkOperation chunkSaver, CountDownLatch countDownLatch) throws Exception {
+    protected ChunkInitiatorHandler initiateRestoreChunk(Integer chunkNo, String encode, SaveFileOperation chunkSaver, CountDownLatch countDownLatch) throws Exception {
         GetChunkMessage msg = new GetChunkMessage(this.peer.getPeerId(), encode, chunkNo);
         ChunkInitiatorHandler handler = new ChunkInitiatorHandler(peer, msg, chunkSaver, countDownLatch);
         this.peer.getRestore().subscribe(handler);

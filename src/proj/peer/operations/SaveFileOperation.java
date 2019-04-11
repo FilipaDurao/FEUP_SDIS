@@ -11,18 +11,16 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
 
-public class SaveChunkOperation implements Runnable {
+public class SaveFileOperation implements Runnable {
     private RandomAccessFile stream;
     private int nChunks;
     private BlockingQueue<ChunkIdentifier> chunks;
     private HashSet<Integer> unorderedChunks;
-    private Boolean lastChunk;
 
-    public SaveChunkOperation(RandomAccessFile stream, int nChunks) {
+    public SaveFileOperation(RandomAccessFile stream, int nChunks) {
         this.stream = stream;
         this.nChunks = nChunks;
         this.chunks = new LinkedBlockingDeque<>();
-        this.lastChunk = false;
         this.unorderedChunks = new HashSet<>();
     }
 
@@ -35,6 +33,7 @@ public class SaveChunkOperation implements Runnable {
                 stream.write(chunk.getBody());
                 this.unorderedChunks.add(chunk.getChunkNo());
             }
+            stream.close();
 
         } catch (IOException e) {
             NetworkLogger.printLog(Level.SEVERE, "Error saving file - " + e.getMessage());
