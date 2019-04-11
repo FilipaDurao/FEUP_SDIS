@@ -17,7 +17,7 @@ public class StoredInitiatorTCPHandler extends StoredInitiatorHandler {
     private final Object lock = new Object();
 
     public StoredInitiatorTCPHandler(Peer peer, PutChunkMessage msg, CountDownLatch chunkSavedSignal, String filename) {
-        super(new ChunkSubscription(StoredMessage.OPERATION, msg.getFileId(), msg.getChunkNo(), msg.getVersion()), peer, msg, chunkSavedSignal);
+        super(new ChunkSubscription(StoredMessageTCP.OPERATION, msg.getFileId(), msg.getChunkNo(), msg.getVersion()), peer, msg, chunkSavedSignal);
         replicationDegree = msg.getReplicationDegree();
         this.filename = filename;
     }

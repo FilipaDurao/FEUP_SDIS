@@ -3,13 +3,16 @@ package proj.peer.operations;
 import proj.peer.Peer;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.PutChunkMessage;
+import proj.peer.message.messages.StoredMessage;
 import proj.peer.message.messages.StoredMessageTCP;
 import proj.peer.utils.IpFinder;
+import proj.peer.utils.RandomGenerator;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class PutchunkTCPOperation implements Runnable {
@@ -43,6 +46,8 @@ public class PutchunkTCPOperation implements Runnable {
             try {
                 // Save body
                 this.peer.getFileManager().putChunk(this.msg.getFileId(), this.msg.getChunkNo(), body, this.msg.getReplicationDegree());
+                int delay = RandomGenerator.getNumberInRange(0, 400);
+                this.peer.getScheduler().schedule(new SendMessageOperation(this.peer.getControl(), new StoredMessage(this.peer.getPeerId(), this.msg.getFileId(), this.msg.getChunkNo())), delay, TimeUnit.MILLISECONDS);
                 new ObjectOutputStream(socket.getOutputStream()).writeObject(true);
             } catch (Exception e) {
                 NetworkLogger.printLog(Level.WARNING, "Error saving chunk in peer - " + e.getMessage());

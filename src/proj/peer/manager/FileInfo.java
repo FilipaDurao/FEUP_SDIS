@@ -9,14 +9,16 @@ public class FileInfo implements Serializable {
 
     private ConcurrentHashMap<Integer, ChunkInfo> chunks;
     private String filename;
+    private Boolean local;
 
-    public FileInfo(String filename) {
+    public FileInfo(String filename, Boolean local) {
         this.filename = filename;
+        this.local = local;
         this.chunks = new ConcurrentHashMap<>();
     }
 
     public void addChunk(Integer chunkNumber, Integer replicationDegree, Integer size) {
-        this.chunks.put(chunkNumber, new ChunkInfo(chunkNumber, replicationDegree, size));
+        this.chunks.put(chunkNumber, new ChunkInfo(chunkNumber, replicationDegree, size, this.local));
     }
 
     public Collection<ChunkInfo> getChunks() {

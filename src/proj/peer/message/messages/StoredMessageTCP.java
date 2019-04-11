@@ -1,6 +1,8 @@
 package proj.peer.message.messages;
 
 public class StoredMessageTCP extends StoredMessage {
+    public static final String OPERATION = "CANSTORE";
+
     private String hostname;
     private Integer port;
 
@@ -8,6 +10,7 @@ public class StoredMessageTCP extends StoredMessage {
         super(version, senderId, fileId, chunkNo);
         this.hostname = hostname;
         this.port = port;
+        this.operation = OPERATION;
     }
 
     public StoredMessageTCP(String msgStr) throws Exception {

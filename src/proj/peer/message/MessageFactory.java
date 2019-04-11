@@ -34,7 +34,7 @@ public class MessageFactory {
                 return new GetChunkMessage(strMessage);
             } else if (PutChunkMessage.OPERATION.equals(operation.toUpperCase())) {
                 return new PutChunkMessage(msgBytes);
-            } else if (StoredMessage.OPERATION.equals(operation.toUpperCase())) {
+            } else if (StoredMessageTCP.OPERATION.equals(operation.toUpperCase())) {
                 return new StoredMessageTCP(strMessage);
             }
         }

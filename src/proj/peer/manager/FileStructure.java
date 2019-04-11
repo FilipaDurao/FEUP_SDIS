@@ -54,7 +54,7 @@ public class FileStructure implements Serializable {
             chunks.addChunk(chunkId, replicationDegree, content.length);
 
         } else {
-            FileInfo info = new FileInfo(fileId);
+            FileInfo info = new FileInfo(fileId, true);
             info.addChunk(chunkId, replicationDegree, content.length);
             this.localFiles.put(fileId, info);
         }
@@ -73,7 +73,7 @@ public class FileStructure implements Serializable {
 
     public void addRemoteFile(String filename, String encoded) {
         if (!this.remoteFiles.containsKey(encoded)) {
-            this.remoteFiles.put(encoded, new FileInfo(filename));
+            this.remoteFiles.put(encoded, new FileInfo(filename, false));
         }
     }
 
