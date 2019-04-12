@@ -8,19 +8,18 @@ PEERCLASS="proj.peer.Peer"
 COMPILERPATH="/src"
 CCLASSPATH="/src/proj/peer/Peer.java"
 
-PEERPREFIX="peer-p"
+PEERPREFIX="peer-"
 
-MCNAME="230.1.2.3"
-MCPORT="5678"
+MCNAME="228.25.25.25"
+MCPORT="8823"
 
-MDBNAME="230.1.2.3"
-MDBPORT="5679"
+MDBNAME="228.25.25.25"
+MDBPORT="8824"
 
-MDRNAME="230.1.2.3"
-MDRPORT="5680"
+MDRNAME="228.25.25.25"
+MDRPORT="8825"
 
 INITIAL_INDEX=1
-index=$INITIAL_INDEX
 
 INPLACE=false
 TILE=false
@@ -80,6 +79,12 @@ case $key in
     shift # past argument
     shift # past value
     ;;
+     -s|--start-index)
+     echo "$2"
+    INITIAL_INDEX=$2
+    shift # past argument
+    shift # past value
+    ;;
     *)    # unknown option
     POSITIONAL+=("$1")
     shift # past argument
@@ -89,6 +94,8 @@ done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
 NPEERS=${1:-3}
+index=$INITIAL_INDEX
+
 
 
 if [[ "$KILL_PEERS" == true ]]; then
