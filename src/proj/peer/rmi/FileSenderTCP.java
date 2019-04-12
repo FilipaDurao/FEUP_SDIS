@@ -21,10 +21,10 @@ public class FileSenderTCP extends FileSender {
     }
 
     @Override
-    protected StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo) {
+    protected StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo, CountDownLatch latch) {
         this.peer.getFileManager().addRemoteChunk(encodedFileName, chunkNo, replicationDegree, 0);
         PutChunkMessage msg = new PutChunkMessage(peer.getVersion(), peer.getPeerId(), encodedFileName, chunkNo, replicationDegree);
-        StoredInitiatorHandler handler = new StoredInitiatorTCPHandler(this.peer, msg, this.chunkSavedSignal, this.file.getAbsolutePath());
+        StoredInitiatorHandler handler = new StoredInitiatorTCPHandler(this.peer, msg, latch, this.file.getAbsolutePath());
         handler.startAsync();
         this.peer.getControl().subscribe(handler);
         return handler;
@@ -33,17 +33,20 @@ public class FileSenderTCP extends FileSender {
     @Override
     boolean sendFile() {
         try {
-            double nChunks = this.file.length() / (double) MulticastConnection.CHUNK_SIZE;
-            this.chunkSavedSignal = new CountDownLatch((int) (Math.ceil(nChunks) + ((nChunks == Math.floor(nChunks)) ? 1 : 0)));
-
+            double nParts = this.file.length() / (double) MulticastConnection.CHUNK_SIZE;
+            int nChunks = (int) (Math.ceil(nParts) + ((nParts == Math.floor(nParts)) ? 1 : 0));
+            CountDownLatch latch = null;
             int i;
             for (i = 0; i < nChunks; i++) {
-                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, null, i));
+                if (i % WINDOW_SIZE == 0) {
+
+                    this.awaitLatch(latch);
+                    latch = new CountDownLatch(Math.min(WINDOW_SIZE, nChunks - i));
+                }
+                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, null, i, latch));
             }
 
-            if (nChunks == Math.floor(nChunks)) {
-                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, new byte[0], i));
-            }
+            this.awaitLatch(latch);
         } catch (Exception e) {
             return false;
         }

@@ -51,11 +51,6 @@ public class RemoteBackup implements RemoteBackupInterface {
             this.peer.getFileManager().removeRemoteFile(fileSender.getEncodedFileName());
             return -2;
         }
-        if (!fileSender.waitOperation()) {
-            delete(new File(pathname).getName());
-            this.peer.getFileManager().removeRemoteFile(fileSender.getEncodedFileName());
-            return -1;
-        }
 
         return 0;
     }
