@@ -2,7 +2,7 @@
 
 
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
-CLASSPATH="/out_peer"
+CLASSPATH="/out"
 PEERCLASS="proj.peer.Peer"
 
 COMPILERPATH="/src"
@@ -79,8 +79,7 @@ case $key in
     shift # past argument
     shift # past value
     ;;
-     -s|--start-index)
-     echo "$2"
+    -s|--start-index)
     INITIAL_INDEX=$2
     shift # past argument
     shift # past value
@@ -154,7 +153,7 @@ if [[ "$TILE" = true && "$INPLACE" == false ]] ; then
 else
     for (( c=0; c<$NPEERS; c++ ))
     do  
-        if [ "$INPLACE" = true ] ; then
+        if [[ "$INPLACE" = true ]] ; then
             startInPlace
         else
             startConsole
