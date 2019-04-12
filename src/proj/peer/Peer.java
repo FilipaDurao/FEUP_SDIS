@@ -5,6 +5,7 @@ import proj.peer.connection.ControlConnection;
 import proj.peer.connection.RestoreConnection;
 import proj.peer.log.NetworkLogger;
 import proj.peer.manager.FileManager;
+import proj.peer.operations.SaveStructureOperation;
 import proj.peer.rmi.RemoteBackup;
 import proj.peer.rmi.RemoteBackupInterface;
 
@@ -51,7 +52,6 @@ public class Peer {
         this.restorePort = restorePort;
 
         this.fileManager = new FileManager(this.peerId);
-        NetworkLogger.setPeerId(peerId);
     }
 
     public static void main(String[] args) throws Exception {
@@ -69,18 +69,20 @@ public class Peer {
         Integer backupPort = Integer.valueOf(args[6]);
         String restoreName = args[7];
         Integer restorePort = Integer.valueOf(args[8]);
+        NetworkLogger.setPeerId(peerId);
 
         Peer peer = new Peer(version, peerId, peer_ap, controlName, controlPort, backupName, backupPort, restoreName, restorePort);
         peer.establishRMI();
         peer.startConnections();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(peer.fileManager));
+        Runtime.getRuntime().addShutdownHook(new Thread(new SaveStructureOperation(peer.fileManager, true)));
         NetworkLogger.printLog(Level.INFO, "Server is running.");
     }
 
     private void startConnections() throws IOException {
         this.scheduler = new ScheduledThreadPoolExecutor(POOL_SIZE);
         this.scheduler.setRemoveOnCancelPolicy(true);
+        this.scheduler.scheduleAtFixedRate(new SaveStructureOperation(this.fileManager, false), 0, 30, TimeUnit.SECONDS);
 
         this.backup = new BackupConnection(this, backupName, backupPort);
         new Thread(this.backup).start();

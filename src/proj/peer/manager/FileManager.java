@@ -8,14 +8,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class FileManager implements Runnable {
+public class FileManager {
 
     public static final String FILENAME = "localManager.ser";
     private FileStructure fileStructure;
+    private boolean structureChanged;
     private String peerId;
 
     public FileManager(String peerId) throws Exception {
         this.peerId = peerId;
+        this.structureChanged = false;
         this.recoverFileStructure();
     }
 
@@ -23,11 +25,12 @@ public class FileManager implements Runnable {
         return "peer_" + peerId + "/" + FILENAME;
     }
 
-    private void saveFileStructure() {
+    public void saveFileStructure() {
         try {
             FileOutputStream fos = new FileOutputStream(this.getFilename());
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(this.fileStructure);
+            this.structureChanged = false;
             oos.close();
 
         } catch (IOException e) {
@@ -59,18 +62,21 @@ public class FileManager implements Runnable {
 
     public void putChunk(String fileId, Integer chunkId, byte[] content, Integer replicationDegree) throws Exception {
         fileStructure.putChunk(fileId, chunkId, content, replicationDegree);
+        this.structureChanged = true;
     }
 
     public void storeChunkPeer(String fileId, Integer chunkId, String peerId) {
         fileStructure.storeChunkPeer(fileId, chunkId, peerId);
+        this.structureChanged = true;
     }
 
     public void removeChunkPeer(String fileId, Integer chunkId, String peerId) {
         fileStructure.removeChunkPeer(fileId, chunkId, peerId);
+        this.structureChanged = true;
+
     }
 
     public byte[] getChunk(String fileId, Integer chunkId) throws Exception {
-
         return fileStructure.getChunk(fileId, chunkId);
     }
 
@@ -82,6 +88,7 @@ public class FileManager implements Runnable {
                 if (chunkInfo.getReplicationDegree() < chunkInfo.getNumberOfSaves()) {
                     fileId = entry.getKey();
                     chunkId = chunkInfo.getChunkNumber();
+                    this.structureChanged = true;
                     return deleteChunkFromMemory(fileId, chunkId);
                 }
 
@@ -96,18 +103,20 @@ public class FileManager implements Runnable {
             throw new Exception("No chunks stored");
         }
 
+        this.structureChanged = true;
         return deleteChunkFromMemory(fileId, chunkId);
     }
 
     private RemovedMessage deleteChunkFromMemory(String fileId, Integer chunkId) throws Exception {
+        this.structureChanged = true;
         fileStructure.deleteChunk(fileId, chunkId);
         NetworkLogger.printLog(Level.INFO, "Deleted chunk - " + fileId.substring(0, 5) + " - " + chunkId);
         return new RemovedMessage(peerId, fileId, chunkId);
     }
 
     public void deleteFile(String fileId) throws Exception {
-
         fileStructure.deleteFile(fileId);
+        this.structureChanged = true;
     }
 
     public boolean isChunkSaved(String fileId, Integer chunkId) {
@@ -147,16 +156,9 @@ public class FileManager implements Runnable {
     }
 
     public void removeRemoteFile(String fileId) {
+        this.structureChanged = true;
         this.fileStructure.removeRemoteFile(fileId);
     }
-
-
-
-    @Override
-    public void run() {
-        this.saveFileStructure();
-    }
-
 
     public ChunkInfo getChunkInfo(String fileId, Integer chunkNo) throws Exception {
         return this.fileStructure.getChunkInfo(fileId, chunkNo);
@@ -164,6 +166,7 @@ public class FileManager implements Runnable {
 
     public void addRemoteChunk(String fileId, Integer chunkId, Integer replication, Integer size) {
         this.fileStructure.addRemoteChunk(fileId, chunkId, replication, size);
+        this.structureChanged = true;
     }
 
     public boolean isFileRemotlyStored(String fileId) {
@@ -171,10 +174,16 @@ public class FileManager implements Runnable {
     }
 
     public int getRemoteNChunks(String fileId) throws Exception {
+        this.structureChanged = true;
         return this.fileStructure.getRemoteNChunks(fileId);
     }
 
     public void setChunkSize(String fileId, Integer chunkNo, int length) {
+        this.structureChanged = true;
         this.fileStructure.setChunkSize(fileId, chunkNo, length);
+    }
+
+    public boolean isStructureChanged() {
+        return structureChanged;
     }
 }
