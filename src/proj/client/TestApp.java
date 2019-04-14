@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class ClientMain {
+public class TestApp {
 
     public static void main(String[] args) {
         if(args.length < 2) {
