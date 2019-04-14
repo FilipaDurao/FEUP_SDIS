@@ -21,7 +21,7 @@ public class PutChunkTCPHandler extends SubscriptionHandler {
     public void notify(Message msg) {
         if (msg instanceof PutChunkMessage) {
             NetworkLogger.printLog(Level.INFO, "Received TCP PUTCHUNK message - " + msg.getTruncatedFilename() + " - " + ((PutChunkMessage) msg).getChunkNo());
-            if (!this.peer.getFileManager().isFileRemotlyStored(msg.getFileId())) {
+            if (!this.peer.getFileManager().isFileRemotlyStored(msg.getFileId()) && this.peer.getFileManager().hasSpace()) {
                 int delay = RandomGenerator.getNumberInRange(0, 400);
                 this.peer.getScheduler().schedule(new PutChunkTCPOperation((PutChunkMessage) msg, peer), delay, TimeUnit.MILLISECONDS);
 

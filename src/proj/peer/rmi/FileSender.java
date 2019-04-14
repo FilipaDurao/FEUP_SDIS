@@ -41,7 +41,7 @@ public class FileSender {
      * Saves all handlers for the messages sent.
      */
     protected ArrayList<StoredInitiatorHandler> handlers;
-    
+
 
     /**
      * File to send.
