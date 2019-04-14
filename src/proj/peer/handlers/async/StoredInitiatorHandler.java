@@ -14,7 +14,7 @@ import java.util.logging.Level;
 
 public class StoredInitiatorHandler extends AsyncHandler {
 
-    private HashSet<String> storedIds;
+    protected HashSet<String> storedIds;
 
     public StoredInitiatorHandler(Peer peer, PutChunkMessage msg, CountDownLatch chunkSavedSignal) {
         super(new ChunkSubscription(StoredMessage.OPERATION, msg.getFileId(), msg.getChunkNo(), msg.getVersion()), peer.getControl(), peer.getBackup(), msg, chunkSavedSignal, peer);

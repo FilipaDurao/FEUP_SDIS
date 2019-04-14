@@ -3,8 +3,7 @@ package proj.peer.rmi;
 import proj.peer.Peer;
 import proj.peer.connection.MulticastConnection;
 import proj.peer.handlers.async.StoredInitiatorHandler;
-import proj.peer.handlers.subscriptions.ChunkSubscription;
-import proj.peer.log.NetworkLogger;
+import proj.peer.handlers.async.StoredInitiatorTCPHandler;
 import proj.peer.message.messages.PutChunkMessage;
 import proj.peer.utils.SHA256Encoder;
 
@@ -13,7 +12,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
 
 /**
  * Sends a file through a multicast connection.
@@ -69,14 +67,15 @@ public class FileSender {
     /**
      * Initiates the sending and subscription of a PUTCHUNK message.
      *
+     * @param size
      * @param replicationDegree Replication degree of the message.
      * @param encodedFileName   Encoded name of the file.
      * @param body              Body of the message.
      * @param chunkNo           Chunk number of the message.
      * @return Handler for the message subscription and retransmission.
      */
-    protected StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo, CountDownLatch latch) {
-        this.peer.getFileManager().addRemoteChunk(encodedFileName, chunkNo, replicationDegree, 0);
+    protected StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo, CountDownLatch latch, int size) {
+        this.peer.getFileManager().addRemoteChunk(encodedFileName, chunkNo, replicationDegree, size);
         PutChunkMessage msg = new PutChunkMessage(peer.getPeerId(), encodedFileName, chunkNo, replicationDegree, body);
         StoredInitiatorHandler handler = new StoredInitiatorHandler(this.peer, msg, latch);
         handler.startAsync();
@@ -107,13 +106,13 @@ public class FileSender {
                 int dataLength = data.read(buffer);
                 if (dataLength == -1) {
                     if (i == nChunks - 1) {
-                        this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, new byte[0], i, latch));
+                        this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, new byte[0], i, latch, 0));
                     } else {
                         throw new Exception("Error reading file");
                     }
                 } else {
                     byte[] body = Arrays.copyOfRange(buffer, 0, dataLength);
-                    this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, body, i, latch));
+                    this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, body, i, latch, dataLength));
                 }
             }
 

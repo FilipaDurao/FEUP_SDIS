@@ -6,6 +6,7 @@ import proj.peer.handlers.subscriptions.OperationSubscription;
 import proj.peer.log.NetworkLogger;
 import proj.peer.message.messages.Message;
 import proj.peer.message.messages.PutChunkMessage;
+import proj.peer.message.messages.PutChunkMessageTCP;
 import proj.peer.operations.PutChunkTCPOperation;
 import proj.peer.utils.RandomGenerator;
 
@@ -19,9 +20,9 @@ public class PutChunkTCPHandler extends SubscriptionHandler {
 
     @Override
     public void notify(Message msg) {
-        if (msg instanceof PutChunkMessage) {
+        if (msg instanceof PutChunkMessageTCP) {
             NetworkLogger.printLog(Level.INFO, "Received TCP PUTCHUNK message - " + msg.getTruncatedFilename() + " - " + ((PutChunkMessage) msg).getChunkNo());
-            if (!this.peer.getFileManager().isFileRemotlyStored(msg.getFileId()) && this.peer.getFileManager().hasSpace()) {
+            if (!this.peer.getFileManager().isFileRemotlyStored(msg.getFileId()) ) {
                 int delay = RandomGenerator.getNumberInRange(0, 400);
                 this.peer.getScheduler().schedule(new PutChunkTCPOperation((PutChunkMessage) msg, peer), delay, TimeUnit.MILLISECONDS);
 

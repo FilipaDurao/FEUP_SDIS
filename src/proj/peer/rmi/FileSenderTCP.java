@@ -5,6 +5,7 @@ import proj.peer.connection.MulticastConnection;
 import proj.peer.handlers.async.StoredInitiatorHandler;
 import proj.peer.handlers.async.StoredInitiatorTCPHandler;
 import proj.peer.message.messages.PutChunkMessage;
+import proj.peer.message.messages.PutChunkMessageTCP;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -21,9 +22,9 @@ public class FileSenderTCP extends FileSender {
     }
 
     @Override
-    protected StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo, CountDownLatch latch) {
+    protected StoredInitiatorHandler sendChunk(Integer replicationDegree, String encodedFileName, byte[] body, int chunkNo, CountDownLatch latch, int size) {
         this.peer.getFileManager().addRemoteChunk(encodedFileName, chunkNo, replicationDegree, 0);
-        PutChunkMessage msg = new PutChunkMessage(peer.getVersion(), peer.getPeerId(), encodedFileName, chunkNo, replicationDegree);
+        PutChunkMessage msg = new PutChunkMessageTCP(peer.getVersion(), peer.getPeerId(), encodedFileName, chunkNo, replicationDegree, size);
         StoredInitiatorHandler handler = new StoredInitiatorTCPHandler(this.peer, msg, latch, this.file.getAbsolutePath());
         handler.startAsync();
         this.peer.getControl().subscribe(handler);
@@ -43,7 +44,7 @@ public class FileSenderTCP extends FileSender {
                     this.awaitLatch(latch);
                     latch = new CountDownLatch(Math.min(WINDOW_SIZE, nChunks - i));
                 }
-                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, null, i, latch));
+                this.handlers.add(this.sendChunk(replicationDegree, encodedFileName, null, i, latch, i == nChunks - 1 ? (int) (this.file.length() % 64000) : 64000));
             }
 
             this.awaitLatch(latch);

@@ -60,7 +60,7 @@ public class StoredTCPOperation implements Runnable {
             outputStream.writeObject(Arrays.copyOfRange(buffer, 0, length));
             if(  (boolean) new ObjectInputStream(socket.getInputStream()).readObject()) {
                 this.peer.getFileManager().storeChunkPeer(fileId, chunkNo, peerId);
-                this.handler.markSuccess();
+                this.handler.markSuccess(peerId);
                 this.success = true;
             }
             file.close();

@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 public class PutChunkMessage extends MessageWBody {
 
     public static final String OPERATION = "PUTCHUNK";
-    private Integer replicationDegree;
+    protected Integer replicationDegree;
 
     public PutChunkMessage(String senderId, String fileId, Integer chunkNo, Integer replicationDegree, byte[] body) {
         super(Peer.DEFAULT_VERSION, OPERATION, senderId, fileId, chunkNo, body);
@@ -40,6 +40,10 @@ public class PutChunkMessage extends MessageWBody {
         this.fileId = msgHeader[3];
         this.chunkNo = Integer.valueOf(msgHeader[4]);
         this.replicationDegree = Integer.valueOf(msgHeader[5]);
+    }
+
+    public PutChunkMessage() {
+
     }
 
     @Override

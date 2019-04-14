@@ -151,7 +151,7 @@ public class FileManager {
         return this.fileStructure.getMaxSize() < this.fileStructure.getSavedSize();
     }
 
-    public boolean hasSpace() {return this.fileStructure.getMaxSize() > this.fileStructure.getSavedSize();}
+    public boolean hasSpace(Integer size) {return this.fileStructure.getMaxSize() > this.fileStructure.getSavedSize() + size;}
 
     public void addRemoteFile(String filename, String encoded) {
         this.fileStructure.addRemoteFile(filename, encoded);

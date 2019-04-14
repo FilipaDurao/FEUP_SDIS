@@ -11,7 +11,6 @@ import java.util.logging.Level;
 
 public class StoredInitiatorTCPHandler extends StoredInitiatorHandler {
     private volatile Integer sendingChunk = 0;
-    private volatile Integer successfulSend = 0;
     private final Integer replicationDegree;
     private String filename;
     private final Object lock = new Object();
@@ -27,7 +26,7 @@ public class StoredInitiatorTCPHandler extends StoredInitiatorHandler {
         if (response instanceof StoredMessageTCP) {
             NetworkLogger.printLog(Level.INFO, "Stored TCP received - " + response.getTruncatedFilename() + " " + ((StoredMessageTCP) response).getChunkNo());
             synchronized (lock) {
-                if (this.sendingChunk + this.successfulSend < replicationDegree) {
+                if (this.sendingChunk + this.storedIds.size() < replicationDegree && !this.storedIds.contains(response.getSenderId())) {
                     this.sendingChunk += 1;
                     // TODO: Start operation to send chunk
                     this.peer.getScheduler().submit(
@@ -46,11 +45,11 @@ public class StoredInitiatorTCPHandler extends StoredInitiatorHandler {
 
     }
 
-    public void markSuccess() {
+    public void markSuccess(String senderId) {
         synchronized (lock) {
-            this.successfulSend += 1;
+            this.storedIds.add(senderId);
             this.sendingChunk -= 1;
-            if (this.successfulSend >= replicationDegree) {
+            if (this.storedIds.size() >= replicationDegree) {
                 this.successful = true;
                 this.shutdown();
             }
@@ -62,5 +61,9 @@ public class StoredInitiatorTCPHandler extends StoredInitiatorHandler {
         synchronized (lock) {
             this.sendingChunk -= 1;
         }
+    }
+
+    public Integer getSuccessfulSend() {
+        return this.storedIds.size();
     }
 }
