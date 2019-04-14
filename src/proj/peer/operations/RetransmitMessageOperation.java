@@ -32,6 +32,13 @@ public class RetransmitMessageOperation implements Runnable {
 
     @Override
     public void run() {
+        if (this.attempts < 5 && !this.successful) {
+            this.future = this.peer.getScheduler().schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
+        } else {
+            this.asyncHandler.shutdown();
+            return;
+        }
+
         try {
             this.attempts++;
 
@@ -45,13 +52,6 @@ public class RetransmitMessageOperation implements Runnable {
         } catch (IOException e) {
             NetworkLogger.printLog(Level.SEVERE, "Error sending scheduled message - " + e.getMessage());
         }
-
-        if (this.attempts < 5 && !this.successful) {
-            this.future = this.peer.getScheduler().schedule(this, (long) Math.pow(2, this.attempts), TimeUnit.SECONDS);
-        } else {
-            this.asyncHandler.shutdown();
-        }
-
 
     }
 

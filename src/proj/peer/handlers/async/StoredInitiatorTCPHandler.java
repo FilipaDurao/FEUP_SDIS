@@ -26,7 +26,7 @@ public class StoredInitiatorTCPHandler extends StoredInitiatorHandler {
         if (response instanceof StoredMessageTCP) {
             NetworkLogger.printLog(Level.INFO, "Stored TCP received - " + response.getTruncatedFilename() + " " + ((StoredMessageTCP) response).getChunkNo());
             synchronized (lock) {
-                if (this.sendingChunk + this.storedIds.size() < replicationDegree && !this.storedIds.contains(response.getSenderId())) {
+                if (this.sendingChunk + this.storedIds.size() < replicationDegree) {
                     this.sendingChunk += 1;
                     // TODO: Start operation to send chunk
                     this.peer.getScheduler().submit(
